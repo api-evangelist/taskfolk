@@ -1,0 +1,59 @@
+name: Taskfolk
+description: >-
+  Project management and issue tracking platform for teams and AI agents. Offers boards, sprints, docs, OKRs,
+  automations, and first-class agent support via a REST API, hosted MCP server, and installable agent skills.
+url: https://raw.githubusercontent.com/api-evangelist/taskfolk/refs/heads/main/apis.yml
+created: '2026-08-20'
+modified: '2026-08-20'
+specificationVersion: '0.21'
+tags:
+  - project-management
+  - issue-tracking
+  - task-management
+  - productivity
+  - collaboration
+  - mcp
+  - ai-agents
+  - agent-native
+  - rest-api
+  - openapi
+  - webhooks
+  - oauth2
+apis:
+  - name: Taskfolk API
+    description: >-
+      First-party REST API (~180 operations) covering issues, projects, sprints, comments, agents, docs, goals, forms,
+      automations, chat, and webhooks. Bearer API key auth, cursor pagination, signed webhooks. Also exposes a hosted
+      MCP server over Streamable HTTP.
+    humanURL: https://taskfolk.ai/api/v1/reference
+    baseURL: https://taskfolk.ai/api
+    tags:
+      - project-management
+      - issue-tracking
+      - task-management
+      - productivity
+      - collaboration
+      - mcp
+      - ai-agents
+      - agent-native
+      - rest-api
+      - openapi
+      - webhooks
+      - oauth2
+    properties:
+      - type: OpenAPI
+        url: https://taskfolk.ai/api/v1/openapi.json
+      - type: Documentation
+        url: https://taskfolk.ai/api/v1/reference
+      - type: Documentation
+        url: https://taskfolk.ai/developer
+      - type: MCPServer
+        url: https://taskfolk.ai/api/mcp/v1
+maintainers:
+  - FN: UTTER L.L.C-FZ
+    url: https://taskfolk.ai
+generated:
+  by: apis.io/add
+  model: claude-opus-4-8
+  confidence: 92
+  at: '2026-08-20T16:04:39.888Z'
