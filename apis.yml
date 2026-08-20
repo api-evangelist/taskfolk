@@ -1,12 +1,41 @@
 name: Taskfolk
 description: >-
-  Project management and issue tracking platform for teams and AI agents. Offers boards, sprints, docs, OKRs,
-  automations, and first-class agent support via a REST API, hosted MCP server, and installable agent skills.
+  Taskfolk is a project-management and issue-tracking platform built for teams and their AI agents working
+  side by side, operated by UTTER L.L.C-FZ of Dubai, UAE. Workspaces contain projects; projects contain
+  issues moved across board, backlog, list, calendar and timeline views, with sprints, milestones, releases,
+  portfolios, OKR goals, docs, chat, time tracking, custom fields, automations, visual workflows and public
+  intake forms. Every human action has a programmatic twin: a public OpenAPI 3.1 REST API of 187 operations,
+  a first-party hosted MCP server generated one-to-one from the same OpenAPI registry, installable agent
+  skills served as live markdown endpoints, signed webhooks, and an OAuth 2.0 authorization server with 47
+  scopes, PKCE and anonymous dynamic client registration. AI agents join as named workspace members that are
+  assignable like people and are never billed as seats. Taskfolk also publishes an RFC 9727 API catalog
+  enumerating six agent surfaces including four machine-payment protocols (MPP, ACP, UCP and x402) for
+  buying AI credits without a human in the loop.
 url: https://raw.githubusercontent.com/api-evangelist/taskfolk/refs/heads/main/apis.yml
+image: https://taskfolk.ai/images/brand/taskfolk-icon.png
 created: '2026-08-20'
 modified: '2026-08-20'
 specificationVersion: '0.21'
 tags:
+  - Project Management
+  - Issue Tracking
+  - Task Management
+  - Productivity
+  - Collaboration
+  - MCP
+  - AI Agents
+  - agent-native
+  - Agentic Commerce
+  - A2A
+  - REST API
+  - OpenAPI
+  - Webhook
+  - Authentication
+  - Agile
+  - Sprints
+  - OKR
+  - Developer Tools
+tags_raw:
   - project-management
   - issue-tracking
   - task-management
@@ -15,10 +44,16 @@ tags:
   - mcp
   - ai-agents
   - agent-native
+  - agentic-commerce
+  - a2a
   - rest-api
   - openapi
   - webhooks
   - oauth2
+  - agile
+  - sprints
+  - okr
+  - developer-tools
 apis:
   - name: Taskfolk API
     description: >-
@@ -28,6 +63,19 @@ apis:
     humanURL: https://taskfolk.ai/api/v1/reference
     baseURL: https://taskfolk.ai/api
     tags:
+      - Project Management
+      - Issue Tracking
+      - Task Management
+      - Productivity
+      - Collaboration
+      - MCP
+      - AI Agents
+      - agent-native
+      - REST API
+      - OpenAPI
+      - Webhook
+      - Authentication
+    tags_raw:
       - project-management
       - issue-tracking
       - task-management
@@ -42,18 +90,170 @@ apis:
       - oauth2
     properties:
       - type: OpenAPI
+        url: openapi/taskfolk-product-api-openapi.yml
+      - type: OpenAPI
         url: https://taskfolk.ai/api/v1/openapi.json
       - type: Documentation
         url: https://taskfolk.ai/api/v1/reference
-      - type: Documentation
+      - type: APIReference
+        url: https://taskfolk.ai/api/v1/reference
+      - type: DeveloperPortal
         url: https://taskfolk.ai/developer
       - type: MCPServer
         url: https://taskfolk.ai/api/mcp/v1
+      - type: MCPServer
+        url: mcp/taskfolk-mcp.yml
+      - type: ToolCrosswalk
+        url: mcp/taskfolk-tool-crosswalk.yml
+      - type: AgentCard
+        url: a2a/taskfolk-a2a.yml
+      - type: Authentication
+        url: authentication/taskfolk-authentication.yml
+      - type: OAuthScopes
+        url: scopes/taskfolk-scopes.yml
+      - type: Webhooks
+        url: asyncapi/taskfolk-webhooks.yml
+      - type: ErrorCatalog
+        url: errors/taskfolk-problem-types.yml
+      - type: Conventions
+        url: conventions/taskfolk-conventions.yml
+      - type: Idempotency
+        url: conventions/taskfolk-conventions.yml
+      - type: RateLimits
+        url: rate-limits/taskfolk-rate-limits.yml
+      - type: DataModel
+        url: data-model/taskfolk-data-model.yml
+      - type: Overlay
+        url: overlays/taskfolk-product-api-overlay.yaml
+      - type: AgentSkill
+        url: skills/_index.yml
+  - name: Taskfolk Agent Commerce API
+    description: >-
+      Machine-payable credit purchase for a Taskfolk workspace, published as a separate OpenAPI 3.1
+      document at https://taskfolk.ai/openapi.json. Four operations
+      (/api/mpp/v1/credits/{small|medium|large|custom}) each carry an x-payment-info block and answer an
+      unauthenticated-for-payment call with HTTP 402 plus a WWW-Authenticate Payment challenge; the retry
+      carries an Authorization: Payment payload and settlement returns an Ed25519-signed Payment-Receipt.
+      The same checkout core is exposed through four protocols — MPP (this spec), ACP
+      (/.well-known/acp.json), UCP (/.well-known/ucp) and x402 — all four declared in the RFC 9727 API
+      catalog. Purchases require an API key carrying the admin scope. No refund, void or cancel operation
+      is published, so a completed purchase is irreversible.
+    humanURL: https://taskfolk.ai/pricing
+    baseURL: https://taskfolk.ai
+    tags:
+      - Agentic Commerce
+      - Payments
+      - x402
+      - MCP
+      - AI Agents
+      - agent-native
+      - OpenAPI
+    tags_raw:
+      - agentic-commerce
+      - payments
+      - x402
+      - mcp
+      - ai-agents
+      - agent-native
+      - openapi
+    properties:
+      - type: OpenAPI
+        url: openapi/taskfolk-agent-commerce-openapi.yml
+      - type: OpenAPI
+        url: https://taskfolk.ai/openapi.json
+      - type: Documentation
+        url: https://taskfolk.ai/api/v1/reference
+      - type: Plans
+        url: plans/taskfolk-plans-pricing.yml
+      - type: Conformance
+        url: conformance/taskfolk-conformance.yml
+      - type: Overlay
+        url: overlays/taskfolk-agent-commerce-overlay.yaml
 maintainers:
   - FN: UTTER L.L.C-FZ
+    email: hi@taskfolk.ai
     url: https://taskfolk.ai
+    address: Meydan Grandstand, Dubai, UAE
 generated:
   by: apis.io/add
   model: claude-opus-4-8
   confidence: 92
   at: '2026-08-20T16:04:39.888Z'
+common:
+- type: DomainSecurity
+  url: security/taskfolk-domain-security.yml
+- type: Authentication
+  url: authentication/taskfolk-authentication.yml
+- type: Website
+  url: https://taskfolk.ai
+- type: DeveloperPortal
+  url: https://taskfolk.ai/developer
+- type: Documentation
+  url: https://taskfolk.ai/developer
+- type: APIReference
+  url: https://taskfolk.ai/api/v1/reference
+- type: GettingStarted
+  url: https://taskfolk.ai/api/skill/taskfolk-product.skill.md
+- type: Support
+  url: https://taskfolk.ai/support
+- type: Blog
+  url: https://taskfolk.ai/blog
+- type: GitHubOrganization
+  url: https://github.com/taskfolk
+- type: Roadmap
+  url: https://taskfolk.ai/feedback
+- type: Pricing
+  url: https://taskfolk.ai/pricing
+- type: SignUp
+  url: https://taskfolk.ai/login
+- type: TermsOfService
+  url: https://taskfolk.ai/legal/terms
+- type: PrivacyPolicy
+  url: https://taskfolk.ai/legal/privacy
+- type: Compliance
+  url: https://taskfolk.ai/legal/privacy
+- type: ChangeLog
+  url: https://taskfolk.ai/changelog
+- type: ChangeLog
+  url: changelog/taskfolk-changelog.yml
+- type: LLMsTxt
+  url: llms/taskfolk-llms.txt
+- type: WellKnown
+  url: well-known/taskfolk-well-known.yml
+- type: APICatalog
+  url: https://taskfolk.ai/.well-known/api-catalog
+- type: AgentCard
+  url: a2a/taskfolk-a2a.yml
+- type: OAuthScopes
+  url: scopes/taskfolk-scopes.yml
+- type: Conventions
+  url: conventions/taskfolk-conventions.yml
+- type: Idempotency
+  url: conventions/taskfolk-conventions.yml
+- type: ErrorCatalog
+  url: errors/taskfolk-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/taskfolk-lifecycle.yml
+- type: Conformance
+  url: conformance/taskfolk-conformance.yml
+- type: DataModel
+  url: data-model/taskfolk-data-model.yml
+- type: Packages
+  url: packages/taskfolk-packages.yml
+- type: Webhooks
+  url: asyncapi/taskfolk-webhooks.yml
+- type: RateLimits
+  url: rate-limits/taskfolk-rate-limits.yml
+- type: Plans
+  url: plans/taskfolk-plans-pricing.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Overlay
+  url: overlays/taskfolk-product-api-overlay.yaml
+- type: Overlay
+  url: overlays/taskfolk-agent-commerce-overlay.yaml
+x-enrichment:
+  date: '2026-08-20'
+  status: enriched
+  artifacts_added: 38
+  pass: local-v1
