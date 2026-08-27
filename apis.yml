@@ -55,120 +55,1286 @@ tags_raw:
   - okr
   - developer-tools
 apis:
-  - name: Taskfolk API
-    description: >-
-      First-party REST API (~180 operations) covering issues, projects, sprints, comments, agents, docs, goals, forms,
-      automations, chat, and webhooks. Bearer API key auth, cursor pagination, signed webhooks. Also exposes a hosted
-      MCP server over Streamable HTTP.
-    humanURL: https://taskfolk.ai/api/v1/reference
-    baseURL: https://taskfolk.ai/api
-    tags:
-      - Project Management
-      - Issue Tracking
-      - Task Management
-      - Productivity
-      - Collaboration
-      - MCP
-      - AI Agents
-      - agent-native
-      - REST API
-      - OpenAPI
-      - Webhook
-      - Authentication
-    tags_raw:
-      - project-management
-      - issue-tracking
-      - task-management
-      - productivity
-      - collaboration
-      - mcp
-      - ai-agents
-      - agent-native
-      - rest-api
-      - openapi
-      - webhooks
-      - oauth2
-    properties:
-      - type: OpenAPI
-        url: openapi/taskfolk-product-api-openapi.yml
-      - type: OpenAPI
-        url: https://taskfolk.ai/api/v1/openapi.json
-      - type: Documentation
-        url: https://taskfolk.ai/api/v1/reference
-      - type: APIReference
-        url: https://taskfolk.ai/api/v1/reference
-      - type: DeveloperPortal
-        url: https://taskfolk.ai/developer
-      - type: MCPServer
-        url: https://taskfolk.ai/api/mcp/v1
-      - type: MCPServer
-        url: mcp/taskfolk-mcp.yml
-      - type: ToolCrosswalk
-        url: mcp/taskfolk-tool-crosswalk.yml
-      - type: AgentCard
-        url: a2a/taskfolk-a2a.yml
-      - type: Authentication
-        url: authentication/taskfolk-authentication.yml
-      - type: OAuthScopes
-        url: scopes/taskfolk-scopes.yml
-      - type: Webhooks
-        url: asyncapi/taskfolk-webhooks.yml
-      - type: ErrorCatalog
-        url: errors/taskfolk-problem-types.yml
-      - type: Conventions
-        url: conventions/taskfolk-conventions.yml
-      - type: Idempotency
-        url: conventions/taskfolk-conventions.yml
-      - type: RateLimits
-        url: rate-limits/taskfolk-rate-limits.yml
-      - type: DataModel
-        url: data-model/taskfolk-data-model.yml
-      - type: Overlay
-        url: overlays/taskfolk-product-api-overlay.yaml
-      - type: AgentSkill
-        url: skills/_index.yml
-  - name: Taskfolk Agent Commerce API
-    description: >-
-      Machine-payable credit purchase for a Taskfolk workspace, published as a separate OpenAPI 3.1
-      document at https://taskfolk.ai/openapi.json. Four operations
-      (/api/mpp/v1/credits/{small|medium|large|custom}) each carry an x-payment-info block and answer an
-      unauthenticated-for-payment call with HTTP 402 plus a WWW-Authenticate Payment challenge; the retry
-      carries an Authorization: Payment payload and settlement returns an Ed25519-signed Payment-Receipt.
-      The same checkout core is exposed through four protocols — MPP (this spec), ACP
-      (/.well-known/acp.json), UCP (/.well-known/ucp) and x402 — all four declared in the RFC 9727 API
-      catalog. Purchases require an API key carrying the admin scope. No refund, void or cancel operation
-      is published, so a completed purchase is irreversible.
-    humanURL: https://taskfolk.ai/pricing
-    baseURL: https://taskfolk.ai
-    tags:
-      - Agentic Commerce
-      - Payments
-      - x402
-      - MCP
-      - AI Agents
-      - agent-native
-      - OpenAPI
-    tags_raw:
-      - agentic-commerce
-      - payments
-      - x402
-      - mcp
-      - ai-agents
-      - agent-native
-      - openapi
-    properties:
-      - type: OpenAPI
-        url: openapi/taskfolk-agent-commerce-openapi.yml
-      - type: OpenAPI
-        url: https://taskfolk.ai/openapi.json
-      - type: Documentation
-        url: https://taskfolk.ai/api/v1/reference
-      - type: Plans
-        url: plans/taskfolk-plans-pricing.yml
-      - type: Conformance
-        url: conformance/taskfolk-conformance.yml
-      - type: Overlay
-        url: overlays/taskfolk-agent-commerce-overlay.yaml
+- aid: taskfolk:taskfolk-activity-api
+  name: Taskfolk Activity API
+  description: The Activity API from Taskfolk — 1 operation(s) for activity.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Activity
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-activity-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-agents-api
+  name: Taskfolk Agents API
+  description: The Agents API from Taskfolk — 5 operation(s) for agents.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Agents
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-agents-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-attachments-api
+  name: Taskfolk Attachments API
+  description: The Attachments API from Taskfolk — 3 operation(s) for attachments.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Attachments
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-attachments-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-automations-api
+  name: Taskfolk Automations API
+  description: The Automations API from Taskfolk — 3 operation(s) for automations.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Automations
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-automations-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-chat-api
+  name: Taskfolk Chat API
+  description: The Chat API from Taskfolk — 9 operation(s) for chat.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Chat
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-chat-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-comments-api
+  name: Taskfolk Comments API
+  description: The Comments API from Taskfolk — 3 operation(s) for comments.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Comments
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-comments-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-custom-fields-api
+  name: Taskfolk Custom fields API
+  description: The Custom fields API from Taskfolk — 4 operation(s) for custom fields.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Custom fields
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-custom-fields-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-developer-api
+  name: Taskfolk Developer API
+  description: The Developer API from Taskfolk — 10 operation(s) for developer.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Developer
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-developer-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-docs-api
+  name: Taskfolk Docs API
+  description: The Docs API from Taskfolk — 9 operation(s) for docs.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Docs
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-docs-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-forms-api
+  name: Taskfolk Forms API
+  description: The Forms API from Taskfolk — 5 operation(s) for forms.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Forms
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-forms-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-goals-api
+  name: Taskfolk Goals API
+  description: The Goals API from Taskfolk — 2 operation(s) for goals.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Goals
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-goals-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-issues-api
+  name: Taskfolk Issues API
+  description: The Issues API from Taskfolk — 8 operation(s) for issues.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Issues
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-issues-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-key-results-api
+  name: Taskfolk Key results API
+  description: The Key results API from Taskfolk — 2 operation(s) for key results.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Key results
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-key-results-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-labels-api
+  name: Taskfolk Labels API
+  description: The Labels API from Taskfolk — 2 operation(s) for labels.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Labels
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-labels-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-members-api
+  name: Taskfolk Members API
+  description: The Members API from Taskfolk — 4 operation(s) for members.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Members
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-members-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-meta-api
+  name: Taskfolk Meta API
+  description: The Meta API from Taskfolk — 1 operation(s) for meta.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Meta
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-meta-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-milestones-api
+  name: Taskfolk Milestones API
+  description: The Milestones API from Taskfolk — 2 operation(s) for milestones.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Milestones
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-milestones-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-mpp-api
+  name: Taskfolk Mpp API
+  description: The Mpp API from Taskfolk — 4 operation(s) for mpp.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Mpp
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-mpp-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-notifications-api
+  name: Taskfolk Notifications API
+  description: The Notifications API from Taskfolk — 3 operation(s) for notifications.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Notifications
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-notifications-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-portfolios-api
+  name: Taskfolk Portfolios API
+  description: The Portfolios API from Taskfolk — 4 operation(s) for portfolios.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Portfolios
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-portfolios-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-projects-api
+  name: Taskfolk Projects API
+  description: The Projects API from Taskfolk — 5 operation(s) for projects.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Projects
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-projects-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-releases-api
+  name: Taskfolk Releases API
+  description: The Releases API from Taskfolk — 2 operation(s) for releases.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Releases
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-releases-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-reports-api
+  name: Taskfolk Reports API
+  description: The Reports API from Taskfolk — 1 operation(s) for reports.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Reports
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-reports-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-saved-views-api
+  name: Taskfolk Saved views API
+  description: The Saved views API from Taskfolk — 2 operation(s) for saved views.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Saved views
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-saved-views-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-search-api
+  name: Taskfolk Search API
+  description: The Search API from Taskfolk — 1 operation(s) for search.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Search
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-search-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-sprints-api
+  name: Taskfolk Sprints API
+  description: The Sprints API from Taskfolk — 2 operation(s) for sprints.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Sprints
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-sprints-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-statuses-api
+  name: Taskfolk Statuses API
+  description: The Statuses API from Taskfolk — 2 operation(s) for statuses.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Statuses
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-statuses-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-time-api
+  name: Taskfolk Time API
+  description: The Time API from Taskfolk — 1 operation(s) for time.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Time
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-time-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-watchers-api
+  name: Taskfolk Watchers API
+  description: The Watchers API from Taskfolk — 2 operation(s) for watchers.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Watchers
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-watchers-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-workflows-api
+  name: Taskfolk Workflows API
+  description: The Workflows API from Taskfolk — 8 operation(s) for workflows.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Workflows
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-workflows-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-workspace-views-api
+  name: Taskfolk Workspace views API
+  description: The Workspace views API from Taskfolk — 2 operation(s) for workspace views.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Workspace views
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-workspace-views-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
+- aid: taskfolk:taskfolk-workspaces-api
+  name: Taskfolk Workspaces API
+  description: The Workspaces API from Taskfolk — 3 operation(s) for workspaces.
+  humanURL: https://taskfolk.ai/api/v1/reference
+  baseURL: https://taskfolk.ai/api
+  tags:
+  - Workspaces
+  properties:
+  - type: OpenAPI
+    url: openapi/taskfolk-workspaces-api-openapi.yml
+  - type: Documentation
+    url: https://taskfolk.ai/api/v1/reference
+  - type: APIReference
+    url: https://taskfolk.ai/api/v1/reference
+  - type: DeveloperPortal
+    url: https://taskfolk.ai/developer
+  - type: ToolCrosswalk
+    url: mcp/taskfolk-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/taskfolk-a2a.yml
+  - type: Authentication
+    url: authentication/taskfolk-authentication.yml
+  - type: OAuthScopes
+    url: scopes/taskfolk-scopes.yml
+  - type: Webhooks
+    url: asyncapi/taskfolk-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/taskfolk-problem-types.yml
+  - type: Conventions
+    url: conventions/taskfolk-conventions.yml
+  - type: Idempotency
+    url: conventions/taskfolk-conventions.yml
+  - type: RateLimits
+    url: rate-limits/taskfolk-rate-limits.yml
+  - type: DataModel
+    url: data-model/taskfolk-data-model.yml
+  - type: Plans
+    url: plans/taskfolk-plans-pricing.yml
+  - type: Conformance
+    url: conformance/taskfolk-conformance.yml
 maintainers:
   - FN: UTTER L.L.C-FZ
     email: hi@taskfolk.ai
@@ -180,6 +1346,10 @@ generated:
   confidence: 92
   at: '2026-08-20T16:04:39.888Z'
 common:
+- type: MCPServer
+  url: https://taskfolk.ai/api/mcp/v1
+- type: MCPServer
+  url: mcp/taskfolk-mcp.yml
 - type: DomainSecurity
   url: security/taskfolk-domain-security.yml
 - type: Authentication
