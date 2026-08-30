@@ -1,0 +1,459 @@
+openapi: 3.2.0
+info:
+  title: Taskfolk Statuses API
+  version: 1.0.0
+  description: Public REST API for Taskfolk (taskfolk.ai). All endpoints require a workspace-scoped bearer API key. Paths are nested under `/v1/workspaces/{slug}/…`.
+servers:
+- url: https://taskfolk.ai/api
+security:
+- bearerAuth: []
+tags:
+- name: Statuses
+paths:
+  /v1/workspaces/{slug}/projects/{key}/statuses:
+    get:
+      summary: List a project's board statuses (ordered).
+      tags:
+      - Statuses
+      security:
+      - bearerAuth:
+        - projects:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectStatus'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - pagination
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    post:
+      summary: Create a board status column (max 12 per project).
+      tags:
+      - Statuses
+      security:
+      - bearerAuth:
+        - projects:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatusCreateInput'
+      responses:
+        '201':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ProjectStatus'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/projects/{key}/statuses/{id}:
+    patch:
+      summary: Update a board status. Changing category re-categorises all issues in the column.
+      tags:
+      - Statuses
+      security:
+      - bearerAuth:
+        - projects:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+        required: true
+        name: id
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatusPatchInput'
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ProjectStatus'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    delete:
+      summary: Delete a board status (soft). All issues in the column are soft-deleted. Refuses if it is the last status.
+      tags:
+      - Statuses
+      security:
+      - bearerAuth:
+        - projects:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+        required: true
+        name: id
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      deleted:
+                        type: boolean
+                        enum:
+                        - true
+                      issues_deleted:
+                        type: integer
+                    required:
+                    - id
+                    - deleted
+                    - issues_deleted
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+components:
+  schemas:
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    ProjectStatus:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          example: In Review
+        name_ar:
+          type:
+          - string
+          - 'null'
+          example: قيد المراجعة
+        color:
+          type: string
+          example: '#4FE8E5'
+        category:
+          type: string
+          enum:
+          - backlog
+          - todo
+          - in_progress
+          - in_review
+          - done
+          - failed
+          - cancelled
+          description: System category the status maps to (open/done semantics).
+        rank:
+          type: string
+          description: LexoRank ordering string.
+      required:
+      - id
+      - name
+      - name_ar
+      - color
+      - category
+      - rank
+    StatusCreateInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+          example: In Review
+        name_ar:
+          type: string
+          maxLength: 80
+          example: قيد المراجعة
+        color:
+          type: string
+          example: '#4FE8E5'
+          description: 'Hex color #RRGGBB.'
+        category:
+          type: string
+          enum:
+          - backlog
+          - todo
+          - in_progress
+          - in_review
+          - done
+          - failed
+          - cancelled
+          description: System category the column maps to (drives open/done semantics).
+      required:
+      - name
+      - color
+      - category
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
+    StatusPatchInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        name_ar:
+          type:
+          - string
+          - 'null'
+          maxLength: 80
+        color:
+          type: string
+          description: 'Hex color #RRGGBB.'
+        category:
+          type: string
+          enum:
+          - backlog
+          - todo
+          - in_progress
+          - in_review
+          - done
+          - failed
+          - cancelled
+          description: System category the column maps to (drives open/done semantics).
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API key
+      description: 'Workspace API key. Send as `Authorization: Bearer tfk_live_…`. Each key is bound to exactly one workspace and carries a set of scopes.'

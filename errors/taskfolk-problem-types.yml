@@ -1,0 +1,83 @@
+generated: '2026-08-20'
+method: derived
+source: >-
+  openapi/taskfolk-product-api-openapi.yml (#/components/schemas/ErrorEnvelope and the
+  4xx responses declared on all 187 operations), enriched from
+  https://taskfolk.ai/api/v1/reference and https://taskfolk.ai/llms-full.txt
+format: vendor-envelope
+rfc9457: false
+rfc9457_note: >-
+  NOT RFC 9457. The string "problem+json" appears nowhere in the contract; every error
+  response is application/json carrying the vendor ErrorEnvelope below. Recorded as an
+  honest negative — this is the single cheapest contract-quality upgrade available to
+  Taskfolk.
+envelope:
+  shape: '{ "error": { "code": <string enum>, "message": <string>, "details": <object> } }'
+  schema_ref: '#/components/schemas/ErrorEnvelope'
+  required: [code, message]
+  media_type: application/json
+coverage:
+  operations_total: 187
+  operations_declaring_400: 187
+  operations_declaring_401: 187
+  operations_declaring_403: 187
+  operations_declaring_404: 187
+  operations_declaring_429: 187
+  note: >-
+    Every operation declares the full 400/401/403/404/429 set against the same envelope
+    schema. Error coverage in this contract is complete and uniform.
+problems:
+  - code: validation
+    status: 400
+    title: Validation error
+    remediation: Fix the request body or query parameters. `details` carries the field-level breakdown.
+  - code: unauthorized
+    status: 401
+    title: Missing / invalid API key
+    remediation: >-
+      Send `Authorization: Bearer tfk_live_…` (or an OAuth access token). A revoked
+      credential fails with an opaque 401 by design.
+  - code: forbidden
+    status: 403
+    title: Key lacks the required scope
+    remediation: >-
+      Mint a key carrying the scope named in the operation's docs (e.g. issues:write), or
+      raise the creator's role. Also returned when a per-agent field-write allowlist blocks
+      the field being written.
+  - code: not_found
+    status: 404
+    title: Resource not found
+    remediation: Check the workspace slug, project key and issue key.
+    security_note: >-
+      A resource in ANOTHER workspace also returns 404 — the spec says "never leaked" on
+      every 404. Cross-tenant existence is never disclosed via 403.
+  - code: rate_limited
+    status: 429
+    title: Rate limited
+    remediation: >-
+      Sleep for the Retry-After seconds, then retry with the same Idempotency-Key so the
+      retry stays safe. See rate-limits/taskfolk-rate-limits.yml.
+  - code: conflict
+    status: 409
+    title: Conflict
+    remediation: >-
+      Declared in the ErrorEnvelope code enum. No operation declares a 409 response in the
+      contract, so the status mapping here is inferred from the code name and is the one
+      documentation gap in an otherwise uniform error surface.
+    status_declared_in_spec: false
+  - code: idempotency_violation
+    status: 409
+    title: Idempotency violation
+    remediation: >-
+      An Idempotency-Key was reused with a different request payload. Use a new key, or
+      replay the identical request to get the original response.
+    status_declared_in_spec: false
+  - code: internal_error
+    status: 500
+    title: Internal error
+    remediation: Retry with backoff; the request is safe to retry when it carried an Idempotency-Key.
+    status_declared_in_spec: false
+domain_errors:
+  - message: A board needs at least one status.
+    trigger: Deleting the last remaining status on a board.
+    source: https://taskfolk.ai/llms-full.txt

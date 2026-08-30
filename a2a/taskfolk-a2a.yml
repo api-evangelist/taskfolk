@@ -1,0 +1,47 @@
+generated: '2026-08-20'
+method: probed
+source: https://taskfolk.ai/.well-known/agent-card.json
+discovery:
+  path: /.well-known/agent-card.json
+  canonical: true
+  host: taskfolk.ai
+conformance:
+  spec: A2A 1.0.0
+  grade: flavored
+  protocol_version: null
+  preferred_transport: null
+  deviations:
+    - no-protocolVersion
+    - supportedInterfaces-instead-of-additionalInterfaces
+    - no-defaultInputModes
+    - no-defaultOutputModes
+    - no-preferredTransport
+    - capabilities-is-not-an-A2A-capabilities-object
+  note: >-
+    Hard check failed: protocolVersion is absent. capabilities IS a JSON object and
+    skills IS an array, but the object carries an authentication/personalAccessTokens
+    shape rather than the A2A capabilities vocabulary (streaming / pushNotifications /
+    stateTransitionHistory). Interfaces are advertised under supportedInterfaces rather
+    than additionalInterfaces. The card is real, served, and useful — it is a
+    Taskfolk-flavored agent descriptor rather than a conformant A2A 1.0.0 AgentCard.
+card:
+  name: Taskfolk
+  url: https://taskfolk.ai
+  version: 1.0.0
+  documentation_url: https://taskfolk.ai/api/v1/reference
+  skills: 6
+  skill_ids: [manage-issues, manage-projects, manage-sprints, manage-releases, search, manage-members]
+  file: taskfolk-agent-card.json
+interfaces:
+  - protocol: mcp
+    transport: streamable-http
+    url: https://taskfolk.ai/api/mcp/v1
+  - protocol: rest
+    transport: https
+    url: https://taskfolk.ai/api/v1
+    spec_url: https://taskfolk.ai/api/v1/openapi.json
+x-evidence:
+  fetched: '2026-08-20'
+  url: https://taskfolk.ai/.well-known/agent-card.json
+  http_status: 200
+  content_type: application/json

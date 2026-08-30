@@ -1,0 +1,427 @@
+openapi: 3.2.0
+info:
+  title: Taskfolk Workspaces API
+  version: 1.0.0
+  description: Public REST API for Taskfolk (taskfolk.ai). All endpoints require a workspace-scoped bearer API key. Paths are nested under `/v1/workspaces/{slug}/…`.
+servers:
+- url: https://taskfolk.ai/api
+security:
+- bearerAuth: []
+tags:
+- name: Workspaces
+paths:
+  /v1/workspaces:
+    get:
+      summary: List workspaces this key can access.
+      tags:
+      - Workspaces
+      security:
+      - bearerAuth:
+        - workspaces:read
+      parameters:
+      - schema:
+          type: string
+        required: false
+        name: cursor
+        in: query
+      - schema:
+          type:
+          - integer
+          - 'null'
+        required: false
+        name: limit
+        in: query
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Workspace'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - pagination
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}:
+    get:
+      summary: Workspace detail.
+      tags:
+      - Workspaces
+      security:
+      - bearerAuth:
+        - workspaces:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Workspace'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    patch:
+      summary: Update workspace name.
+      tags:
+      - Workspaces
+      security:
+      - bearerAuth:
+        - workspaces:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspacePatchInput'
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Workspace'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/usage:
+    get:
+      summary: Read-only plan, storage, and AI-credit usage for the workspace.
+      tags:
+      - Workspaces
+      security:
+      - bearerAuth:
+        - workspaces:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/WorkspaceUsage'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+components:
+  schemas:
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    Workspace:
+      type: object
+      properties:
+        id:
+          type: string
+        slug:
+          type: string
+          example: taskfolk
+        name:
+          type: string
+          example: Taskfolk
+        default_locale:
+          type: string
+          example: en
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - slug
+      - name
+      - default_locale
+      - created_at
+    WorkspacePatchInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: Taskfolk
+      required:
+      - name
+    WorkspaceUsage:
+      type: object
+      properties:
+        plan:
+          type: object
+          properties:
+            plan:
+              type: string
+              enum:
+              - free
+              - pro
+              - business
+            status:
+              type:
+              - string
+              - 'null'
+            trialing:
+              type: boolean
+            cycle:
+              type:
+              - string
+              - 'null'
+            current_period_end:
+              type:
+              - string
+              - 'null'
+              format: date-time
+              example: '2026-05-28T14:30:00Z'
+          required:
+          - plan
+          - status
+          - trialing
+          - cycle
+          - current_period_end
+        storage:
+          type: object
+          properties:
+            used_bytes:
+              type: integer
+            cap_bytes:
+              type: integer
+            base_cap_bytes:
+              type: integer
+            addon_bytes:
+              type: integer
+            remaining_bytes:
+              type: integer
+            used_pct:
+              type: integer
+          required:
+          - used_bytes
+          - cap_bytes
+          - base_cap_bytes
+          - addon_bytes
+          - remaining_bytes
+          - used_pct
+        ai_credits:
+          type: object
+          properties:
+            monthly_grant:
+              type: integer
+            used:
+              type: integer
+            remaining:
+              type: integer
+            topup_balance:
+              type: integer
+            daily_limit:
+              type: integer
+            daily_used:
+              type: integer
+            daily_remaining:
+              type: integer
+          required:
+          - monthly_grant
+          - used
+          - remaining
+          - topup_balance
+          - daily_limit
+          - daily_used
+          - daily_remaining
+      required:
+      - plan
+      - storage
+      - ai_credits
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API key
+      description: 'Workspace API key. Send as `Authorization: Bearer tfk_live_…`. Each key is bound to exactly one workspace and carries a set of scopes.'

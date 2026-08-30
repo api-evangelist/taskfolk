@@ -1,0 +1,79 @@
+generated: '2026-08-20'
+method: searched
+source: >-
+  https://taskfolk.ai/llms.txt, https://taskfolk.ai/llms-full.txt, and the webhook management
+  operations in openapi/taskfolk-product-api-openapi.yml
+spec_type: none
+asyncapi_published: false
+asyncapi_note: >-
+  Taskfolk publishes NO AsyncAPI document. /asyncapi.yaml and /asyncapi.json are not served and
+  the GitHub org holds a single repo (taskfolk/mcp) containing only a README. The event surface
+  below is real and documented in prose — captured here as a webhook catalog and wired as
+  type: Webhooks. Not fabricated into an AsyncAPI.
+transport: HTTPS POST to a subscriber-registered endpoint
+management_api:
+  list_and_create: 'GET|POST /v1/workspaces/{slug}/webhooks'
+  read_update_delete: 'GET|PATCH|DELETE /v1/workspaces/{slug}/webhooks/{id}'
+  delivery_log: 'GET /v1/workspaces/{slug}/webhooks/{id}/deliveries'
+  rotate_secret: 'POST /v1/workspaces/{slug}/webhooks/{id}/rotate-secret'
+  send_test: 'POST /v1/workspaces/{slug}/webhooks/{id}/test'
+  scopes: [webhooks:read, webhooks:write]
+  registered_by: workspace owners, in the Developer dashboard
+subscription:
+  per_event: true
+  wildcard: '*'
+envelope:
+  fields: [id, event, data]
+  id_note: >-
+    `id` equals the X-Taskfolk-Delivery header value and is the recommended consumer-side
+    idempotency/dedupe key.
+  data_note: >-
+    `data` is the FULL REST resource for the affected entity — the same object a GET on that
+    resource returns. No second API call is needed to hydrate the event.
+security:
+  signature_header: 'X-Taskfolk-Signature: t=<unix>, v1=<hex>'
+  delivery_header: X-Taskfolk-Delivery
+  algorithm: HMAC-SHA256
+  key_derivation: >-
+    v1 = HMAC-SHA256(key = SHA256(your-signing-secret), message = "{t}.{raw_body}").
+    NOTE the unusual step: the HMAC key is the SHA-256 HASH of the secret, not the raw secret,
+    because Taskfolk stores only the hash. A verifier written against the conventional
+    Stripe-style scheme WILL fail here.
+  verification: constant-time compare; reject if t is stale
+  replay_protection: timestamp in t
+event_count: 14
+events:
+  - {name: issue.created, resource: issue}
+  - {name: issue.updated, resource: issue}
+  - {name: issue.archived, resource: issue, note: emitted on soft-delete; reversible for 30 days via the issue restore endpoint}
+  - {name: issue.restored, resource: issue}
+  - {name: comment.created, resource: comment}
+  - {name: comment.updated, resource: comment}
+  - {name: comment.deleted, resource: comment}
+  - {name: doc.created, resource: doc}
+  - {name: doc.updated, resource: doc}
+  - {name: doc.archived, resource: doc}
+  - {name: member.added, resource: member}
+  - {name: member.removed, resource: member}
+  - {name: member.role_changed, resource: member}
+  - {name: workspace.updated, resource: workspace}
+event_count_discrepancy:
+  note: >-
+    llms.txt lists SIX events (issue.created, issue.updated, issue.deleted, comment.created,
+    member.added, member.removed) while llms-full.txt states the v1 publisher emits FOURTEEN and
+    names them. The 14-event list is used here because it is the more specific and more recent
+    statement; note that llms.txt's `issue.deleted` does NOT appear in the 14 — the soft-delete
+    event is `issue.archived`. A consumer subscribing to `issue.deleted` from llms.txt would
+    receive nothing. Worth reporting to the provider.
+  llms_txt_list: [issue.created, issue.updated, issue.deleted, comment.created, member.added, member.removed]
+outbound_integrations:
+  slack_compatible: >-
+    An outbound webhook whose payload is shaped for Slack when the host is hooks.slack.com.
+    Explicitly NOT a Slack app — no slash commands, no unfurls, no two-way sync.
+  github: Inbound GitHub webhooks link commits by #KEY-NUM and auto-ship releases on a matching tag.
+delivery_semantics:
+  at_least_once: true
+  guidance: >-
+    "make your consumer idempotent, keyed on the delivery id (the X-Taskfolk-Delivery UUID,
+    also the id in the envelope). Because you will sometimes reprocess, dedupe on that id so
+    acting twice does no harm."

@@ -1,0 +1,153 @@
+openapi: 3.2.0
+info:
+  title: Taskfolk Agent Commerce Mpp API
+  version: 1.0.0
+  description: 'Machine-payable operations on Taskfolk (https://taskfolk.ai): one-time AI credit purchases for a workspace via the Machine Payments Protocol (HTTP 402). The full product REST API is described at https://taskfolk.ai/api/v1/openapi.json; agent commerce is also available via ACP (https://taskfolk.ai/.well-known/acp.json) and UCP (https://taskfolk.ai/.well-known/ucp).'
+servers:
+- url: https://taskfolk.ai
+tags:
+- name: Mpp
+paths:
+  /api/mpp/v1/credits/small:
+    post:
+      operationId: buyCreditsSmall
+      summary: Buy the small AI credit pack (2,000 credits)
+      description: '2,000 AI credits added to the workspace balance. Credits never expire while the workspace is active. MPP charge flow: call once with your workspace API key (Authorization: Bearer or X-Api-Key; admin scope from an owner/admin key) to receive HTTP 402 with a WWW-Authenticate Payment challenge. Retry with X-Api-Key plus Authorization: Payment payload="<base64url JSON>" carrying {"challenge_id", "shared_payment_token"} for a delegated Stripe token, or {"challenge_id", "use_saved_card": true} to charge the workspace''s saved card. Success returns a signed Payment-Receipt header; AI credits are granted to the workspace after payment confirmation.'
+      x-payment-info:
+        intent: charge
+        method: stripe
+        amount: '2000'
+        currency: USD
+        description: 'Small AI credit pack: 2,000 AI credits for USD 20.00.'
+        offers:
+        - intent: charge
+          method: stripe
+          amount: '2000'
+          currency: USD
+          description: 'Small AI credit pack: 2,000 AI credits for USD 20.00.'
+      responses:
+        '200':
+          description: Payment accepted. Carries a Payment-Receipt header (base64url JSON, Ed25519-signed with the key published at /.well-known/ucp signing_keys).
+        '400':
+          description: Invalid request or malformed Payment credential.
+        '401':
+          description: Missing or invalid API key.
+        '402':
+          description: Payment Required. WWW-Authenticate carries a single-use Payment challenge (10 minute expiry).
+        '403':
+          description: API key lacks the admin scope or owner/admin role.
+      tags:
+      - Mpp
+  /api/mpp/v1/credits/medium:
+    post:
+      operationId: buyCreditsMedium
+      summary: Buy the medium AI credit pack (5,500 credits)
+      description: '5,500 AI credits added to the workspace balance (9% bulk discount). Credits never expire while the workspace is active. MPP charge flow: call once with your workspace API key (Authorization: Bearer or X-Api-Key; admin scope from an owner/admin key) to receive HTTP 402 with a WWW-Authenticate Payment challenge. Retry with X-Api-Key plus Authorization: Payment payload="<base64url JSON>" carrying {"challenge_id", "shared_payment_token"} for a delegated Stripe token, or {"challenge_id", "use_saved_card": true} to charge the workspace''s saved card. Success returns a signed Payment-Receipt header; AI credits are granted to the workspace after payment confirmation.'
+      x-payment-info:
+        intent: charge
+        method: stripe
+        amount: '5000'
+        currency: USD
+        description: 'Medium AI credit pack: 5,500 AI credits for USD 50.00.'
+        offers:
+        - intent: charge
+          method: stripe
+          amount: '5000'
+          currency: USD
+          description: 'Medium AI credit pack: 5,500 AI credits for USD 50.00.'
+      responses:
+        '200':
+          description: Payment accepted. Carries a Payment-Receipt header (base64url JSON, Ed25519-signed with the key published at /.well-known/ucp signing_keys).
+        '400':
+          description: Invalid request or malformed Payment credential.
+        '401':
+          description: Missing or invalid API key.
+        '402':
+          description: Payment Required. WWW-Authenticate carries a single-use Payment challenge (10 minute expiry).
+        '403':
+          description: API key lacks the admin scope or owner/admin role.
+      tags:
+      - Mpp
+  /api/mpp/v1/credits/large:
+    post:
+      operationId: buyCreditsLarge
+      summary: Buy the large AI credit pack (12,000 credits)
+      description: '12,000 AI credits added to the workspace balance (17% bulk discount). Credits never expire while the workspace is active. MPP charge flow: call once with your workspace API key (Authorization: Bearer or X-Api-Key; admin scope from an owner/admin key) to receive HTTP 402 with a WWW-Authenticate Payment challenge. Retry with X-Api-Key plus Authorization: Payment payload="<base64url JSON>" carrying {"challenge_id", "shared_payment_token"} for a delegated Stripe token, or {"challenge_id", "use_saved_card": true} to charge the workspace''s saved card. Success returns a signed Payment-Receipt header; AI credits are granted to the workspace after payment confirmation.'
+      x-payment-info:
+        intent: charge
+        method: stripe
+        amount: '10000'
+        currency: USD
+        description: 'Large AI credit pack: 12,000 AI credits for USD 100.00.'
+        offers:
+        - intent: charge
+          method: stripe
+          amount: '10000'
+          currency: USD
+          description: 'Large AI credit pack: 12,000 AI credits for USD 100.00.'
+      responses:
+        '200':
+          description: Payment accepted. Carries a Payment-Receipt header (base64url JSON, Ed25519-signed with the key published at /.well-known/ucp signing_keys).
+        '400':
+          description: Invalid request or malformed Payment credential.
+        '401':
+          description: Missing or invalid API key.
+        '402':
+          description: Payment Required. WWW-Authenticate carries a single-use Payment challenge (10 minute expiry).
+        '403':
+          description: API key lacks the admin scope or owner/admin role.
+      tags:
+      - Mpp
+  /api/mpp/v1/credits/custom:
+    post:
+      operationId: buyCreditsCustom
+      summary: Buy a custom amount of AI credits (1 cent per credit)
+      description: 'Buy an exact number of AI credits at list price (USD 0.01 per credit). Quantity is the credit count, between 500 and 50,000. MPP charge flow: call once with your workspace API key (Authorization: Bearer or X-Api-Key; admin scope from an owner/admin key) to receive HTTP 402 with a WWW-Authenticate Payment challenge. Retry with X-Api-Key plus Authorization: Payment payload="<base64url JSON>" carrying {"challenge_id", "shared_payment_token"} for a delegated Stripe token, or {"challenge_id", "use_saved_card": true} to charge the workspace''s saved card. Success returns a signed Payment-Receipt header; AI credits are granted to the workspace after payment confirmation.'
+      x-payment-info:
+        intent: charge
+        method: stripe
+        amount: '500'
+        currency: USD
+        description: Minimum shown (500 credits = USD 5.00); the actual charge is 1 cent per requested credit, 500 to 50,000 credits.
+        offers:
+        - intent: charge
+          method: stripe
+          amount: '500'
+          currency: USD
+          description: Minimum shown (500 credits = USD 5.00); the actual charge is 1 cent per requested credit, 500 to 50,000 credits.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - credits
+              properties:
+                credits:
+                  type: integer
+                  minimum: 500
+                  maximum: 50000
+                  description: Number of AI credits to buy (1 credit = USD 0.01).
+      responses:
+        '200':
+          description: Payment accepted. Carries a Payment-Receipt header (base64url JSON, Ed25519-signed with the key published at /.well-known/ucp signing_keys).
+        '400':
+          description: Invalid request or malformed Payment credential.
+        '401':
+          description: Missing or invalid API key.
+        '402':
+          description: Payment Required. WWW-Authenticate carries a single-use Payment challenge (10 minute expiry).
+        '403':
+          description: API key lacks the admin scope or owner/admin role.
+      tags:
+      - Mpp
+x-service-info:
+  categories:
+  - software
+  - productivity
+  - project-management
+  docs:
+    homepage: https://taskfolk.ai
+    apiReference: https://taskfolk.ai/api/v1/reference
+    llms: https://taskfolk.ai/llms.txt

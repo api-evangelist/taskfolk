@@ -1,0 +1,842 @@
+openapi: 3.2.0
+info:
+  title: Taskfolk Projects API
+  version: 1.0.0
+  description: Public REST API for Taskfolk (taskfolk.ai). All endpoints require a workspace-scoped bearer API key. Paths are nested under `/v1/workspaces/{slug}/…`.
+servers:
+- url: https://taskfolk.ai/api
+security:
+- bearerAuth: []
+tags:
+- name: Projects
+paths:
+  /v1/workspaces/{slug}/projects:
+    get:
+      summary: List projects.
+      tags:
+      - Projects
+      security:
+      - bearerAuth:
+        - projects:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+        required: false
+        name: cursor
+        in: query
+      - schema:
+          type:
+          - integer
+          - 'null'
+        required: false
+        name: limit
+        in: query
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Project'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - pagination
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    post:
+      summary: Create a project.
+      tags:
+      - Projects
+      security:
+      - bearerAuth:
+        - projects:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectCreateInput'
+      responses:
+        '201':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Project'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/projects/{key}:
+    get:
+      summary: Project detail.
+      tags:
+      - Projects
+      security:
+      - bearerAuth:
+        - projects:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Project'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    patch:
+      summary: Update a project.
+      tags:
+      - Projects
+      security:
+      - bearerAuth:
+        - projects:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectPatchInput'
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Project'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    delete:
+      summary: Archive a project (soft).
+      tags:
+      - Projects
+      security:
+      - bearerAuth:
+        - projects:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Project'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/projects/{key}/restore:
+    post:
+      summary: Restore an archived project.
+      tags:
+      - Projects
+      security:
+      - bearerAuth:
+        - projects:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Project'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/projects/{key}/members:
+    get:
+      summary: List project members (explicit access list for scoped projects).
+      tags:
+      - Projects
+      security:
+      - bearerAuth:
+        - projects:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+        required: false
+        name: cursor
+        in: query
+      - schema:
+          type:
+          - integer
+          - 'null'
+        required: false
+        name: limit
+        in: query
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectMember'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - pagination
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    post:
+      summary: Add or update a project member. Idempotent — updates role if already a member. User must be a workspace member. Admin-only scope.
+      tags:
+      - Projects
+      security:
+      - bearerAuth:
+        - projects:admin
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectMemberAddInput'
+      responses:
+        '201':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ProjectMember'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/projects/{key}/members/{userId}:
+    delete:
+      summary: Remove a user from the project member list. Admin-only scope.
+      tags:
+      - Projects
+      security:
+      - bearerAuth:
+        - projects:admin
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+        required: true
+        name: userId
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      user_id:
+                        type: string
+                      removed:
+                        type: boolean
+                        enum:
+                        - true
+                    required:
+                    - user_id
+                    - removed
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+components:
+  schemas:
+    ProjectMemberAddInput:
+      type: object
+      properties:
+        user_id:
+          type: string
+          description: ID of an existing workspace member.
+        role:
+          type: string
+          enum:
+          - admin
+          - member
+          - viewer
+      required:
+      - user_id
+      - role
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    ProjectMember:
+      type: object
+      properties:
+        user_id:
+          type: string
+        email:
+          type: string
+        name:
+          type:
+          - string
+          - 'null'
+        role:
+          type: string
+          enum:
+          - admin
+          - member
+          - viewer
+        added_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - user_id
+      - email
+      - name
+      - role
+      - added_at
+    ProjectPatchInput:
+      type: object
+      properties:
+        name:
+          type: string
+        description_md:
+          type:
+          - string
+          - 'null'
+        lead_user_id:
+          type:
+          - string
+          - 'null'
+        estimation_unit:
+          type: string
+          enum:
+          - time
+          - points
+          - none
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+        key:
+          type: string
+          example: WEB
+        slug:
+          type: string
+          example: web
+        name:
+          type: string
+          example: Website
+        description_md:
+          type:
+          - string
+          - 'null'
+        lead_user_id:
+          type:
+          - string
+          - 'null'
+        scoped:
+          type: boolean
+          description: True when access is restricted to explicit project members.
+        estimation_unit:
+          type: string
+          enum:
+          - time
+          - points
+          - none
+          description: 'How this project estimates work (POINTS-01): time (estimate_minutes), points (story_points), or none.'
+        archived_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - key
+      - slug
+      - name
+      - description_md
+      - lead_user_id
+      - scoped
+      - estimation_unit
+      - archived_at
+      - created_at
+      - updated_at
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
+    ProjectCreateInput:
+      type: object
+      properties:
+        key:
+          type: string
+          example: WEB
+        name:
+          type: string
+        slug:
+          type: string
+        description_md:
+          type: string
+        lead_user_id:
+          type: string
+      required:
+      - key
+      - name
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API key
+      description: 'Workspace API key. Send as `Authorization: Bearer tfk_live_…`. Each key is bound to exactly one workspace and carries a set of scopes.'

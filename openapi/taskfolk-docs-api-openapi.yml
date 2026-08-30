@@ -1,0 +1,1378 @@
+openapi: 3.2.0
+info:
+  title: Taskfolk Docs API
+  version: 1.0.0
+  description: Public REST API for Taskfolk (taskfolk.ai). All endpoints require a workspace-scoped bearer API key. Paths are nested under `/v1/workspaces/{slug}/…`.
+servers:
+- url: https://taskfolk.ai/api
+security:
+- bearerAuth: []
+tags:
+- name: Docs
+paths:
+  /v1/workspaces/{slug}/docs:
+    get:
+      summary: List docs (workspace or project-scoped).
+      tags:
+      - Docs
+      security:
+      - bearerAuth:
+        - docs:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          description: Filter to a project key.
+        required: false
+        description: Filter to a project key.
+        name: project
+        in: query
+      - schema:
+          type: string
+        required: false
+        name: cursor
+        in: query
+      - schema:
+          type:
+          - integer
+          - 'null'
+        required: false
+        name: limit
+        in: query
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Doc'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - pagination
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    post:
+      summary: Create a doc.
+      tags:
+      - Docs
+      security:
+      - bearerAuth:
+        - docs:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocCreateInput'
+      responses:
+        '201':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Doc'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/docs/bulk:
+    post:
+      summary: Bulk-create docs (1–50). Returns a per-item result array; 201 when all succeed, 207 when some fail.
+      tags:
+      - Docs
+      security:
+      - bearerAuth:
+        - docs:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkDocsCreateInput'
+      responses:
+        '201':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BulkDocResult'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - pagination
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/docs/{id}:
+    get:
+      summary: Doc detail.
+      tags:
+      - Docs
+      security:
+      - bearerAuth:
+        - docs:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+        required: true
+        name: id
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Doc'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    patch:
+      summary: Update a doc.
+      tags:
+      - Docs
+      security:
+      - bearerAuth:
+        - docs:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+        required: true
+        name: id
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                project:
+                  type: string
+                  description: project key to scope the doc
+                parent_id:
+                  type: string
+                body_md:
+                  type: string
+                body_json: {}
+                icon:
+                  type: string
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Doc'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    delete:
+      summary: Archive a doc (soft).
+      tags:
+      - Docs
+      security:
+      - bearerAuth:
+        - docs:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+        required: true
+        name: id
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      deleted:
+                        type: boolean
+                        enum:
+                        - true
+                    required:
+                    - id
+                    - deleted
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/docs/{id}/export:
+    get:
+      summary: Export a doc as md / html / pdf.
+      tags:
+      - Docs
+      security:
+      - bearerAuth:
+        - docs:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+        required: true
+        name: id
+        in: path
+      - schema:
+          type: string
+          enum:
+          - md
+          - html
+          - pdf
+        required: false
+        name: format
+        in: query
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      format:
+                        type: string
+                      content:
+                        type: string
+                    required:
+                    - format
+                    - content
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/docs/{id}/comments:
+    get:
+      summary: List doc comments (oldest first).
+      tags:
+      - Docs
+      security:
+      - bearerAuth:
+        - docs:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+          description: Doc id.
+        required: true
+        description: Doc id.
+        name: id
+        in: path
+      - schema:
+          type: string
+        required: false
+        name: cursor
+        in: query
+      - schema:
+          type:
+          - integer
+          - 'null'
+        required: false
+        name: limit
+        in: query
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DocComment'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - pagination
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    post:
+      summary: Add a doc comment (optionally threaded).
+      tags:
+      - Docs
+      security:
+      - bearerAuth:
+        - docs:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+          description: Doc id.
+        required: true
+        description: Doc id.
+        name: id
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body_md:
+                  type: string
+                  minLength: 1
+                  maxLength: 64000
+                parent_id:
+                  type:
+                  - string
+                  - 'null'
+              required:
+              - body_md
+      responses:
+        '201':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/DocComment'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/docs/{id}/comments/{commentId}:
+    patch:
+      summary: Edit a doc comment (author; owner/admin may edit any).
+      tags:
+      - Docs
+      security:
+      - bearerAuth:
+        - docs:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+          description: Doc id.
+        required: true
+        description: Doc id.
+        name: id
+        in: path
+      - schema:
+          type: string
+        required: true
+        name: commentId
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body_md:
+                  type: string
+                  minLength: 1
+                  maxLength: 64000
+              required:
+              - body_md
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/DocComment'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    delete:
+      summary: Delete a doc comment.
+      tags:
+      - Docs
+      security:
+      - bearerAuth:
+        - docs:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+          description: Doc id.
+        required: true
+        description: Doc id.
+        name: id
+        in: path
+      - schema:
+          type: string
+        required: true
+        name: commentId
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      deleted:
+                        type: boolean
+                        enum:
+                        - true
+                    required:
+                    - id
+                    - deleted
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/docs/{id}/versions:
+    get:
+      summary: List doc version snapshots (newest first; no bodies).
+      tags:
+      - Docs
+      security:
+      - bearerAuth:
+        - docs:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+          description: Doc id.
+        required: true
+        description: Doc id.
+        name: id
+        in: path
+      - schema:
+          type: string
+        required: false
+        name: cursor
+        in: query
+      - schema:
+          type:
+          - integer
+          - 'null'
+        required: false
+        name: limit
+        in: query
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DocVersionSummary'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - pagination
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/docs/{id}/versions/{versionId}:
+    get:
+      summary: Get a full version snapshot.
+      tags:
+      - Docs
+      security:
+      - bearerAuth:
+        - docs:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+          description: Doc id.
+        required: true
+        description: Doc id.
+        name: id
+        in: path
+      - schema:
+          type: string
+        required: true
+        name: versionId
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/DocVersion'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/docs/{id}/versions/{versionId}/restore:
+    post:
+      summary: Restore the doc to this snapshot.
+      tags:
+      - Docs
+      security:
+      - bearerAuth:
+        - docs:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+          description: Doc id.
+        required: true
+        description: Doc id.
+        name: id
+        in: path
+      - schema:
+          type: string
+        required: true
+        name: versionId
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Doc'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+components:
+  schemas:
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    DocVersion:
+      type: object
+      properties:
+        id:
+          type: string
+        doc_id:
+          type: string
+        title:
+          type: string
+        body_json: {}
+        body_md:
+          type:
+          - string
+          - 'null'
+        created_by:
+          type: object
+          properties:
+            id:
+              type: string
+            email:
+              type: string
+            name:
+              type:
+              - string
+              - 'null'
+          required:
+          - id
+          - email
+          - name
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - doc_id
+      - title
+      - body_md
+      - created_by
+      - created_at
+    Doc:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        project_id:
+          type:
+          - string
+          - 'null'
+        parent_id:
+          type:
+          - string
+          - 'null'
+        icon:
+          type:
+          - string
+          - 'null'
+        body_md:
+          type:
+          - string
+          - 'null'
+        body_json: {}
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - title
+      - project_id
+      - parent_id
+      - icon
+      - body_md
+      - created_at
+      - updated_at
+    DocComment:
+      type: object
+      properties:
+        id:
+          type: string
+        doc_id:
+          type: string
+        parent_id:
+          type:
+          - string
+          - 'null'
+        author:
+          type: object
+          properties:
+            id:
+              type: string
+            email:
+              type: string
+            name:
+              type:
+              - string
+              - 'null'
+          required:
+          - id
+          - email
+          - name
+        body_md:
+          type: string
+        body_html:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - doc_id
+      - parent_id
+      - author
+      - body_md
+      - body_html
+      - created_at
+      - updated_at
+    BulkDocsCreateInput:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocCreateInput'
+          minItems: 1
+          maxItems: 50
+      required:
+      - items
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
+    BulkDocResult:
+      anyOf:
+      - type: object
+        properties:
+          index:
+            type: integer
+          ok:
+            type: boolean
+            enum:
+            - true
+          data:
+            $ref: '#/components/schemas/Doc'
+        required:
+        - index
+        - ok
+        - data
+      - type: object
+        properties:
+          index:
+            type: integer
+          ok:
+            type: boolean
+            enum:
+            - false
+          error:
+            type: object
+            properties:
+              code:
+                type: string
+                enum:
+                - unauthorized
+                - forbidden
+                - not_found
+                - validation
+                - rate_limited
+                - conflict
+                - idempotency_violation
+                - internal_error
+                example: validation
+              message:
+                type: string
+              details:
+                type: object
+                additionalProperties: {}
+            required:
+            - code
+            - message
+        required:
+        - index
+        - ok
+        - error
+    DocVersionSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        doc_id:
+          type: string
+        title:
+          type: string
+        created_by:
+          type: object
+          properties:
+            id:
+              type: string
+            email:
+              type: string
+            name:
+              type:
+              - string
+              - 'null'
+          required:
+          - id
+          - email
+          - name
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        body_md_length:
+          type: integer
+      required:
+      - id
+      - doc_id
+      - title
+      - created_by
+      - created_at
+      - body_md_length
+    DocCreateInput:
+      type: object
+      properties:
+        title:
+          type: string
+        project:
+          type: string
+          description: project key to scope the doc
+        parent_id:
+          type: string
+        body_md:
+          type: string
+        body_json: {}
+        icon:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API key
+      description: 'Workspace API key. Send as `Authorization: Bearer tfk_live_…`. Each key is bound to exactly one workspace and carries a set of scopes.'

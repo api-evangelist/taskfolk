@@ -1,0 +1,1595 @@
+openapi: 3.2.0
+info:
+  title: Taskfolk Issues API
+  version: 1.0.0
+  description: Public REST API for Taskfolk (taskfolk.ai). All endpoints require a workspace-scoped bearer API key. Paths are nested under `/v1/workspaces/{slug}/…`.
+servers:
+- url: https://taskfolk.ai/api
+security:
+- bearerAuth: []
+tags:
+- name: Issues
+paths:
+  /v1/workspaces/{slug}/projects/{key}/issues:
+    get:
+      summary: List issues.
+      tags:
+      - Issues
+      security:
+      - bearerAuth:
+        - issues:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+        required: false
+        name: status
+        in: query
+      - schema:
+          type: string
+          description: user_id, email, or "me" (the calling key's own user).
+        required: false
+        description: user_id, email, or "me" (the calling key's own user).
+        name: assignee
+        in: query
+      - schema:
+          type: string
+          description: user_id, email, or "me" (the calling key's own user).
+        required: false
+        description: user_id, email, or "me" (the calling key's own user).
+        name: reporter
+        in: query
+      - schema:
+          type: string
+        required: false
+        name: label
+        in: query
+      - schema:
+          type: string
+        required: false
+        name: priority
+        in: query
+      - schema:
+          type: string
+        required: false
+        name: type
+        in: query
+      - schema:
+          type: string
+          description: Sprint id to filter by.
+        required: false
+        description: Sprint id to filter by.
+        name: sprint
+        in: query
+      - schema:
+          type: string
+          description: Milestone id to filter by.
+        required: false
+        description: Milestone id to filter by.
+        name: milestone
+        in: query
+      - schema:
+          type: string
+          description: Issue id to list its subtasks. Pass "none" to return only top-level issues (no parent).
+        required: false
+        description: Issue id to list its subtasks. Pass "none" to return only top-level issues (no parent).
+        name: parent
+        in: query
+      - schema:
+          type: string
+        required: false
+        name: q
+        in: query
+      - schema:
+          type: string
+        required: false
+        name: cursor
+        in: query
+      - schema:
+          type:
+          - integer
+          - 'null'
+        required: false
+        name: limit
+        in: query
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Issue'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - pagination
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    post:
+      summary: Create an issue.
+      tags:
+      - Issues
+      security:
+      - bearerAuth:
+        - issues:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IssueCreateInput'
+      responses:
+        '201':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Issue'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}:
+    get:
+      summary: Issue detail.
+      tags:
+      - Issues
+      security:
+      - bearerAuth:
+        - issues:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+          example: WEB-39
+          description: Issue key (KEY-N).
+        required: true
+        description: Issue key (KEY-N).
+        name: issueKey
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Issue'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    patch:
+      summary: Update an issue.
+      tags:
+      - Issues
+      security:
+      - bearerAuth:
+        - issues:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+          example: WEB-39
+          description: Issue key (KEY-N).
+        required: true
+        description: Issue key (KEY-N).
+        name: issueKey
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IssuePatchInput'
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Issue'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    delete:
+      summary: Archive an issue (soft).
+      tags:
+      - Issues
+      security:
+      - bearerAuth:
+        - issues:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+          example: WEB-39
+          description: Issue key (KEY-N).
+        required: true
+        description: Issue key (KEY-N).
+        name: issueKey
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Issue'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/restore:
+    post:
+      summary: Restore an archived issue.
+      tags:
+      - Issues
+      security:
+      - bearerAuth:
+        - issues:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+          example: WEB-39
+          description: Issue key (KEY-N).
+        required: true
+        description: Issue key (KEY-N).
+        name: issueKey
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Issue'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/transition:
+    post:
+      summary: Transition status (board move).
+      tags:
+      - Issues
+      security:
+      - bearerAuth:
+        - issues:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+          example: WEB-39
+          description: Issue key (KEY-N).
+        required: true
+        description: Issue key (KEY-N).
+        name: issueKey
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IssueTransitionInput'
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Issue'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/projects/{key}/issues/bulk:
+    post:
+      summary: Bulk-create issues (1–50). Returns a per-item result array; 201 when all succeed, 207 when some fail.
+      tags:
+      - Issues
+      security:
+      - bearerAuth:
+        - issues:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkIssuesCreateInput'
+      responses:
+        '201':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BulkIssueResult'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - pagination
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/links:
+    get:
+      summary: List links for an issue (both directions).
+      tags:
+      - Issues
+      security:
+      - bearerAuth:
+        - issues:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+          example: WEB-39
+          description: Issue key (KEY-N).
+        required: true
+        description: Issue key (KEY-N).
+        name: issueKey
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/IssueLink'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - pagination
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    post:
+      summary: Create a link between this issue and another (by KEY-NUM). Cross-project within the workspace is supported.
+      tags:
+      - Issues
+      security:
+      - bearerAuth:
+        - issues:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+          example: WEB-39
+          description: Issue key (KEY-N).
+        required: true
+        description: Issue key (KEY-N).
+        name: issueKey
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IssueLinkCreateInput'
+      responses:
+        '201':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/IssueLink'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/links/{id}:
+    delete:
+      summary: Remove a link.
+      tags:
+      - Issues
+      security:
+      - bearerAuth:
+        - issues:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+          example: WEB-39
+          description: Issue key (KEY-N).
+        required: true
+        description: Issue key (KEY-N).
+        name: issueKey
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+        required: true
+        name: id
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      deleted:
+                        type: boolean
+                        enum:
+                        - true
+                    required:
+                    - id
+                    - deleted
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/commits:
+    get:
+      summary: List git commit references associated with this issue (populated by the GitHub/GitLab integration).
+      tags:
+      - Issues
+      security:
+      - bearerAuth:
+        - issues:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+          example: WEB-39
+          description: Issue key (KEY-N).
+        required: true
+        description: Issue key (KEY-N).
+        name: issueKey
+        in: path
+      - schema:
+          type: string
+        required: false
+        name: cursor
+        in: query
+      - schema:
+          type:
+          - integer
+          - 'null'
+        required: false
+        name: limit
+        in: query
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CommitRef'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - pagination
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+components:
+  schemas:
+    Issue:
+      type: object
+      properties:
+        id:
+          type: string
+        key:
+          type: string
+          example: WEB-39
+        url:
+          type: string
+          example: https://taskfolk.ai/w/taskfolk/p/web/WEB-39
+        number:
+          type: integer
+        type:
+          type: string
+          enum:
+          - epic
+          - story
+          - task
+          - bug
+          - subtask
+        title:
+          type: string
+        description_md:
+          type:
+          - string
+          - 'null'
+        status:
+          type: string
+          enum:
+          - backlog
+          - todo
+          - in_progress
+          - in_review
+          - done
+          - failed
+          - cancelled
+        status_id:
+          type:
+          - string
+          - 'null'
+          description: Specific board status id (project_statuses). See GET .../statuses.
+        status_name:
+          type:
+          - string
+          - 'null'
+          description: Display name of the board status.
+        priority:
+          type: string
+          enum:
+          - lowest
+          - low
+          - medium
+          - high
+          - highest
+          - critical
+        assignee_id:
+          type:
+          - string
+          - 'null'
+          description: Primary assignee (compat). Equals assignees[0], or null when unassigned.
+        assignees:
+          type: array
+          items:
+            type: string
+          description: All assignee user ids, primary first. Set via PATCH assignee_ids.
+        reporter_id:
+          type: string
+        parent_id:
+          type:
+          - string
+          - 'null'
+        epic_id:
+          type:
+          - string
+          - 'null'
+        milestone_id:
+          type:
+          - string
+          - 'null'
+          description: Attached milestone id, or null.
+        sprint_id:
+          type:
+          - string
+          - 'null'
+          description: Attached sprint id, or null.
+        release_id:
+          type:
+          - string
+          - 'null'
+          description: Attached release id, or null.
+        labels:
+          type: array
+          items:
+            $ref: '#/components/schemas/Label'
+        estimate_minutes:
+          type:
+          - integer
+          - 'null'
+        story_points:
+          type:
+          - integer
+          - 'null'
+          description: Story points estimate (POINTS-01); used when the project's estimation_unit is "points". Null = unestimated.
+        spent_minutes:
+          type:
+          - integer
+          - 'null'
+        completion_pct:
+          type:
+          - integer
+          - 'null'
+        start_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        due_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        resolved_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        archived_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - key
+      - url
+      - number
+      - type
+      - title
+      - description_md
+      - status
+      - status_id
+      - status_name
+      - priority
+      - assignee_id
+      - assignees
+      - reporter_id
+      - parent_id
+      - epic_id
+      - milestone_id
+      - sprint_id
+      - release_id
+      - labels
+      - estimate_minutes
+      - story_points
+      - spent_minutes
+      - completion_pct
+      - start_at
+      - due_at
+      - resolved_at
+      - archived_at
+      - created_at
+      - updated_at
+    Label:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          example: frontend
+        color:
+          type: string
+          example: '#f5c518'
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - name
+      - color
+      - created_at
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    IssueTransitionInput:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - backlog
+          - todo
+          - in_progress
+          - in_review
+          - done
+          - failed
+          - cancelled
+        rank:
+          type: string
+      required:
+      - status
+    IssueLink:
+      type: object
+      properties:
+        id:
+          type: string
+        kind:
+          type: string
+          enum:
+          - relates_to
+          - blocks
+          - duplicates
+        direction:
+          type: string
+          enum:
+          - out
+          - in
+          description: '"out" = anchor → target, "in" = target → anchor.'
+        target_key:
+          type: string
+          example: WEB-12
+        target_title:
+          type: string
+        target_status:
+          type: string
+        target_project_slug:
+          type: string
+      required:
+      - id
+      - kind
+      - direction
+      - target_key
+      - target_title
+      - target_status
+      - target_project_slug
+    IssueCreateInput:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - epic
+          - story
+          - task
+          - bug
+          - subtask
+        title:
+          type: string
+        description_md:
+          type: string
+        status:
+          type: string
+          enum:
+          - backlog
+          - todo
+          - in_progress
+          - in_review
+          - done
+          - failed
+          - cancelled
+        status_id:
+          type: string
+          description: Board status id (project_statuses); wins over status.
+        priority:
+          type: string
+          enum:
+          - lowest
+          - low
+          - medium
+          - high
+          - highest
+          - critical
+        assignee:
+          type: string
+          description: user_id or email
+          example: omar@haris.bz
+        labels:
+          type: array
+          items:
+            type: string
+          description: label ids or names
+        parent:
+          type: string
+          example: WEB-2
+        epic:
+          type: string
+          example: WEB-2
+        start_at:
+          type:
+          - string
+          - 'null'
+        due_at:
+          type:
+          - string
+          - 'null'
+        estimate_minutes:
+          type:
+          - integer
+          - 'null'
+        story_points:
+          type:
+          - integer
+          - 'null'
+      required:
+      - type
+      - title
+    IssuePatchInput:
+      type: object
+      properties:
+        title:
+          type: string
+        description_md:
+          type:
+          - string
+          - 'null'
+        status:
+          type: string
+          enum:
+          - backlog
+          - todo
+          - in_progress
+          - in_review
+          - done
+          - failed
+          - cancelled
+        status_id:
+          type: string
+          description: Board status id (project_statuses); wins over status.
+        priority:
+          type: string
+          enum:
+          - lowest
+          - low
+          - medium
+          - high
+          - highest
+          - critical
+        assignee:
+          type:
+          - string
+          - 'null'
+          description: Primary assignee (user_id or email), or null to unassign. Back-compat single field; seeds a one-element assignee set.
+        assignee_ids:
+          type: array
+          items:
+            type: string
+          description: Full ordered assignee set (user_ids or emails), primary first. Wins over `assignee`; pass [] to unassign everyone.
+        labels:
+          type: array
+          items:
+            type: string
+        milestone_id:
+          type:
+          - string
+          - 'null'
+        sprint_id:
+          type:
+          - string
+          - 'null'
+          description: Attach the issue to a sprint (sprint id), or null to detach. This is how issues are added to / removed from a sprint.
+        release_id:
+          type:
+          - string
+          - 'null'
+          description: Attach the issue to a release (release id), or null to detach. This is how issues are added to / removed from a release.
+        estimate_minutes:
+          type:
+          - integer
+          - 'null'
+        story_points:
+          type:
+          - integer
+          - 'null'
+        spent_minutes:
+          type:
+          - integer
+          - 'null'
+        completion_pct:
+          type:
+          - integer
+          - 'null'
+        start_at:
+          type:
+          - string
+          - 'null'
+        due_at:
+          type:
+          - string
+          - 'null'
+    CommitRef:
+      type: object
+      properties:
+        id:
+          type: string
+        repo:
+          type: string
+          example: utter-ae/product
+        sha:
+          type: string
+          example: a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2
+        message:
+          type: string
+        url:
+          type: string
+          example: https://github.com/utter-ae/product/commit/a1b2c3
+        author:
+          type:
+          - string
+          - 'null'
+        committed_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - repo
+      - sha
+      - message
+      - url
+      - author
+      - committed_at
+    BulkIssueResult:
+      anyOf:
+      - type: object
+        properties:
+          index:
+            type: integer
+          ok:
+            type: boolean
+            enum:
+            - true
+          data:
+            $ref: '#/components/schemas/Issue'
+        required:
+        - index
+        - ok
+        - data
+      - type: object
+        properties:
+          index:
+            type: integer
+          ok:
+            type: boolean
+            enum:
+            - false
+          error:
+            type: object
+            properties:
+              code:
+                type: string
+                enum:
+                - unauthorized
+                - forbidden
+                - not_found
+                - validation
+                - rate_limited
+                - conflict
+                - idempotency_violation
+                - internal_error
+                example: validation
+              message:
+                type: string
+              details:
+                type: object
+                additionalProperties: {}
+            required:
+            - code
+            - message
+        required:
+        - index
+        - ok
+        - error
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
+    IssueLinkCreateInput:
+      type: object
+      properties:
+        kind:
+          type: string
+          enum:
+          - relates_to
+          - blocks
+          - duplicates
+        direction:
+          type: string
+          enum:
+          - out
+          - in
+          description: '"out" = anchor blocks/relates_to/duplicates target; "in" = target → anchor.'
+        target_key:
+          type: string
+          description: Target issue KEY-NUM (e.g. WEB-12). Cross-project within the workspace is supported.
+          example: WEB-12
+      required:
+      - kind
+      - direction
+      - target_key
+    BulkIssuesCreateInput:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/IssueCreateInput'
+          minItems: 1
+          maxItems: 50
+      required:
+      - items
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API key
+      description: 'Workspace API key. Send as `Authorization: Bearer tfk_live_…`. Each key is bound to exactly one workspace and carries a set of scopes.'

@@ -1,0 +1,250 @@
+openapi: 3.2.0
+info:
+  title: Taskfolk Time API
+  version: 1.0.0
+  description: Public REST API for Taskfolk (taskfolk.ai). All endpoints require a workspace-scoped bearer API key. Paths are nested under `/v1/workspaces/{slug}/…`.
+servers:
+- url: https://taskfolk.ai/api
+security:
+- bearerAuth: []
+tags:
+- name: Time
+paths:
+  /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/time:
+    get:
+      summary: Get time tracking.
+      tags:
+      - Time
+      security:
+      - bearerAuth:
+        - issues:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+          example: WEB-39
+          description: Issue key (KEY-N).
+        required: true
+        description: Issue key (KEY-N).
+        name: issueKey
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/TimeTracking'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    patch:
+      summary: Update time tracking.
+      tags:
+      - Time
+      security:
+      - bearerAuth:
+        - issues:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+          example: WEB-39
+          description: Issue key (KEY-N).
+        required: true
+        description: Issue key (KEY-N).
+        name: issueKey
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TimePatchInput'
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/TimeTracking'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+components:
+  schemas:
+    TimePatchInput:
+      type: object
+      properties:
+        estimate_minutes:
+          type:
+          - integer
+          - 'null'
+        story_points:
+          type:
+          - integer
+          - 'null'
+        spent_minutes:
+          type:
+          - integer
+          - 'null'
+        completion_pct:
+          type:
+          - integer
+          - 'null'
+    TimeTracking:
+      type: object
+      properties:
+        issue_key:
+          type: string
+          example: WEB-12
+        estimate_minutes:
+          type:
+          - integer
+          - 'null'
+        story_points:
+          type:
+          - integer
+          - 'null'
+        spent_minutes:
+          type:
+          - integer
+          - 'null'
+        completion_pct:
+          type:
+          - integer
+          - 'null'
+      required:
+      - issue_key
+      - estimate_minutes
+      - story_points
+      - spent_minutes
+      - completion_pct
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API key
+      description: 'Workspace API key. Send as `Authorization: Bearer tfk_live_…`. Each key is bound to exactly one workspace and carries a set of scopes.'

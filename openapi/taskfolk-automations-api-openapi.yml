@@ -1,0 +1,921 @@
+openapi: 3.2.0
+info:
+  title: Taskfolk Automations API
+  version: 1.0.0
+  description: Public REST API for Taskfolk (taskfolk.ai). All endpoints require a workspace-scoped bearer API key. Paths are nested under `/v1/workspaces/{slug}/…`.
+servers:
+- url: https://taskfolk.ai/api
+security:
+- bearerAuth: []
+tags:
+- name: Automations
+paths:
+  /v1/workspaces/{slug}/automations:
+    get:
+      summary: List automation rules.
+      tags:
+      - Automations
+      security:
+      - bearerAuth:
+        - automations:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+        required: false
+        name: cursor
+        in: query
+      - schema:
+          type:
+          - integer
+          - 'null'
+        required: false
+        name: limit
+        in: query
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Automation'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - pagination
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    post:
+      summary: Create an automation rule (admin-tier scope; Pro/Business plans).
+      tags:
+      - Automations
+      security:
+      - bearerAuth:
+        - automations:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutomationCreateInput'
+      responses:
+        '201':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Automation'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/automations/{id}:
+    get:
+      summary: Get an automation rule.
+      tags:
+      - Automations
+      security:
+      - bearerAuth:
+        - automations:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+        required: true
+        name: id
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Automation'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    patch:
+      summary: Update or enable/disable an automation rule.
+      tags:
+      - Automations
+      security:
+      - bearerAuth:
+        - automations:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+        required: true
+        name: id
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutomationPatchInput'
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Automation'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    delete:
+      summary: Delete an automation rule.
+      tags:
+      - Automations
+      security:
+      - bearerAuth:
+        - automations:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+        required: true
+        name: id
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      deleted:
+                        type: boolean
+                        enum:
+                        - true
+                    required:
+                    - id
+                    - deleted
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/automations/{id}/runs:
+    get:
+      summary: List an automation's run history (newest first).
+      tags:
+      - Automations
+      security:
+      - bearerAuth:
+        - automations:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+        required: true
+        name: id
+        in: path
+      - schema:
+          type: string
+        required: false
+        name: cursor
+        in: query
+      - schema:
+          type:
+          - integer
+          - 'null'
+        required: false
+        name: limit
+        in: query
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AutomationRun'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - pagination
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+components:
+  schemas:
+    Automation:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        enabled:
+          type: boolean
+        trigger:
+          type: string
+          enum:
+          - issue.created
+          - issue.status_changed
+          - issue.priority_changed
+          - issue.assigned
+          - issue.unassigned
+          - comment.added
+        conditions:
+          type:
+          - object
+          - 'null'
+          properties:
+            match:
+              type: string
+              enum:
+              - all
+              - any
+            rules:
+              type: array
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                    enum:
+                    - project
+                    - type
+                    - priority
+                    - status
+                    - assignee
+                    - label
+                    - title
+                  op:
+                    type: string
+                    enum:
+                    - is
+                    - is_not
+                    - is_one_of
+                    - contains
+                    - is_set
+                    - is_empty
+                  value:
+                    anyOf:
+                    - type: string
+                      maxLength: 500
+                    - type: array
+                      items:
+                        type: string
+                        maxLength: 100
+                      maxItems: 50
+                required:
+                - field
+                - op
+              maxItems: 10
+          required:
+          - match
+          - rules
+        actions:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                enum:
+                - set_status
+                - set_priority
+                - assign_to
+                - unassign
+                - add_label
+                - remove_label
+                - move_to_sprint
+                - add_comment
+                - notify_agent
+              status:
+                type: string
+              priority:
+                type: string
+              assign_target:
+                type: string
+                enum:
+                - member
+                - triggering_user
+              member_id:
+                type: string
+              label_id:
+                type: string
+              sprint_target:
+                type: string
+                enum:
+                - active
+                - specific
+                - backlog
+              sprint_id:
+                type: string
+              comment:
+                type: string
+                maxLength: 2000
+              agent_user_id:
+                type: string
+            required:
+            - type
+        project_id:
+          type:
+          - string
+          - 'null'
+          description: Derived from a project-is condition; null = all projects.
+        created_by:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - name
+      - enabled
+      - trigger
+      - conditions
+      - actions
+      - project_id
+      - created_by
+      - created_at
+      - updated_at
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    AutomationRun:
+      type: object
+      properties:
+        id:
+          type: string
+        automation_id:
+          type: string
+        issue_id:
+          type:
+          - string
+          - 'null'
+        trigger:
+          type: string
+        status:
+          type: string
+          enum:
+          - ok
+          - partial
+          - error
+        actions_applied:
+          type:
+          - array
+          - 'null'
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              ok:
+                type: boolean
+              detail:
+                type: string
+            required:
+            - type
+            - ok
+        detail:
+          type:
+          - string
+          - 'null'
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - automation_id
+      - issue_id
+      - trigger
+      - status
+      - actions_applied
+      - detail
+      - created_at
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
+    AutomationPatchInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        trigger:
+          type: string
+          enum:
+          - issue.created
+          - issue.status_changed
+          - issue.priority_changed
+          - issue.assigned
+          - issue.unassigned
+          - comment.added
+        conditions:
+          type:
+          - object
+          - 'null'
+          properties:
+            match:
+              type: string
+              enum:
+              - all
+              - any
+            rules:
+              type: array
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                    enum:
+                    - project
+                    - type
+                    - priority
+                    - status
+                    - assignee
+                    - label
+                    - title
+                  op:
+                    type: string
+                    enum:
+                    - is
+                    - is_not
+                    - is_one_of
+                    - contains
+                    - is_set
+                    - is_empty
+                  value:
+                    anyOf:
+                    - type: string
+                      maxLength: 500
+                    - type: array
+                      items:
+                        type: string
+                        maxLength: 100
+                      maxItems: 50
+                required:
+                - field
+                - op
+              maxItems: 10
+          required:
+          - match
+          - rules
+        actions:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                enum:
+                - set_status
+                - set_priority
+                - assign_to
+                - unassign
+                - add_label
+                - remove_label
+                - move_to_sprint
+                - add_comment
+                - notify_agent
+              status:
+                type: string
+              priority:
+                type: string
+              assign_target:
+                type: string
+                enum:
+                - member
+                - triggering_user
+              member_id:
+                type: string
+              label_id:
+                type: string
+              sprint_target:
+                type: string
+                enum:
+                - active
+                - specific
+                - backlog
+              sprint_id:
+                type: string
+              comment:
+                type: string
+                maxLength: 2000
+              agent_user_id:
+                type: string
+            required:
+            - type
+          minItems: 1
+          maxItems: 10
+        project_id:
+          type:
+          - string
+          - 'null'
+        enabled:
+          type: boolean
+    AutomationCreateInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        trigger:
+          type: string
+          enum:
+          - issue.created
+          - issue.status_changed
+          - issue.priority_changed
+          - issue.assigned
+          - issue.unassigned
+          - comment.added
+        conditions:
+          type:
+          - object
+          - 'null'
+          properties:
+            match:
+              type: string
+              enum:
+              - all
+              - any
+            rules:
+              type: array
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                    enum:
+                    - project
+                    - type
+                    - priority
+                    - status
+                    - assignee
+                    - label
+                    - title
+                  op:
+                    type: string
+                    enum:
+                    - is
+                    - is_not
+                    - is_one_of
+                    - contains
+                    - is_set
+                    - is_empty
+                  value:
+                    anyOf:
+                    - type: string
+                      maxLength: 500
+                    - type: array
+                      items:
+                        type: string
+                        maxLength: 100
+                      maxItems: 50
+                required:
+                - field
+                - op
+              maxItems: 10
+          required:
+          - match
+          - rules
+        actions:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                enum:
+                - set_status
+                - set_priority
+                - assign_to
+                - unassign
+                - add_label
+                - remove_label
+                - move_to_sprint
+                - add_comment
+                - notify_agent
+              status:
+                type: string
+              priority:
+                type: string
+              assign_target:
+                type: string
+                enum:
+                - member
+                - triggering_user
+              member_id:
+                type: string
+              label_id:
+                type: string
+              sprint_target:
+                type: string
+                enum:
+                - active
+                - specific
+                - backlog
+              sprint_id:
+                type: string
+              comment:
+                type: string
+                maxLength: 2000
+              agent_user_id:
+                type: string
+            required:
+            - type
+          minItems: 1
+          maxItems: 10
+        project_id:
+          type:
+          - string
+          - 'null'
+        enabled:
+          type: boolean
+      required:
+      - name
+      - trigger
+      - actions
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API key
+      description: 'Workspace API key. Send as `Authorization: Bearer tfk_live_…`. Each key is bound to exactly one workspace and carries a set of scopes.'

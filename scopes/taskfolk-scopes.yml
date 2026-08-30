@@ -1,0 +1,379 @@
+generated: '2026-08-20'
+method: searched
+source: https://taskfolk.ai/.well-known/oauth-authorization-server (RFC 8414, HTTP 200) and https://taskfolk.ai/.well-known/oauth-protected-resource
+  (RFC 9728, HTTP 200)
+docs: https://taskfolk.ai/auth.md
+note: 'The published OpenAPI declares ONLY a bearerAuth http scheme, so derive-oauth-scopes.py found zero
+  oauth2 flows in the spec. The OAuth surface is real but lives entirely in the RFC 8414 / RFC 9728 discovery
+  documents and auth.md, not in the contract. All 47 scopes below are read verbatim from those two documents,
+  which agree exactly. Recording the gap: a securitySchemes.oauth2 block in the OpenAPI would put these
+  scopes in the contract where a generated client can see them.'
+schemes:
+- name: oauth2
+  source: https://taskfolk.ai/.well-known/oauth-authorization-server
+  issuer: https://taskfolk.ai
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://taskfolk.ai/api/oauth/authorize
+    tokenUrl: https://taskfolk.ai/api/oauth/token
+    refreshUrl: https://taskfolk.ai/api/oauth/token
+    pkce_required: true
+    code_challenge_methods:
+    - S256
+  revocation_endpoint: https://taskfolk.ai/api/oauth/revoke
+  registration_endpoint: https://taskfolk.ai/api/oauth/register
+  dynamic_client_registration: RFC 7591, unauthenticated by design, rate limited per IP and per workspace
+  token_endpoint_auth_methods:
+  - none
+  - client_secret_post
+  grant_types:
+  - authorization_code
+  - refresh_token
+protected_resources:
+- https://taskfolk.ai/api/mcp/v1
+scope_count: 47
+scope_model: Three coarse scopes (read / write / admin) plus 44 fine-grained resource:action scopes across
+  22 resource families. A key is bound to exactly one workspace and carries a set of scopes; MCP tools/list
+  is filtered by them, so a read-only key literally cannot see a write tool. Tokens inherit the creator
+  role ceiling.
+scopes:
+- scope: read
+  description: Read workspaces, projects, issues, comments, members (coarse-grained).
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: write
+  description: Create and update resources (coarse-grained).
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: admin
+  description: Workspace management, billing, settings, and agent commerce (credit purchase).
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: workspaces:read
+  description: Read access to workspaces.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: workspaces:write
+  description: Create and update workspaces.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: projects:read
+  description: Read access to projects.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: projects:write
+  description: Create and update projects.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: projects:admin
+  description: Administer projects.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: issues:read
+  description: Read access to issues.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: issues:write
+  description: Create and update issues.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: comments:read
+  description: Read access to comments.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: comments:write
+  description: Create and update comments.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: attachments:read
+  description: Read access to attachments.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: attachments:write
+  description: Create and update attachments.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: labels:read
+  description: Read access to labels.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: labels:write
+  description: Create and update labels.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: custom_fields:read
+  description: Read access to custom fields.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: custom_fields:write
+  description: Create and update custom fields.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: saved_views:read
+  description: Read access to saved views.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: saved_views:write
+  description: Create and update saved views.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: docs:read
+  description: Read access to docs.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: docs:write
+  description: Create and update docs.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: members:read
+  description: Read access to members.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: members:write
+  description: Create and update members.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: notifications:read
+  description: Read access to notifications.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: notifications:write
+  description: Create and update notifications.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: search:read
+  description: Read access to search.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: chat:read
+  description: Read access to chat.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: chat:write
+  description: Create and update chat.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: forms:read
+  description: Read access to forms.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: forms:write
+  description: Create and update forms.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: automations:read
+  description: Read access to automations.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: automations:write
+  description: Create and update automations.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: portfolios:read
+  description: Read access to portfolios.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: portfolios:write
+  description: Create and update portfolios.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: goals:read
+  description: Read access to goals.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: goals:write
+  description: Create and update goals.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: agents:read
+  description: Read access to agents.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: agents:write
+  description: Create and update agents.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: workflows:read
+  description: Read access to workflows.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: workflows:write
+  description: Create and update workflows.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: api_keys:read
+  description: Read access to api keys.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: api_keys:write
+  description: Create and update api keys.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: webhooks:read
+  description: Read access to webhooks.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: webhooks:write
+  description: Create and update webhooks.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: oauth_apps:read
+  description: Read access to oauth apps.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+- scope: oauth_apps:write
+  description: Create and update oauth apps.
+  flows:
+  - authorizationCode
+  sources:
+  - https://taskfolk.ai/.well-known/oauth-authorization-server
+  - https://taskfolk.ai/.well-known/oauth-protected-resource
+agent_auth:
+  skill: https://taskfolk.ai/auth.md
+  identity_types_supported:
+  - anonymous
+  credential_types_supported:
+  - oauth2_authorization_code
+  - access_token
+  note: Non-standard agent_auth block in the AS metadata. It lets an ANONYMOUS agent register an OAuth
+    client with no pre-existing account or API key, then obtain user-delegated tokens through a claim
+    ceremony the human approves. This is the mechanism that makes the OAuth surface reachable by an agent
+    that has never met the user.

@@ -1,0 +1,575 @@
+openapi: 3.2.0
+info:
+  title: Taskfolk Key results API
+  version: 1.0.0
+  description: Public REST API for Taskfolk (taskfolk.ai). All endpoints require a workspace-scoped bearer API key. Paths are nested under `/v1/workspaces/{slug}/…`.
+servers:
+- url: https://taskfolk.ai/api
+security:
+- bearerAuth: []
+tags:
+- name: Key results
+paths:
+  /v1/workspaces/{slug}/goals/{goalId}/key-results:
+    get:
+      summary: List a goal's key results.
+      tags:
+      - Key results
+      security:
+      - bearerAuth:
+        - goals:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+          description: Goal id.
+        required: true
+        description: Goal id.
+        name: goalId
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/KeyResult'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - pagination
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    post:
+      summary: Create a key result (manual metric or auto scope roll-up).
+      tags:
+      - Key results
+      security:
+      - bearerAuth:
+        - goals:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+          description: Goal id.
+        required: true
+        description: Goal id.
+        name: goalId
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KeyResultCreateInput'
+      responses:
+        '201':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/KeyResult'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/goals/{goalId}/key-results/{keyResultId}:
+    patch:
+      summary: Update a key result.
+      tags:
+      - Key results
+      security:
+      - bearerAuth:
+        - goals:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+          description: Goal id.
+        required: true
+        description: Goal id.
+        name: goalId
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+          description: Key result id.
+        required: true
+        description: Key result id.
+        name: keyResultId
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KeyResultPatchInput'
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/KeyResult'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    delete:
+      summary: Delete a key result (soft).
+      tags:
+      - Key results
+      security:
+      - bearerAuth:
+        - goals:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+          description: Goal id.
+        required: true
+        description: Goal id.
+        name: goalId
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+          description: Key result id.
+        required: true
+        description: Key result id.
+        name: keyResultId
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      deleted:
+                        type: boolean
+                        enum:
+                        - true
+                    required:
+                    - id
+                    - deleted
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+components:
+  schemas:
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    KeyResultCreateInput:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        kind:
+          type: string
+          enum:
+          - manual
+          - auto
+        unit:
+          type:
+          - string
+          - 'null'
+          maxLength: 24
+        start_value:
+          type:
+          - number
+          - 'null'
+        target_value:
+          type:
+          - number
+          - 'null'
+        current_value:
+          type:
+          - number
+          - 'null'
+        weight:
+          type: number
+          exclusiveMinimum: 0
+          maximum: 999
+          description: Relative weight in the goal roll-up (default 1).
+        scope:
+          type:
+          - object
+          - 'null'
+          properties:
+            project_ids:
+              type: array
+              items:
+                type: string
+            issue_types:
+              type: array
+              items:
+                type: string
+                enum:
+                - epic
+                - story
+                - task
+                - bug
+                - subtask
+            label_ids:
+              type: array
+              items:
+                type: string
+            assignee_id:
+              type:
+              - string
+              - 'null'
+          description: Auto KRs only; ignored for manual.
+      required:
+      - title
+      - kind
+    KeyResult:
+      type: object
+      properties:
+        id:
+          type: string
+        goal_id:
+          type: string
+        title:
+          type: string
+        kind:
+          type: string
+          enum:
+          - manual
+          - auto
+        unit:
+          type:
+          - string
+          - 'null'
+          example: '%'
+        start_value:
+          type:
+          - number
+          - 'null'
+        target_value:
+          type:
+          - number
+          - 'null'
+        current_value:
+          type:
+          - number
+          - 'null'
+        weight:
+          type: number
+          example: 1
+        scope:
+          type:
+          - object
+          - 'null'
+          properties:
+            project_ids:
+              type: array
+              items:
+                type: string
+            issue_types:
+              type: array
+              items:
+                type: string
+                enum:
+                - epic
+                - story
+                - task
+                - bug
+                - subtask
+            label_ids:
+              type: array
+              items:
+                type: string
+            assignee_id:
+              type:
+              - string
+              - 'null'
+          description: Auto-KR work scope; null = inherit the goal's portfolio/workspace scope. Unknown ids are dropped.
+        progress_pct:
+          type:
+          - integer
+          - 'null'
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - goal_id
+      - title
+      - kind
+      - unit
+      - start_value
+      - target_value
+      - current_value
+      - weight
+      - scope
+      - progress_pct
+      - created_at
+      - updated_at
+    KeyResultPatchInput:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        unit:
+          type:
+          - string
+          - 'null'
+          maxLength: 24
+        start_value:
+          type:
+          - number
+          - 'null'
+        target_value:
+          type:
+          - number
+          - 'null'
+        current_value:
+          type:
+          - number
+          - 'null'
+        weight:
+          type: number
+          exclusiveMinimum: 0
+          maximum: 999
+        scope:
+          type:
+          - object
+          - 'null'
+          properties:
+            project_ids:
+              type: array
+              items:
+                type: string
+            issue_types:
+              type: array
+              items:
+                type: string
+                enum:
+                - epic
+                - story
+                - task
+                - bug
+                - subtask
+            label_ids:
+              type: array
+              items:
+                type: string
+            assignee_id:
+              type:
+              - string
+              - 'null'
+          description: Applied only to auto KRs.
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API key
+      description: 'Workspace API key. Send as `Authorization: Bearer tfk_live_…`. Each key is bound to exactly one workspace and carries a set of scopes.'

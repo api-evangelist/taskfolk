@@ -1,0 +1,187 @@
+generated: '2026-08-20'
+method: searched
+source: >-
+  https://taskfolk.ai/llms.txt, https://taskfolk.ai/llms-full.txt,
+  https://taskfolk.ai/auth.md, https://taskfolk.ai/api/v1/reference,
+  and openapi/taskfolk-product-api-openapi.yml
+description: >-
+  Cross-cutting request/response semantics that apply to every Taskfolk v1 operation and,
+  identically, to every MCP tool — the provider states an MCP tools/call re-enters the REST
+  pipeline in-process, so auth, scopes, rate limits, validation, idempotency and usage
+  logging are one implementation, not two.
+
+base_url: https://taskfolk.ai/api
+api_style: REST over HTTPS, JSON requests and responses, ISO 8601 dates
+path_shape: /v1/workspaces/{slug}/… — the workspace slug is the tenant boundary on nearly every path
+
+authentication:
+  scheme: HTTP Bearer
+  key_prefix: tfk_live_
+  key_scope: one key is bound to exactly one workspace and carries a set of scopes
+  alternatives: [OAuth 2.0 authorization_code + PKCE (S256), personal access tokens]
+  identity_semantics: >-
+    A key acts as the user who created it, so everything an agent does is attributed to
+    that identity. The provider recommends one key per agent for a clean audit trail.
+  docs: https://taskfolk.ai/auth.md
+  detail: authentication/taskfolk-authentication.yml
+
+idempotency:
+  supported: true
+  mechanism: Idempotency-Key request header
+  applies_to: any mutating request — POST, PUT, PATCH, DELETE
+  key_format: client-generated unique value (the docs use uuidgen / crypto.randomUUID() / str(uuid.uuid4()))
+  replay_behavior: >-
+    A retry carrying the same key returns the ORIGINAL result instead of performing the
+    write again — the documented fix for the double-create when a network hiccup eats the
+    first response.
+  conflict_signal: >-
+    ErrorEnvelope error.code enum includes `idempotency_violation`, so a key reused with a
+    different request body is rejected explicitly rather than silently.
+  guidance: >-
+    Derive the key from the logical operation's identity (this CI run, this import row) so a
+    retry of the same logical action reuses it. The docs pair this with 429 handling: on a
+    429, sleep Retry-After seconds and retry WITH the idempotency key still attached.
+  natively_idempotent_writes:
+    - 'POST /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/watchers — self-subscribe; first call 201, repeat returns 200 with the same watcher row'
+    - 'POST /v1/workspaces/{slug}/projects/{key}/members/{userId} — 201 for a new grant, 200 for a role update in place, never a duplicate row'
+  docs: https://taskfolk.ai/blog/how-to-use-the-rest-api
+
+pagination:
+  style: cursor (keyset)
+  request_params:
+    cursor: opaque base64url cursor from the previous page
+    limit: integer, nullable
+  response_fields:
+    data: array of results
+    pagination.next_cursor: opaque cursor, or null on the last page
+  no_page_numbers: true
+  note: >-
+    Walks forward through rank order. There is no page-number jumping. Open-issue counters
+    are capped for performance and read as "1000+" past 1,000 rather than an exact figure.
+
+field_expansion:
+  supported: false
+  note: No expand[]/sparse-fieldset mechanism is documented.
+
+metadata:
+  supported: true
+  mechanism: workspace-defined custom fields on issues
+  api: 'PUT|DELETE /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/custom-fields/{fieldId}'
+  note: Not an arbitrary key/value bag — custom fields are defined per project via custom-field-defs.
+
+request_tracing:
+  request_id_header: null
+  webhook_delivery_header: X-Taskfolk-Delivery
+  note: >-
+    No REST request-id response header is documented. On the webhook side the delivery UUID
+    in X-Taskfolk-Delivery equals the `id` in the event envelope and the docs explicitly
+    recommend it as the consumer-side dedupe key.
+
+versioning:
+  scheme: uri-path
+  current: v1
+  detail: lifecycle/taskfolk-lifecycle.yml
+
+error_envelope:
+  shape: '{ "error": { "code": <enum>, "message": <string>, "details": <object> } }'
+  schema: '#/components/schemas/ErrorEnvelope'
+  format: vendor JSON envelope — NOT RFC 9457 (no application/problem+json anywhere in the spec)
+  codes: [unauthorized, forbidden, not_found, validation, rate_limited, conflict, idempotency_violation, internal_error]
+  cross_workspace_policy: >-
+    A cross-workspace resource returns 404, never 403 — the spec says "never leaked" on
+    every 404 description. Existence is not disclosed across the tenant boundary.
+  detail: errors/taskfolk-problem-types.yml
+
+rate_limit_signaling:
+  headers: [X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, Retry-After]
+  exhaustion_status: 429
+  exhaustion_body_code: rate_limited
+  detail: rate-limits/taskfolk-rate-limits.yml
+
+# ---------------------------------------------------------------------------
+# REVERSIBILITY — the 15th agent-readiness dimension (0.12.0).
+# Can an agent take back the action it is about to take, and inside what window?
+# ---------------------------------------------------------------------------
+reversibility:
+  applicable: true
+  grade: verified
+  grade_basis: >-
+    Reversal operations exist in the published contract AND the provider states the window
+    in its own docs ("recoverable for 30 days", quoted verbatim from the in-product confirm
+    dialog). Both halves present, so `verified` rather than `documented`.
+  model: >-
+    Destructive writes are SOFT deletes. DELETE on an issue archives it; the issue remains
+    restorable through an explicit restore endpoint for a stated grace period, after which a
+    storage-reclaim sweep frees its attachments and the recovery door closes.
+  window: 30 days
+  window_source: https://taskfolk.ai/llms-full.txt
+  window_quote: >-
+    "Issues in this column will be soft-deleted. They are recoverable for 30 days." … "those
+    archived issues sit in the normal 30-day restore grace period … After that window the
+    storage-reclaim sweep frees their attachments and the recovery door closes."
+  operations:
+    - action: delete an issue
+      forward: 'DELETE /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}'
+      reversal: 'POST /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/restore'
+      window: 30 days
+      operation_id: null
+      note: operationId absent from the contract; bound by verbatim method+path.
+    - action: delete a project
+      forward: 'DELETE /v1/workspaces/{slug}/projects/{key}'
+      reversal: 'POST /v1/workspaces/{slug}/projects/{key}/restore'
+      window: 30 days
+    - action: overwrite a doc
+      forward: 'PATCH /v1/workspaces/{slug}/docs/{id}'
+      reversal: 'POST /v1/workspaces/{slug}/docs/{id}/versions/{versionId}/restore'
+      window: >-
+        Version snapshots are retained on all plans; the docs do not state a snapshot
+        retention limit, so no window is asserted here.
+      window_stated: false
+    - action: delete a board status/column
+      forward: 'DELETE /v1/workspaces/{slug}/projects/{key}/statuses/{id}'
+      reversal: 'POST /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/restore (per affected issue)'
+      window: 30 days
+      note: >-
+        Deleting a column soft-deletes the issues in it. There is no single "undo column
+        delete" call — recovery is per issue. A guard refuses deletion of the last remaining
+        status ("A board needs at least one status.").
+    - action: rotate a webhook signing secret
+      forward: 'POST /v1/workspaces/{slug}/webhooks/{id}/rotate-secret'
+      reversal: null
+      window: null
+      note: NOT reversible. The previous secret is not recoverable.
+  irreversible:
+    - 'DELETE /v1/workspaces/{slug}/api-keys/{id} — revocation is final; the key is not recoverable.'
+    - 'DELETE /v1/workspaces/{slug}/oauth-apps/{clientId} — revokes the client.'
+    - 'POST /api/mpp/v1/credits/* — a completed machine payment returns a signed Payment-Receipt; the contract documents no refund or void operation.'
+  agent_guidance: >-
+    An agent may safely DELETE an issue or project knowing a 30-day restore path exists on a
+    published endpoint. It must NOT treat key revocation, webhook secret rotation, or a
+    completed credit purchase as recoverable — no reversal operation is published for any of
+    the three.
+
+dry_run_mode:
+  supported: false
+  note: >-
+    No dry-run/preview parameter is documented on any write path. The nearest published
+    control is the per-agent field-write allowlist (which fields an agent may write) plus
+    transition rules that reject a disallowed status move — both are refusals at write time,
+    not a rehearsal.
+
+agent_guardrails:
+  field_write_allowlist: >-
+    Per-agent, per-field. Enforced at the single API write path, so it holds whether the
+    agent uses REST or MCP. Covers issue fields only; create/delete and non-issue resources
+    are governed by scopes plus roles.
+  transition_rules: An illegal status move is rejected from every write path including the API.
+  spend_cap: Per-agent spend cap and cost/token totals are exposed on 'GET /v1/workspaces/{slug}/agents/{id}'.
+  scope_filtered_tools: An MCP key only sees tools matching its scopes.
+  human_in_the_loop: Session states pending / running / needs_input / review / done / failed / cancelled make a human review gate a first-class state.
+
+cross_links:
+  errors: errors/taskfolk-problem-types.yml
+  lifecycle: lifecycle/taskfolk-lifecycle.yml
+  authentication: authentication/taskfolk-authentication.yml
+  scopes: scopes/taskfolk-scopes.yml
+  rate_limits: rate-limits/taskfolk-rate-limits.yml
+  webhooks: asyncapi/taskfolk-webhooks.yml

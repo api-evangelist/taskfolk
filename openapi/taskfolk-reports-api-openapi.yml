@@ -1,0 +1,152 @@
+openapi: 3.2.0
+info:
+  title: Taskfolk Reports API
+  version: 1.0.0
+  description: Public REST API for Taskfolk (taskfolk.ai). All endpoints require a workspace-scoped bearer API key. Paths are nested under `/v1/workspaces/{slug}/…`.
+servers:
+- url: https://taskfolk.ai/api
+security:
+- bearerAuth: []
+tags:
+- name: Reports
+paths:
+  /v1/workspaces/{slug}/projects/{key}/reports/{report}:
+    get:
+      summary: Get a project report (velocity, burndown, cycle-time, throughput, status/type breakdown, workload). Paid feature.
+      tags:
+      - Reports
+      security:
+      - bearerAuth:
+        - projects:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+          example: velocity
+          description: 'Report id: velocity | burndown | cycle-time | throughput | status-breakdown | type-breakdown | workload.'
+        required: true
+        description: 'Report id: velocity | burndown | cycle-time | throughput | status-breakdown | type-breakdown | workload.'
+        name: report
+        in: path
+      - schema:
+          type: string
+          enum:
+          - json
+          - csv
+          description: Response format. `csv` returns a downloadable text/csv body; default is JSON.
+        required: false
+        description: Response format. `csv` returns a downloadable text/csv body; default is JSON.
+        name: format
+        in: query
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Report'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+components:
+  schemas:
+    Report:
+      type: object
+      properties:
+        report:
+          type: string
+          enum:
+          - velocity
+          - burndown
+          - cycle-time
+          - throughput
+          - status-breakdown
+          - type-breakdown
+          - workload
+          description: Which report this payload describes.
+        data:
+          description: 'Report-specific payload. Shape depends on `report`: velocity (bars + average), burndown (points), cycle-time (buckets + percentiles), throughput (weekly created vs resolved), status/type-breakdown (slices), workload (rows by assignee). Sprint-dependent reports may be null when the project has no sprints.'
+      required:
+      - report
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API key
+      description: 'Workspace API key. Send as `Authorization: Bearer tfk_live_…`. Each key is bound to exactly one workspace and carries a set of scopes.'

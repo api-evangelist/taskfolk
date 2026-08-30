@@ -1,0 +1,1167 @@
+openapi: 3.2.0
+info:
+  title: Taskfolk Forms API
+  version: 1.0.0
+  description: Public REST API for Taskfolk (taskfolk.ai). All endpoints require a workspace-scoped bearer API key. Paths are nested under `/v1/workspaces/{slug}/…`.
+servers:
+- url: https://taskfolk.ai/api
+security:
+- bearerAuth: []
+tags:
+- name: Forms
+paths:
+  /v1/workspaces/{slug}/projects/{key}/forms:
+    get:
+      summary: List project forms.
+      tags:
+      - Forms
+      security:
+      - bearerAuth:
+        - forms:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+        required: false
+        name: cursor
+        in: query
+      - schema:
+          type:
+          - integer
+          - 'null'
+        required: false
+        name: limit
+        in: query
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FormSummary'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - pagination
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    post:
+      summary: Create a form (admin-tier scope).
+      tags:
+      - Forms
+      security:
+      - bearerAuth:
+        - forms:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FormCreateInput'
+      responses:
+        '201':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Form'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/projects/{key}/forms/{id}:
+    get:
+      summary: Get a form with its ordered fields.
+      tags:
+      - Forms
+      security:
+      - bearerAuth:
+        - forms:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+          description: Form id.
+        required: true
+        description: Form id.
+        name: id
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Form'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    patch:
+      summary: Update form settings / publish / enable public sharing.
+      tags:
+      - Forms
+      security:
+      - bearerAuth:
+        - forms:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+          description: Form id.
+        required: true
+        description: Form id.
+        name: id
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FormPatchInput'
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Form'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    delete:
+      summary: Soft-delete a form (disables public sharing).
+      tags:
+      - Forms
+      security:
+      - bearerAuth:
+        - forms:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+          description: Form id.
+        required: true
+        description: Form id.
+        name: id
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      deleted:
+                        type: boolean
+                        enum:
+                        - true
+                    required:
+                    - id
+                    - deleted
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/projects/{key}/forms/{id}/fields:
+    get:
+      summary: List a form's fields in order.
+      tags:
+      - Forms
+      security:
+      - bearerAuth:
+        - forms:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+          description: Form id.
+        required: true
+        description: Form id.
+        name: id
+        in: path
+      - schema:
+          type: string
+        required: false
+        name: cursor
+        in: query
+      - schema:
+          type:
+          - integer
+          - 'null'
+        required: false
+        name: limit
+        in: query
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FormField'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - pagination
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/projects/{key}/forms/{id}/submissions:
+    get:
+      summary: List form submissions.
+      tags:
+      - Forms
+      security:
+      - bearerAuth:
+        - forms:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+          description: Form id.
+        required: true
+        description: Form id.
+        name: id
+        in: path
+      - schema:
+          type: string
+        required: false
+        name: cursor
+        in: query
+      - schema:
+          type:
+          - integer
+          - 'null'
+        required: false
+        name: limit
+        in: query
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FormSubmission'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - pagination
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/projects/{key}/forms/{id}/submissions/{sid}:
+    get:
+      summary: Get a single submission.
+      tags:
+      - Forms
+      security:
+      - bearerAuth:
+        - forms:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: web
+          description: Project key.
+        required: true
+        description: Project key.
+        name: key
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+          description: Form id.
+        required: true
+        description: Form id.
+        name: id
+        in: path
+      - schema:
+          type: string
+          description: Submission id.
+        required: true
+        description: Submission id.
+        name: sid
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/FormSubmission'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+components:
+  schemas:
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    FormField:
+      type: object
+      properties:
+        id:
+          type: string
+        position:
+          type: integer
+        kind:
+          type: string
+          enum:
+          - short_text
+          - long_text
+          - select
+          - multi_select
+          - number
+          - date
+          - email
+          - radio
+          - phone
+          - url
+          - rating
+          - section
+          - file
+          - checkbox
+        label:
+          type: string
+        help_text:
+          type:
+          - string
+          - 'null'
+        placeholder:
+          type:
+          - string
+          - 'null'
+        required:
+          type: boolean
+        options:
+          type: array
+          items:
+            type: string
+        mapping:
+          type: string
+          enum:
+          - none
+          - title
+          - description
+          - priority
+        min_value:
+          type:
+          - number
+          - 'null'
+        max_value:
+          type:
+          - number
+          - 'null'
+        max_length:
+          type:
+          - integer
+          - 'null'
+        default_value:
+          type:
+          - string
+          - 'null'
+        visibility_rule: {}
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - position
+      - kind
+      - label
+      - help_text
+      - placeholder
+      - required
+      - options
+      - mapping
+      - min_value
+      - max_value
+      - max_length
+      - default_value
+      - created_at
+    FormSubmission:
+      type: object
+      properties:
+        id:
+          type: string
+        answers:
+          type: object
+          additionalProperties: {}
+          description: field_id → submitted value, stored verbatim.
+        submitter_email:
+          type:
+          - string
+          - 'null'
+        source:
+          type: string
+          enum:
+          - public
+          - internal
+        created_issue_id:
+          type:
+          - string
+          - 'null'
+        created_issue_key:
+          type:
+          - string
+          - 'null'
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - answers
+      - submitter_email
+      - source
+      - created_issue_id
+      - created_issue_key
+      - created_at
+    FormSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type:
+          - string
+          - 'null'
+        status:
+          type: string
+          enum:
+          - draft
+          - published
+          - closed
+        public_enabled:
+          type: boolean
+        share_url:
+          type:
+          - string
+          - 'null'
+          description: Public /f/<token> URL; null unless public sharing is enabled.
+        submission_count:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - title
+      - description
+      - status
+      - public_enabled
+      - share_url
+      - submission_count
+      - created_at
+      - updated_at
+    FormCreateInput:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+          maxLength: 2000
+        issue_type:
+          type: string
+          enum:
+          - task
+          - story
+          - bug
+        priority:
+          type: string
+        fields:
+          type: array
+          items:
+            type: object
+            properties:
+              kind:
+                type: string
+                enum:
+                - short_text
+                - long_text
+                - select
+                - multi_select
+                - number
+                - date
+                - email
+                - radio
+                - phone
+                - url
+                - rating
+                - section
+                - file
+                - checkbox
+              label:
+                type: string
+                minLength: 1
+                maxLength: 200
+              required:
+                type: boolean
+              options:
+                type: array
+                items:
+                  type: string
+                  maxLength: 200
+                maxItems: 50
+              placeholder:
+                type: string
+                maxLength: 200
+              help_text:
+                type: string
+                maxLength: 500
+              mapping:
+                type: string
+                enum:
+                - none
+                - title
+                - description
+                - priority
+              min_value:
+                type: number
+              max_value:
+                type: number
+              max_length:
+                type: integer
+                minimum: 1
+                maximum: 20000
+              default_value:
+                type: string
+                maxLength: 500
+            required:
+            - kind
+            - label
+          maxItems: 200
+      required:
+      - title
+    FormPatchInput:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type:
+          - string
+          - 'null'
+          maxLength: 2000
+        status:
+          type: string
+          enum:
+          - draft
+          - published
+          - closed
+        issue_type:
+          type: string
+          enum:
+          - task
+          - story
+          - bug
+        priority:
+          type: string
+        success_message:
+          type:
+          - string
+          - 'null'
+        accent_color:
+          type:
+          - string
+          - 'null'
+        header_text:
+          type:
+          - string
+          - 'null'
+        show_project_header:
+          type: boolean
+        close_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        response_limit:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 1000000
+        one_per_email:
+          type: boolean
+        confirmation_mode:
+          type: string
+          enum:
+          - message
+          - redirect
+        redirect_url:
+          type:
+          - string
+          - 'null'
+        default_assignee_id:
+          type:
+          - string
+          - 'null'
+        default_label_ids:
+          type: array
+          items:
+            type: string
+        default_sprint_id:
+          type:
+          - string
+          - 'null'
+        default_status_id:
+          type:
+          - string
+          - 'null'
+        access_mode:
+          type: string
+          enum:
+          - anyone
+          - members
+          - invited
+        allowed_emails:
+          type: array
+          items:
+            type: string
+          maxItems: 500
+        notify_submission:
+          type: boolean
+        confirmation_email:
+          type: boolean
+        public_enabled:
+          type: boolean
+    Form:
+      allOf:
+      - $ref: '#/components/schemas/FormSummary'
+      - type: object
+        properties:
+          issue_type:
+            type: string
+            enum:
+            - task
+            - story
+            - bug
+          priority:
+            type: string
+          success_message:
+            type:
+            - string
+            - 'null'
+          accent_color:
+            type:
+            - string
+            - 'null'
+          header_text:
+            type:
+            - string
+            - 'null'
+          show_project_header:
+            type: boolean
+          close_at:
+            type:
+            - string
+            - 'null'
+            format: date-time
+            example: '2026-05-28T14:30:00Z'
+          response_limit:
+            type:
+            - integer
+            - 'null'
+          one_per_email:
+            type: boolean
+          confirmation_mode:
+            type: string
+            enum:
+            - message
+            - redirect
+          redirect_url:
+            type:
+            - string
+            - 'null'
+          default_assignee_id:
+            type:
+            - string
+            - 'null'
+          default_label_ids:
+            type: array
+            items:
+              type: string
+          default_sprint_id:
+            type:
+            - string
+            - 'null'
+          default_status_id:
+            type:
+            - string
+            - 'null'
+          access_mode:
+            type: string
+            enum:
+            - anyone
+            - members
+            - invited
+          allowed_emails:
+            type: array
+            items:
+              type: string
+          has_password:
+            type: boolean
+          notify_submission:
+            type: boolean
+          confirmation_email:
+            type: boolean
+          fields:
+            type: array
+            items:
+              $ref: '#/components/schemas/FormField'
+        required:
+        - issue_type
+        - priority
+        - success_message
+        - accent_color
+        - header_text
+        - show_project_header
+        - close_at
+        - response_limit
+        - one_per_email
+        - confirmation_mode
+        - redirect_url
+        - default_assignee_id
+        - default_label_ids
+        - default_sprint_id
+        - default_status_id
+        - access_mode
+        - allowed_emails
+        - has_password
+        - notify_submission
+        - confirmation_email
+        - fields
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API key
+      description: 'Workspace API key. Send as `Authorization: Bearer tfk_live_…`. Each key is bound to exactly one workspace and carries a set of scopes.'

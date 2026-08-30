@@ -1,0 +1,52 @@
+generated: '2026-08-20'
+method: searched
+source: https://taskfolk.ai/llms-full.txt
+docs: https://taskfolk.ai/blog/how-to-use-the-rest-api
+limit_count: 3
+response_headers:
+  - X-RateLimit-Limit
+  - X-RateLimit-Remaining
+  - X-RateLimit-Reset
+  - Retry-After
+exhaustion:
+  status: 429
+  error_code: rate_limited
+  envelope: '{ "error": { "code": "rate_limited", "message": "…" } }'
+  retry_guidance: >-
+    Sleep for Retry-After seconds, then retry — the docs explicitly say to keep the
+    Idempotency-Key attached so the retry stays safe.
+  documented_on_every_operation: true
+  note: All 187 operations in the OpenAPI declare a 429 response. That is unusually complete.
+rate_limits:
+  - scope: per-api-key
+    window: 1 minute
+    limit: 600
+    burst: null
+    adjustable: true
+    note: >-
+      Default 600 requests per minute per key. Every key has an adjustable per-minute rate
+      limit set in the workspace Developer console, which also gives each key a Usage tab
+      and an Audit tab.
+    source_quote: >-
+      "Taskfolk's default is 600 requests per minute per key, with X-RateLimit-Limit,
+      X-RateLimit-Remaining, and X-RateLimit-Reset headers on every response and a
+      rate_limited 429 envelope when you exceed it."
+  - scope: per-user
+    window: 1 minute
+    limit: 10
+    endpoint: AI issue triage
+    note: 10 triage calls per minute per user.
+  - scope: per-ip
+    window: null
+    limit: null
+    endpoint: public request-intake forms
+    note: >-
+      Forms ship with per-IP rate limiting; the numeric limit is not published. Recorded as
+      an unquantified control rather than omitted.
+applies_to_mcp: true
+mcp_note: >-
+  MCP shares the REST rate limiter — a tools/call re-enters the REST pipeline in-process, so
+  there is no separate MCP budget.
+anomaly_detection: >-
+  Anomaly detection watches for unusual key behaviour and emails an `api-anomaly` alert;
+  revoking a key emails `api-key-revoked` to its owner.

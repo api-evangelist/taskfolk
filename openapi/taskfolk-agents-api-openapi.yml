@@ -1,0 +1,896 @@
+openapi: 3.2.0
+info:
+  title: Taskfolk Agents API
+  version: 1.0.0
+  description: Public REST API for Taskfolk (taskfolk.ai). All endpoints require a workspace-scoped bearer API key. Paths are nested under `/v1/workspaces/{slug}/…`.
+servers:
+- url: https://taskfolk.ai/api
+security:
+- bearerAuth: []
+tags:
+- name: Agents
+paths:
+  /v1/workspaces/{slug}/agents:
+    get:
+      summary: List the workspace's connected agents (named coding agents like Claude Code, Codex, Cursor). Assign issues to an agent's agent_id like any member.
+      tags:
+      - Agents
+      security:
+      - bearerAuth:
+        - agents:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+        required: false
+        name: cursor
+        in: query
+      - schema:
+          type:
+          - integer
+          - 'null'
+        required: false
+        name: limit
+        in: query
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Agent'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - pagination
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/agents/{id}:
+    get:
+      summary: 'Get one agent''s full profile: identity, owner, key state + scopes, field policy, spend cap, and cost + token totals. {id} is the agent_id.'
+      tags:
+      - Agents
+      security:
+      - bearerAuth:
+        - agents:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+        required: true
+        name: id
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AgentDetail'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/agent-sessions:
+    get:
+      summary: List agent work sessions, newest activity first. Filter by state to see which agents are running, blocked (needs_input), or ready for review.
+      tags:
+      - Agents
+      security:
+      - bearerAuth:
+        - agents:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: running
+          description: 'Filter: running, needs_input, review, done, failed, cancelled.'
+        required: false
+        description: 'Filter: running, needs_input, review, done, failed, cancelled.'
+        name: state
+        in: query
+      - schema:
+          type: string
+          example: WEB-39
+        required: false
+        name: issue_key
+        in: query
+      - schema:
+          type: string
+        required: false
+        name: agent_id
+        in: query
+      - schema:
+          type: string
+        required: false
+        name: cursor
+        in: query
+      - schema:
+          type:
+          - integer
+          - 'null'
+        required: false
+        name: limit
+        in: query
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AgentSession'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - pagination
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    post:
+      summary: Start an agent work session. Call this when you pick up an issue so the team can follow your progress on the ticket and the Agents hub.
+      tags:
+      - Agents
+      security:
+      - bearerAuth:
+        - agents:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 300
+                  example: Fix flaky auth test
+                  description: What the agent is working on.
+                issue_key:
+                  type: string
+                  example: WEB-39
+                  description: Anchor the session to an issue so the team sees it on the ticket. Strongly recommended.
+                note:
+                  type: string
+                  maxLength: 2000
+                  description: Optional first status note.
+                external_url:
+                  type: string
+                  format: uri
+                agent_id:
+                  type: string
+                  description: 'Only needed when calling with a personal (non-agent) token: the agent to act as, from GET /agents. Agent keys act as themselves.'
+              required:
+              - title
+      responses:
+        '201':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AgentSession'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/agent-sessions/{id}:
+    get:
+      summary: Get one agent session.
+      tags:
+      - Agents
+      security:
+      - bearerAuth:
+        - agents:read
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+        required: true
+        name: id
+        in: path
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AgentSession'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    patch:
+      summary: 'Update your session: heartbeat (any PATCH bumps last_activity_at), progress note, state change (needs_input when blocked, review when the PR is ready, done/failed to finish), or the PR link.'
+      tags:
+      - Agents
+      security:
+      - bearerAuth:
+        - agents:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+        required: true
+        name: id
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                state:
+                  type: string
+                  enum:
+                  - running
+                  - needs_input
+                  - review
+                  - done
+                  - failed
+                  - cancelled
+                  description: Set needs_input when blocked on a human, review when a PR is ready, done/failed when finished. Terminal states end the session.
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 300
+                note:
+                  type:
+                  - string
+                  - 'null'
+                  maxLength: 2000
+                  description: 'Replace the status note (''opened PR #42'', ''blocked on env var'').'
+                external_url:
+                  type:
+                  - string
+                  - 'null'
+                  format: uri
+                  description: The PR / output URL.
+                agent_id:
+                  type: string
+                  description: Only for personal (non-agent) tokens — see POST /agent-sessions.
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AgentSession'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /v1/workspaces/{slug}/agent-sessions/{id}/usage:
+    post:
+      summary: Report your token usage / cost for this session (one call per turn, additive). Send cost_usd from your provider, or send tokens + model and Taskfolk estimates the cost. Shows a live cost + burn rate next to the session. Agent-reported.
+      tags:
+      - Agents
+      security:
+      - bearerAuth:
+        - agents:write
+      parameters:
+      - schema:
+          type: string
+          example: taskfolk
+          description: Workspace slug.
+        required: true
+        description: Workspace slug.
+        name: slug
+        in: path
+      - schema:
+          type: string
+          example: 019e6f12-…
+        required: true
+        name: id
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tokens_in:
+                  type: integer
+                  minimum: 0
+                  description: Input tokens for this turn.
+                tokens_out:
+                  type: integer
+                  minimum: 0
+                  description: Output tokens for this turn.
+                cached_tokens:
+                  type: integer
+                  minimum: 0
+                  description: Cached input tokens for this turn.
+                cost_usd:
+                  type: number
+                  minimum: 0
+                  example: 0.0142
+                  description: Cost of this turn in USD, from your provider. Authoritative — sent verbatim. Omit it and Taskfolk estimates from tokens + model.
+                model:
+                  type: string
+                  maxLength: 64
+                  example: claude-opus-4-8
+                  description: The model used this turn (also used to estimate cost when cost_usd is omitted).
+                agent_id:
+                  type: string
+                  description: Only for personal (non-agent) tokens.
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AgentSession'
+                required:
+                - data
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing / invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Key lacks the required scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Resource not found (or cross-workspace — never leaked).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+components:
+  schemas:
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    AgentSession:
+      type: object
+      properties:
+        id:
+          type: string
+        agent_id:
+          type: string
+        agent_name:
+          type: string
+          example: Omar's Claude Code
+        agent_kind:
+          type: string
+          example: claude
+        state:
+          type: string
+          enum:
+          - running
+          - needs_input
+          - review
+          - done
+          - failed
+          - cancelled
+          example: running
+        title:
+          type: string
+          example: Fix flaky auth test
+        note:
+          type:
+          - string
+          - 'null'
+          description: The agent's latest status note.
+        external_url:
+          type:
+          - string
+          - 'null'
+          description: Where the output lives — typically the PR URL.
+        cost_usd:
+          type:
+          - number
+          - 'null'
+          description: Cumulative agent-reported cost of this session in USD (null if never reported). Agent-reported — Taskfolk does not run the model or verify spend.
+        tokens_in:
+          type:
+          - integer
+          - 'null'
+          description: Cumulative input tokens the agent reported.
+        tokens_out:
+          type:
+          - integer
+          - 'null'
+          description: Cumulative output tokens the agent reported.
+        model:
+          type:
+          - string
+          - 'null'
+          example: claude-opus-4-8
+          description: The model of the latest usage report.
+        usage_reports:
+          type: integer
+          description: How many usage reports the agent has posted.
+        issue_id:
+          type:
+          - string
+          - 'null'
+        issue_key:
+          type:
+          - string
+          - 'null'
+          example: WEB-39
+        started_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        last_activity_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        ended_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - agent_id
+      - agent_name
+      - agent_kind
+      - state
+      - title
+      - note
+      - external_url
+      - cost_usd
+      - tokens_in
+      - tokens_out
+      - model
+      - usage_reports
+      - issue_id
+      - issue_key
+      - started_at
+      - last_activity_at
+      - ended_at
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
+    AgentDetail:
+      type: object
+      properties:
+        agent_id:
+          type: string
+        name:
+          type: string
+        kind:
+          type: string
+        owner_user_id:
+          type: string
+        running_sessions:
+          type: integer
+        pending_sessions:
+          type: integer
+          description: Unclaimed delegations (assigned, not yet started).
+        last_activity_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        cost_total:
+          type:
+          - number
+          - 'null'
+        tokens_in:
+          type:
+          - number
+          - 'null'
+        tokens_out:
+          type:
+          - number
+          - 'null'
+        usage_reports:
+          type: integer
+        key_prefix:
+          type:
+          - string
+          - 'null'
+        key_revoked:
+          type: boolean
+        key_scopes:
+          type: array
+          items:
+            type: string
+        key_last_used_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        field_policy:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        spend_cap_usd:
+          type:
+          - number
+          - 'null'
+      required:
+      - agent_id
+      - name
+      - kind
+      - owner_user_id
+      - running_sessions
+      - pending_sessions
+      - last_activity_at
+      - created_at
+      - cost_total
+      - tokens_in
+      - tokens_out
+      - usage_reports
+      - key_prefix
+      - key_revoked
+      - key_scopes
+      - key_last_used_at
+      - field_policy
+      - spend_cap_usd
+    Agent:
+      type: object
+      properties:
+        agent_id:
+          type: string
+          example: 019e6f12-…
+          description: The agent's user id — the value to pass as agent_id elsewhere and the id used when assigning issues to the agent.
+        name:
+          type: string
+          example: Omar's Claude Code
+        kind:
+          type: string
+          example: claude
+          description: 'Provider: claude, openai, cursor, copilot, gemini, deepseek, kimi, perplexity, or custom.'
+        owner_user_id:
+          type: string
+          description: The human member who connected this agent.
+        running_sessions:
+          type: integer
+          example: 1
+        last_activity_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        cost_total:
+          type:
+          - number
+          - 'null'
+          description: Total agent-reported cost across the agent's sessions (USD). Agent-reported; Taskfolk never runs the model.
+        key_prefix:
+          type:
+          - string
+          - 'null'
+          description: The agent's API key prefix (masked).
+        key_revoked:
+          type: boolean
+          description: Whether the agent's API key is revoked.
+        field_policy:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: FIELD-POLICY-01 allowlist of writable issue fields; null = all fields writable.
+        spend_cap_usd:
+          type:
+          - number
+          - 'null'
+          description: Per-agent soft spend cap (USD), or null when unset. Alert-only.
+      required:
+      - agent_id
+      - name
+      - kind
+      - owner_user_id
+      - running_sessions
+      - last_activity_at
+      - created_at
+      - cost_total
+      - key_prefix
+      - key_revoked
+      - field_policy
+      - spend_cap_usd
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API key
+      description: 'Workspace API key. Send as `Authorization: Bearer tfk_live_…`. Each key is bound to exactly one workspace and carries a set of scopes.'

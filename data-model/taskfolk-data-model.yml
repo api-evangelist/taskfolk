@@ -1,0 +1,159 @@
+generated: '2026-08-20'
+method: derived
+source: >-
+  openapi/taskfolk-product-api-openapi.yml — 127 component schemas, the id-reference fields on
+  those schemas, and the path hierarchy of the 111 paths. Enriched from
+  https://taskfolk.ai/llms.txt ("Product structure") and https://taskfolk.ai/llms-full.txt.
+schema_count: 127
+tenancy:
+  boundary: workspace
+  path_shape: /v1/workspaces/{slug}/…
+  enforcement: >-
+    A resource in another workspace returns 404, never 403 — cross-tenant existence is never
+    disclosed. Every operation's 404 description reads "(or cross-workspace — never leaked)".
+identifiers:
+  workspace: slug (lowercase, URL-safe)
+  project: key (uppercase short code, e.g. WEB) plus a lowercase slug
+  issue: 'issue key of the form PROJECT-NUMBER (e.g. WEB-12) — stable and human-quotable'
+  agent: agent_id (assignable exactly like a member id)
+  everything_else: UUID in an *_id field
+  note: >-
+    No Stripe-style typed id prefixes. Projects and issues are addressed by human-readable
+    business keys in the path; everything else by UUID in the body.
+entities:
+  - name: Workspace
+    root: true
+    description: The tenant boundary. One organisation owns one workspace.
+    tags: [Workspaces, Workspace views]
+  - name: Project
+    description: A body of work with a short key. Issues live here.
+    tags: [Projects]
+  - name: Issue
+    description: 'Tracked unit of work. Types: epic, story, task, bug, subtask.'
+    tags: [Issues]
+  - name: Comment
+    tags: [Comments]
+  - name: Doc
+    description: Rich-text document; workspace Knowledge page when project_id is null, project Doc when set.
+    tags: [Docs]
+  - name: Sprint
+    tags: [Sprints]
+  - name: Milestone
+    tags: [Milestones]
+  - name: Release
+    tags: [Releases]
+  - name: Status
+    description: Per-project named board column mapped to a category (to-do, in progress, done, cancelled, failed).
+    tags: [Statuses]
+  - name: Label
+    tags: [Labels]
+  - name: Member
+    tags: [Members]
+  - name: Agent
+    description: An AI agent as a named workspace member; assignable like a person, never billed as a seat.
+    tags: [Agents]
+  - name: AgentSession
+    description: A unit of agent work with states pending / running / needs_input / review / done / failed / cancelled.
+    tags: [Agents]
+  - name: Portfolio
+    tags: [Portfolios]
+  - name: Goal
+    description: OKR-style goal with measurable key results; self-referencing via parent_goal_id.
+    tags: [Goals]
+  - name: KeyResult
+    tags: [Key results]
+  - name: Workflow
+    description: Canvas workflow of nodes and edges; a WorkflowRun tracks one issue through it.
+    tags: [Workflows]
+  - name: Automation
+    tags: [Automations]
+  - name: Form
+    description: Public intake form whose submissions become routed issues.
+    tags: [Forms]
+  - name: ChatChannel
+    tags: [Chat]
+  - name: Attachment
+    tags: [Attachments]
+  - name: CustomFieldDef
+    tags: [Custom fields]
+  - name: Webhook
+    tags: [Developer]
+  - name: ApiKey
+    tags: [Developer]
+  - name: OauthApp
+    tags: [Developer]
+relationships:
+  - {from: Workspace, type: has_many, to: Project, via: path hierarchy}
+  - {from: Workspace, type: has_many, to: Member, via: path hierarchy}
+  - {from: Workspace, type: has_many, to: Agent, via: path hierarchy}
+  - {from: Workspace, type: has_many, to: Doc, via: path hierarchy}
+  - {from: Workspace, type: has_many, to: Portfolio, via: path hierarchy}
+  - {from: Workspace, type: has_many, to: Goal, via: Goal.workspace_id}
+  - {from: Workspace, type: has_many, to: Webhook, via: path hierarchy}
+  - {from: Project, type: has_many, to: Issue, via: path hierarchy}
+  - {from: Project, type: has_many, to: Sprint, via: path hierarchy}
+  - {from: Project, type: has_many, to: Milestone, via: path hierarchy}
+  - {from: Project, type: has_many, to: Release, via: path hierarchy}
+  - {from: Project, type: has_many, to: Status, via: path hierarchy}
+  - {from: Project, type: has_many, to: Label, via: path hierarchy}
+  - {from: Project, type: has_many, to: Form, via: path hierarchy}
+  - {from: Project, type: has_many, to: Automation, via: Automation.project_id}
+  - {from: Project, type: has_many, to: Doc, via: Doc.project_id}
+  - {from: Project, type: belongs_to, to: Member, via: Project.lead_user_id}
+  - {from: Issue, type: belongs_to, to: Status, via: Issue.status_id}
+  - {from: Issue, type: belongs_to, to: Member, via: Issue.assignee_id}
+  - {from: Issue, type: belongs_to, to: Member, via: Issue.reporter_id}
+  - {from: Issue, type: belongs_to, to: Issue, via: Issue.parent_id, note: subtask parent within the same project}
+  - {from: Issue, type: belongs_to, to: Issue, via: Issue.epic_id}
+  - {from: Issue, type: belongs_to, to: Milestone, via: Issue.milestone_id}
+  - {from: Issue, type: belongs_to, to: Sprint, via: Issue.sprint_id}
+  - {from: Issue, type: belongs_to, to: Release, via: Issue.release_id}
+  - {from: Issue, type: has_many, to: Label, via: Issue.labels ($ref array)}
+  - {from: Issue, type: has_many, to: Comment, via: Comment.issue_id}
+  - {from: Issue, type: has_many, to: Attachment, via: Attachment.issue_id}
+  - {from: Issue, type: has_many, to: Watcher, via: path hierarchy}
+  - {from: Issue, type: has_many, to: IssueLink, via: IssueLink.target_key}
+  - {from: Issue, type: has_one, to: TimeTracking, via: TimeTracking.issue_key}
+  - {from: Issue, type: has_many, to: CustomFieldValue, via: CustomFieldValue.field_id}
+  - {from: Comment, type: belongs_to, to: Member, via: Comment.author_id}
+  - {from: Attachment, type: belongs_to, to: Comment, via: Attachment.comment_id}
+  - {from: Attachment, type: belongs_to, to: Member, via: Attachment.uploader_id}
+  - {from: Doc, type: belongs_to, to: Doc, via: Doc.parent_id, note: docs nest into a tree, ordered with LexoRank}
+  - {from: Doc, type: has_many, to: DocVersion, via: DocVersion.doc_id}
+  - {from: Doc, type: has_many, to: DocComment, via: DocComment.doc_id}
+  - {from: DocComment, type: belongs_to, to: DocComment, via: DocComment.parent_id}
+  - {from: Portfolio, type: has_many, to: Project, via: PortfolioProject.portfolio_id + project_id}
+  - {from: Portfolio, type: belongs_to, to: Member, via: Portfolio.lead_user_id}
+  - {from: Goal, type: belongs_to, to: Portfolio, via: Goal.portfolio_id}
+  - {from: Goal, type: belongs_to, to: Goal, via: Goal.parent_goal_id}
+  - {from: Goal, type: has_many, to: KeyResult, via: KeyResult.goal_id}
+  - {from: Agent, type: belongs_to, to: Member, via: Agent.owner_user_id}
+  - {from: Agent, type: has_many, to: AgentSession, via: AgentSession.agent_id}
+  - {from: AgentSession, type: belongs_to, to: Issue, via: AgentSession.issue_id / issue_key}
+  - {from: Workflow, type: has_many, to: WorkflowNode, via: WorkflowDetail.nodes ($ref array)}
+  - {from: Workflow, type: has_many, to: WorkflowEdge, via: WorkflowDetail.edges ($ref array)}
+  - {from: WorkflowEdge, type: connects, to: WorkflowNode, via: source_node_id + target_node_id}
+  - {from: WorkflowNode, type: belongs_to, to: Member, via: WorkflowNode.assignee_user_id}
+  - {from: WorkflowRun, type: belongs_to, to: Issue, via: WorkflowRun.issue_id}
+  - {from: WorkflowRun, type: belongs_to, to: Workflow, via: WorkflowRunDetail.workflow_id}
+  - {from: Automation, type: has_many, to: AutomationRun, via: AutomationRun.automation_id}
+  - {from: AutomationRun, type: belongs_to, to: Issue, via: AutomationRun.issue_id}
+  - {from: Form, type: has_many, to: FormSubmission, via: path hierarchy}
+  - {from: FormSubmission, type: creates, to: Issue, via: FormSubmission.created_issue_id / created_issue_key}
+  - {from: ChatChannel, type: has_many, to: ChatMessage, via: ChatMessage.channel_id}
+  - {from: ChatMessage, type: belongs_to, to: ChatMessage, via: ChatMessage.parent_id / root_id, note: threaded replies}
+  - {from: ChatMessage, type: belongs_to, to: Member, via: ChatMessage.author_id}
+  - {from: Webhook, type: has_many, to: WebhookDelivery, via: path hierarchy}
+  - {from: ApiKey, type: has_one, to: ApiKeyUsage, via: ApiKeyUsage.key_id}
+  - {from: Activity, type: belongs_to, to: Member, via: Activity.actor_id}
+notes:
+  ref_reuse_is_low: >-
+    Only 7 of 127 schemas use a $ref to another schema in their properties (8 $ref edges total).
+    The graph is expressed almost entirely through flat *_id fields, so a code generator sees
+    strings where the domain has relationships. This is the second contract-quality gap after
+    the missing operationIds — an inline `x-ref` extension or a $ref on assignee/status/sprint
+    would make the graph machine-visible without changing the wire format.
+  agent_is_a_first_class_entity: >-
+    Notably, Agent and AgentSession sit in the core graph as peers of Member and Issue, not as a
+    bolt-on. An agent is assignable to an issue exactly like a person.
+render: null

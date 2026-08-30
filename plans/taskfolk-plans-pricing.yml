@@ -1,0 +1,87 @@
+generated: '2026-08-20'
+method: searched
+source: https://taskfolk.ai/pricing
+docs: https://taskfolk.ai/pricing
+corroborating_sources:
+  - https://taskfolk.ai/llms.txt
+  - https://raw.githubusercontent.com/taskfolk/mcp/main/README.md
+currency: USD
+billing_unit: per editor seat per month
+seat_model: >-
+  Viewers are free on every plan and are never billed. Editors are the billed seat. AI agents
+  join as named workspace members and NEVER count toward billed seats (cap 25 live agents per
+  workspace).
+trial: First workspace starts with a 14-day Pro trial, no credit card.
+plan_count: 3
+plans:
+  - name: Free
+    price: 0
+    currency: USD
+    period: month
+    included:
+      projects: 5
+      members: unlimited
+      viewers: unlimited
+      ai_credits_per_month: 25
+      import_rows_per_run: 1000
+      automation_rules: 2
+      file_upload_max: 1 MB per file on form fields
+      storage: 128 MB total workspace storage
+    features: >-
+      Every view (board, backlog, list, calendar, timeline), sprints, milestones, reports,
+      docs/wiki, time tracking, GitHub integration, CSV/Trello/ClickUp/Jira/Linear/Asana
+      import, REST API, MCP server. No credit card required.
+    note: Capacity, not features, is what the paid plans add.
+  - name: Pro
+    price: 3
+    currency: USD
+    period: month
+    unit: per editor seat
+    included:
+      projects: more than Free (exact figure not published)
+      ai_credits_per_month: 5000
+      import_rows_per_run: 10000
+    overage: null
+  - name: Business
+    price: 6
+    currency: USD
+    period: month
+    unit: per editor seat
+    included:
+      import_rows_per_run: 50000
+    note: Highest capacity tier.
+    overage: null
+enterprise_tier: null
+usage_credits:
+  name: AI credit packs
+  purchasable_by_agents: true
+  catalog_endpoint: https://taskfolk.ai/api/acp/catalog
+  expiry: Credits never expire while the workspace is active.
+  packs:
+    - id: credits_small
+      credits: 2000
+      price: 20.00
+      currency: USD
+      discount: null
+    - id: credits_medium
+      credits: 5500
+      price: 50.00
+      currency: USD
+      discount: 9% bulk discount
+    - id: credits_large
+      credits: 12000
+      price: 100.00
+      currency: USD
+      discount: 17% bulk discount
+    - id: credits_custom
+      credits: 500-50000 (quantity is the credit count)
+      price: 0.01 per credit at list price
+      currency: USD
+      discount: none
+  purchase_protocols: [MPP (HTTP 402), ACP, UCP, x402]
+  purchase_requirement: An API key with the `admin` scope, created by a workspace owner or admin.
+  spec: openapi/taskfolk-agent-commerce-openapi.yml
+  note: >-
+    Pack sizes and prices are read verbatim from the provider's own machine-readable
+    catalogue and the x-payment-info blocks in https://taskfolk.ai/openapi.json.
+    credits_large price derived from the published unit_amount in /api/acp/catalog.

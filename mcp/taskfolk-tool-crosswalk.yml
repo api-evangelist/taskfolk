@@ -1,0 +1,118 @@
+generated: '2026-08-20'
+method: derived
+source: >-
+  Derived by aligning the provider-published MCP tool names (github.com/taskfolk/mcp README,
+  llms.txt) with the live REST OpenAPI at openapi/taskfolk-product-api-openapi.yml
+  (187 operations, 111 paths, 127 schemas).
+purpose: >-
+  Bind each MCP tool to the REST operation that backs it so the tool inherits a REAL input
+  contract instead of a guessed one. Taskfolk is the unusual case where the crosswalk is
+  near-total by construction: the provider states both surfaces are generated from ONE
+  OpenAPI registry (buildOpenApiDocument) and an MCP tools/call re-enters the REST pipeline
+  in-process. There is no MCP-only capability and no REST-only capability by design.
+surfaces:
+  rest_openapi: openapi/taskfolk-product-api-openapi.yml   # 187 operations, public, unauthenticated to read
+  mcp: https://taskfolk.ai/api/mcp/v1                       # tools/list GATED (HTTP 401, bearer required)
+  graphql: null                                             # no GraphQL surface published
+  agent_commerce: openapi/taskfolk-agent-commerce-openapi.yml  # MPP/402 credit purchase, 4 ops, separate spec
+
+# CAVEAT THAT GOVERNS EVERY confidence BELOW:
+# The published OpenAPI declares NO operationId on ANY of its 187 operations. There is
+# therefore no operationId to bind to, and every row binds to the verbatim METHOD + path
+# that exists in the spec. Those are real and greppable; the operationIds are simply absent
+# from the contract. This is a genuine contract-quality gap, recorded in
+# conformance/taskfolk-conformance.yml, not a limitation of this crosswalk.
+binding_key: method+path
+
+crosswalk:
+  - tool: who_am_i
+    category: identity
+    rest: ['GET /v1/me']
+    binding: rest
+    confidence: high
+  - tool: search
+    category: search
+    rest: ['GET /v1/workspaces/{slug}/search']
+    binding: rest
+    confidence: high
+  - tool: list_projects
+    category: projects
+    rest: ['GET /v1/workspaces/{slug}/projects']
+    binding: rest
+    confidence: high
+  - tool: list_issues
+    category: issues
+    rest: ['GET /v1/workspaces/{slug}/projects/{key}/issues']
+    binding: rest
+    confidence: high
+  - tool: get_issue
+    category: issues
+    rest: ['GET /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}']
+    binding: rest
+    confidence: high
+  - tool: create_issue
+    category: issues
+    rest: ['POST /v1/workspaces/{slug}/projects/{key}/issues']
+    binding: rest
+    confidence: high
+  - tool: update_issue
+    category: issues
+    rest: ['PATCH /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}']
+    binding: rest
+    confidence: high
+  - tool: transition_issue
+    category: issues
+    rest: ['POST /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/transition']
+    binding: rest
+    confidence: high
+    note: >-
+      A dedicated transition endpoint exists separately from the generic PATCH, and
+      transition rules are enforced server-side on every write path including MCP.
+  - tool: list_issue_comments
+    category: comments
+    rest: ['GET /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/comments']
+    binding: rest
+    confidence: high
+  - tool: startAgentSession
+    category: agents
+    rest: ['POST /v1/workspaces/{slug}/agent-sessions']
+    binding: rest
+    confidence: high
+    note: >-
+      Named verbatim in the provider's MCP README ("a running session starts only when
+      the agent claims the work (startAgentSession over MCP or REST)"). This is the one
+      published tool name that is NOT snake_case, so the generator's naming is not
+      uniformly mechanical.
+
+mcp_only: []
+# No MCP-only tools. Both surfaces are emitted from one OpenAPI registry and MCP calls
+# re-enter the REST pipeline, so an MCP-only capability cannot exist without a REST twin.
+
+rest_only:
+  - capability: agentic commerce (credit purchase)
+    surface: openapi/taskfolk-agent-commerce-openapi.yml
+    rest: ['POST /api/mpp/v1/credits/small', 'POST /api/mpp/v1/credits/medium', 'POST /api/mpp/v1/credits/large', 'POST /api/mpp/v1/credits/custom']
+    reason: >-
+      Machine payments live on a separate spec and separate protocols (MPP/402, ACP, UCP,
+      x402), not on the MCP tool surface.
+  - capability: the remaining ~177 v1 REST operations
+    reason: >-
+      The provider states there are 180+ MCP tools generated one-to-one from the 187
+      REST operations, but tools/list is auth-gated (401) so only the 10 names the
+      provider published in prose can be bound here without fabrication. The unbound
+      operations are almost certainly tool-backed; this file records what was VERIFIED,
+      not what was inferred.
+    rest_groups: [Docs, Chat, Workflows, Forms, Portfolios, Goals, Key results, Sprints, Milestones, Releases, Automations, Custom fields, Saved views, Workspace views, Labels, Statuses, Members, Watchers, Notifications, Attachments, Time, Reports, Activity, Developer]
+
+coverage:
+  tools_named_by_provider: 10
+  tools_bound: 10
+  tools_unbound: 0
+  mcp_only: 0
+  provider_claimed_tool_count: 180
+  rest_ops_total: 187
+  rest_ops_with_a_verified_tool: 10
+  note: >-
+    tools_bound/tools_named = 10/10 (100% of what the provider published in prose).
+    rest_ops_with_a_verified_tool/rest_ops_total = 10/187 (5%) is a measurement ceiling
+    imposed by the gated tools/list, NOT an observed coverage gap.

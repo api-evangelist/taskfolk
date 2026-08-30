@@ -1,0 +1,191 @@
+generated: '2026-08-20'
+method: searched
+source: >-
+  openapi/taskfolk-product-api-openapi.yml, openapi/taskfolk-agent-commerce-openapi.yml, and the
+  live /.well-known/ documents saved under well-known/
+standards:
+  - id: openapi-3.1
+    conforms: true
+    evidence: 'Both published specs declare openapi: 3.1.0. Product API: 111 paths, 187 operations, 127 schemas.'
+  - id: oauth2-rfc6749
+    conforms: true
+    evidence: authorization_code + refresh_token grants published at https://taskfolk.ai/.well-known/oauth-authorization-server
+  - id: rfc8414-oauth-authorization-server-metadata
+    conforms: true
+    evidence: 'https://taskfolk.ai/.well-known/oauth-authorization-server returns 200 with issuer, authorization_endpoint, token_endpoint, scopes_supported'
+  - id: rfc9728-oauth-protected-resource-metadata
+    conforms: true
+    evidence: >-
+      https://taskfolk.ai/.well-known/oauth-protected-resource returns 200; the MCP endpoint's
+      401 carries WWW-Authenticate with a resource_metadata pointer at it.
+  - id: rfc7636-pkce
+    conforms: true
+    evidence: code_challenge_methods_supported = [S256]; auth.md states PKCE is required on every code exchange.
+  - id: rfc7591-dynamic-client-registration
+    conforms: true
+    evidence: registration_endpoint https://taskfolk.ai/api/oauth/register, unauthenticated by design
+  - id: rfc7009-token-revocation
+    conforms: true
+    evidence: revocation_endpoint https://taskfolk.ai/api/oauth/revoke
+  - id: oidc
+    conforms: false
+    evidence: '/.well-known/openid-configuration returns 404. Taskfolk is an OAuth AS, not an OpenID Provider.'
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: >-
+      No application/problem+json anywhere in either spec; errors use a vendor
+      { error: { code, message, details } } envelope.
+  - id: rfc9116-security-txt
+    conforms: false
+    evidence: /.well-known/security.txt returns 404 (negative control probe also 404s, so this is a real absence).
+  - id: idempotency
+    conforms: true
+    evidence: >-
+      Idempotency-Key request header on all mutating methods, with an explicit
+      `idempotency_violation` code in the ErrorEnvelope enum. Documented at
+      https://taskfolk.ai/blog/how-to-use-the-rest-api
+  - id: pagination
+    conforms: true
+    evidence: cursor/keyset pagination with `cursor` + `limit` params and pagination.next_cursor in responses
+  - id: rfc6750-bearer-token-usage
+    conforms: true
+    evidence: bearer_methods_supported = [header]; observed WWW-Authenticate Bearer challenge on 401.
+  - id: json-api
+    conforms: false
+    evidence: Plain JSON with a data/pagination envelope; no JSON:API media type or document structure.
+  - id: scim
+    conforms: claimed
+    evidence: >-
+      The changelog (July 2026, "Single sign-on and SCIM provisioning") states enterprise
+      workspaces can sign in with SAML or OpenID Connect and provision members through SCIM.
+      NO SCIM surface appears in the public 187-operation contract — no urn:ietf:params:scim
+      schema URNs, no /Users or /Groups paths — so this is recorded as a provider CLAIM on an
+      enterprise-gated surface, not a verified conformance.
+    claim_source: https://taskfolk.ai/changelog
+  - id: saml-oidc-sso
+    conforms: claimed
+    evidence: Same changelog entry; enterprise-gated, not visible in the public contract.
+    claim_source: https://taskfolk.ai/changelog
+  - id: odata
+    conforms: false
+    evidence: No $metadata surface, no OData query options.
+
+# ---------------------------------------------------------------------------
+# DOMAIN-STANDARD SIGNATURES — the contract declaring a standard for its own market.
+# Taskfolk's market (project management / issue tracking) has NO dominant interop
+# standard, so the reward-only domain_standard slot would normally be empty. It is not:
+# Taskfolk declares FIVE agent-native protocols in its own machine-readable documents.
+# ---------------------------------------------------------------------------
+domain_standards:
+  - id: mcp
+    name: Model Context Protocol
+    conforms: true
+    role: server
+    evidence: >-
+      /.well-known/mcp/server-card.json (schemaVersion 0.1.0) declares transport http at
+      https://taskfolk.ai/api/mcp/v1 with capabilities.tools true; protocol revision 2025-06-18;
+      registered in the official MCP registry as ai.taskfolk/mcp (status active, published 2026-08-19).
+    detail: mcp/taskfolk-mcp.yml
+  - id: a2a
+    name: Agent2Agent
+    conforms: partial
+    grade: flavored
+    evidence: >-
+      /.well-known/agent-card.json returns 200 with a real card (name, url, version, 6 skills,
+      capabilities object) but omits protocolVersion and uses supportedInterfaces rather than
+      additionalInterfaces. Graded flavored against A2A 1.0.0.
+    detail: a2a/taskfolk-a2a.yml
+  - id: acp
+    name: Agentic Commerce Protocol
+    conforms: true
+    version: '2026-01-16'
+    evidence: >-
+      /.well-known/acp.json declares protocol.name acp, api_base_url https://taskfolk.ai/api/acp,
+      services [checkout], and an item_catalog extension at https://taskfolk.ai/api/acp/catalog
+      (which returns a real 200 item list).
+    spec: https://github.com/agentic-commerce-protocol/agentic-commerce-protocol
+  - id: ucp
+    name: Universal Commerce Protocol
+    conforms: true
+    version: '2026-04-08'
+    evidence: >-
+      /.well-known/ucp declares service dev.ucp.shopping and capability dev.ucp.shopping.checkout
+      at https://taskfolk.ai/api/ucp/v1, with five checkout-session endpoints, two Stripe payment
+      handlers, and an Ed25519 JWK (kid utter-ucp-1) used to sign Payment-Receipt headers.
+    spec: https://ucp.dev/specification/overview/
+  - id: mpp
+    name: Machine Payments Protocol (HTTP 402)
+    conforms: true
+    evidence: >-
+      https://taskfolk.ai/openapi.json is a dedicated OpenAPI 3.1.0 whose four operations each
+      carry an x-payment-info block (intent charge, method stripe, amount, currency, offers[]).
+      The flow is a 402 + WWW-Authenticate Payment challenge answered with an
+      Authorization: Payment payload, returning a signed Payment-Receipt.
+    spec: https://mpp.dev
+    detail: openapi/taskfolk-agent-commerce-openapi.yml
+  - id: x402
+    name: x402 (HTTP 402 USDC payments)
+    conforms: claimed
+    evidence: >-
+      Declared in /.well-known/api-catalog (anchor https://taskfolk.ai/api, service-doc
+      https://x402.org) and described in llms.txt (exact scheme, USDC, X-PAYMENT request header,
+      X-PAYMENT-RESPONSE on settlement). No dedicated machine-readable x402 manifest is served —
+      /.well-known/x402 returns 404 — so this is recorded as CLAIMED, not verified.
+    spec: https://x402.org
+  - id: rfc9727-api-catalog
+    name: RFC 9727 API catalog (as an RFC 9264 linkset)
+    conforms: true
+    evidence: >-
+      /.well-known/api-catalog returns 200 with content-type application/linkset+json and six
+      anchors, each carrying service-desc and/or service-doc links. This is the discovery
+      document that makes the other five surfaces findable without reading marketing copy.
+  - id: llms-txt
+    name: llms.txt
+    conforms: true
+    evidence: 'https://taskfolk.ai/llms.txt returns 200 text/plain, 324 lines, with a Last updated date and an llms-full.txt companion.'
+  - id: agent-skills
+    name: Agent Skills (frontmatter + markdown)
+    conforms: true
+    evidence: >-
+      https://taskfolk.ai/api/skill/taskfolk-product.skill.md returns 200 text/markdown with
+      name / description / allowed-tools frontmatter. The MCP server card points at it as skillBundle.
+      The same URL re-fetched WITH a key returns a workspace-customised guide.
+  - id: content-signal
+    name: Content Signal (robots.txt)
+    conforms: true
+    evidence: 'robots.txt carries `Content-Signal: search=yes, ai-input=yes, ai-train=yes`, repeated per AI user-agent block.'
+compliance_program:
+  published: true
+  kind: regulatory posture + sub-processor disclosure — NOT third-party certification
+  url: https://taskfolk.ai/legal/privacy
+  regimes_named: [GDPR, UK GDPR, UAE PDPL, CCPA/CPRA]
+  certifications: []
+  certifications_note: >-
+    ZERO third-party certifications. The strings SOC 2, ISO 27001, PCI DSS, HIPAA and FedRAMP
+    appear nowhere on the site. This is a compliance POSTURE, not an audited program, and the
+    distinction matters to a regulated buyer.
+  data_controller: UTTER L.L.C-FZ, Meydan Grandstand, Dubai, UAE
+  data_residency: Database infrastructure operated by the provider in the EU (Finland)
+  sub_processors: [Resend (transactional email), Cloudflare (DNS/CDN/object storage), Stripe (payments), Anthropic (AI), OpenAI (AI), Google (analytics, consent-gated)]
+  ai_training_commitment: >-
+    "none of them may use your content to train models or for advertising" — an explicit
+    no-train commitment covering the named AI sub-processors.
+  retention:
+    account_and_workspace_data: while the account exists
+    soft_deleted_workspaces: 30 days from deletion, then purged
+    server_logs: 14 days
+    backups: 30 days, encrypted at rest
+  security_trust_strip:
+    url: https://taskfolk.ai/pricing
+    claims: [GDPR-aligned data handling, magic-link sign-in with no password database, no advertising trackers, files stored on Cloudflare R2]
+  trust_center: null
+  trust_center_probes:
+    - {host: trust.taskfolk.ai, dns: NXDOMAIN}
+    - {host: security.taskfolk.ai, dns: NXDOMAIN}
+    - {url: 'https://taskfolk.ai/trust', status: 404}
+    - {url: 'https://taskfolk.ai/security', status: 404}
+  note: >-
+    A Compliance pointer IS emitted (url https://taskfolk.ai/legal/privacy) because the provider
+    publishes a named regulatory posture, a sub-processor list, data residency and retention
+    windows. NO TrustCenter pointer is emitted — there is no trust center, and no certification
+    exists to point at.
