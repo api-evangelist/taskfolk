@@ -29,23 +29,23 @@ created: '2026-08-20'
 modified: '2026-08-20'
 specificationVersion: '0.21'
 tags:
-  - Project Management
-  - Issue Tracking
-  - Task Management
-  - Productivity
+  - project-management
+  - issue-tracking
+  - task-management
+  - productivity
   - Collaboration
   - MCP
   - AI Agents
   - agent-native
-  - Agentic Commerce
+  - agentic-commerce
   - A2A
   - REST API
   - OpenAPI
   - Webhook
   - Authentication
-  - Agile
-  - Sprints
-  - OKR
+  - agile
+  - sprints
+  - okr
   - Developer Tools
 tags_raw:
   - project-management
@@ -313,6 +313,8 @@ apis:
   humanURL: https://taskfolk.ai/api/v1/reference
   baseURL: https://taskfolk.ai/api
   tags:
+  - Custom Fields
+  tags_raw:
   - Custom fields
   properties:
   - type: OpenAPI
@@ -353,6 +355,8 @@ apis:
   humanURL: https://taskfolk.ai/api/v1/reference
   baseURL: https://taskfolk.ai/api
   tags:
+  - Developers
+  tags_raw:
   - Developer
   properties:
   - type: OpenAPI
@@ -553,6 +557,8 @@ apis:
   humanURL: https://taskfolk.ai/api/v1/reference
   baseURL: https://taskfolk.ai/api
   tags:
+  - Key Results
+  tags_raw:
   - Key results
   properties:
   - type: OpenAPI
@@ -753,6 +759,8 @@ apis:
   humanURL: https://taskfolk.ai/api/v1/reference
   baseURL: https://taskfolk.ai/api
   tags:
+  - MPP
+  tags_raw:
   - Mpp
   properties:
   - type: OpenAPI
@@ -793,6 +801,8 @@ apis:
   humanURL: https://taskfolk.ai/api/v1/reference
   baseURL: https://taskfolk.ai/api
   tags:
+  - Notification
+  tags_raw:
   - Notifications
   properties:
   - type: OpenAPI
@@ -833,6 +843,8 @@ apis:
   humanURL: https://taskfolk.ai/api/v1/reference
   baseURL: https://taskfolk.ai/api
   tags:
+  - Portfolio
+  tags_raw:
   - Portfolios
   properties:
   - type: OpenAPI
@@ -873,6 +885,8 @@ apis:
   humanURL: https://taskfolk.ai/api/v1/reference
   baseURL: https://taskfolk.ai/api
   tags:
+  - Project
+  tags_raw:
   - Projects
   properties:
   - type: OpenAPI
@@ -993,6 +1007,8 @@ apis:
   humanURL: https://taskfolk.ai/api/v1/reference
   baseURL: https://taskfolk.ai/api
   tags:
+  - Saved Views
+  tags_raw:
   - Saved views
   properties:
   - type: OpenAPI
@@ -1113,6 +1129,8 @@ apis:
   humanURL: https://taskfolk.ai/api/v1/reference
   baseURL: https://taskfolk.ai/api
   tags:
+  - Status
+  tags_raw:
   - Statuses
   properties:
   - type: OpenAPI
