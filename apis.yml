@@ -24,6 +24,22 @@ deliveryModel:
   - pricing
   generated: '2026-08-28'
   method: derived
+accessModel:
+  pricing: freemium
+  onboarding: self-serve
+  trial: false
+  try_now: true
+  public: false
+  label: Freemium · Self-serve signup
+  confidence: high
+  source:
+  - plans
+  - authentication
+  - scopes
+  - rate-limits
+  - security
+  generated: '2026-09-02'
+  method: derived
 image: https://taskfolk.ai/images/brand/taskfolk-icon.png
 created: '2026-08-20'
 modified: '2026-08-20'
@@ -1376,6 +1392,9 @@ generated:
   confidence: 92
   at: '2026-08-20T16:04:39.888Z'
 common:
+- type: CapabilityMap
+  url: capabilities/taskfolk-capability-edges.yml
+  name: Taskfolk Business Capability Map
 - type: MCPServer
   url: https://taskfolk.ai/api/mcp/v1
 - type: MCPServer
