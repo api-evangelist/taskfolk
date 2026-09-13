@@ -1,0 +1,83 @@
+generated: '2026-08-20'
+method: searched
+source: https://taskfolk.ai/.well-known/mcp/server-card.json (200), https://github.com/taskfolk/mcp (first-party
+  org repo, README), https://registry.modelcontextprotocol.io/v0/servers?search=taskfolk (official registry,
+  active), https://taskfolk.ai/llms.txt
+status: published
+deployment:
+  mode: remote
+  endpoint: https://taskfolk.ai/api/mcp/v1
+  install: null
+  package: null
+  auth: oauth
+  verified: probed
+  note: 'Remote ONLY. The first-party repo states it plainly: "This repo is the public listing for the
+    hosted server. There is no local install binary. Point your client at the URL." Clients register the
+    hosted URL (`claude mcp add taskfolk-product https://taskfolk.ai/api/mcp/v1 --header "Authorization:
+    Bearer <key>"`), which is a remote registration, not a stdio install. Auth is a workspace bearer API
+    key OR OAuth 2.0 authorization_code + PKCE; an anonymous POST to the endpoint returns HTTP 401 with
+    `WWW-Authenticate: Bearer realm="taskfolk-product", resource_metadata="https://taskfolk.ai/.well-known/oauth-protected-resource"`.'
+  probe_prior: (never probed)
+  probe: gated
+  probe_why: RFC 9728 challenge on the MCP path only
+  checked: '2026-09-11'
+  source: claimed-backlog re-probe 2026-09-11
+server:
+  name: taskfolk-product
+  registry_id: ai.taskfolk/mcp
+  registry: https://registry.modelcontextprotocol.io
+  registry_status: active
+  registry_published: '2026-08-19'
+  transport: streamable-http
+  url: https://taskfolk.ai/api/mcp/v1
+  protocol_revision: '2025-06-18'
+  server_card: https://taskfolk.ai/.well-known/mcp/server-card.json
+  repo: https://github.com/taskfolk/mcp
+  capabilities:
+    tools: true
+    prompts: false
+    resources: false
+authentication:
+  types:
+  - api-key-bearer
+  - oauth2-authorization-code-pkce
+  authorization_server: https://taskfolk.ai/.well-known/oauth-authorization-server
+  protected_resource: https://taskfolk.ai/.well-known/oauth-protected-resource
+  scope_filtered_tools: true
+  detail: tools/list is filtered by the calling key's scopes, so a read-only key sees only read-only tools.
+    The same bearer token works on REST and MCP.
+tools:
+  count_published: 180
+  generation: Tools are generated one-to-one from the same OpenAPI registry that produces the REST API
+    (buildOpenApiDocument), so REST and MCP cannot drift. A tools/call re-enters the REST pipeline in-process
+    — auth, scopes, rate limits, validation, idempotency and usage logging all apply identically.
+  live_introspection: gated
+  live_introspection_evidence:
+    url: https://taskfolk.ai/api/mcp/v1
+    method: POST {"jsonrpc":"2.0","id":1,"method":"tools/list"}
+    http_status: 401
+    body: '{"jsonrpc":"2.0","id":null,"error":{"code":-32001,"message":"Missing or invalid API key."}}'
+    note: Real inputSchemas require an authenticated tools/list. The names below are the provider-published
+      examples from github.com/taskfolk/mcp; every one maps to a REST operation in openapi/taskfolk-product-api-openapi.yml
+      (see the tool crosswalk). NOT fabricated and NOT exhaustive — the provider states there are 180+.
+  published_names:
+  - who_am_i
+  - search
+  - list_projects
+  - list_issues
+  - get_issue
+  - create_issue
+  - update_issue
+  - transition_issue
+  - list_issue_comments
+  - startAgentSession
+skill_bundle: https://taskfolk.ai/api/skill/taskfolk-product.skill.md
+clients_documented:
+- Claude Code
+- Claude Desktop
+- Cursor
+- VS Code
+- OpenCode
+- Codex
+- Generic MCP
+crosswalk: mcp/taskfolk-tool-crosswalk.yml
