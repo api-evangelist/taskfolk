@@ -61,7 +61,7 @@ tags:
   - Authentication
   - Agile
   - Sprints
-  - OKR
+  - OKRs
   - Developer Tools
 tags_raw:
   - project-management
@@ -209,6 +209,8 @@ apis:
   humanURL: https://taskfolk.ai/api/v1/reference
   baseURL: https://taskfolk.ai/api
   tags:
+  - Automation
+  tags_raw:
   - Automations
   properties:
   - type: OpenAPI
@@ -1347,6 +1349,8 @@ apis:
   humanURL: https://taskfolk.ai/api/v1/reference
   baseURL: https://taskfolk.ai/api
   tags:
+  - Workspace
+  tags_raw:
   - Workspaces
   properties:
   - type: OpenAPI
