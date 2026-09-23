@@ -12,7 +12,7 @@ tags:
 paths:
   /v1/workspaces/{slug}/projects/{key}/issues:
     get:
-      summary: List issues.
+      summary: List issues
       tags:
       - Issues
       security:
@@ -154,8 +154,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeyIssues
+      x-operation-id-source: derived
     post:
-      summary: Create an issue.
+      summary: Create an issue
       tags:
       - Issues
       security:
@@ -225,9 +227,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugProjectsByKeyIssues
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}:
     get:
-      summary: Issue detail.
+      summary: Issue detail
       tags:
       - Issues
       security:
@@ -300,8 +304,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeyIssuesByIssueKey
+      x-operation-id-source: derived
     patch:
-      summary: Update an issue.
+      summary: Update an issue
       tags:
       - Issues
       security:
@@ -379,8 +385,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugProjectsByKeyIssuesByIssueKey
+      x-operation-id-source: derived
     delete:
-      summary: Archive an issue (soft).
+      summary: Archive an issue (soft)
       tags:
       - Issues
       security:
@@ -453,9 +461,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugProjectsByKeyIssuesByIssueKey
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/restore:
     post:
-      summary: Restore an archived issue.
+      summary: Restore an archived issue
       tags:
       - Issues
       security:
@@ -528,9 +538,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugProjectsByKeyIssuesByIssueKeyRestore
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/transition:
     post:
-      summary: Transition status (board move).
+      summary: Transition status (board move)
       tags:
       - Issues
       security:
@@ -608,9 +620,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugProjectsByKeyIssuesByIssueKeyTransition
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/issues/bulk:
     post:
-      summary: Bulk-create issues (1–50). Returns a per-item result array; 201 when all succeed, 207 when some fail.
+      summary: Bulk-create issues (1–50).
       tags:
       - Issues
       security:
@@ -685,9 +699,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugProjectsByKeyIssuesBulk
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/links:
     get:
-      summary: List links for an issue (both directions).
+      summary: List links for an issue (both directions)
       tags:
       - Issues
       security:
@@ -765,8 +781,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeyIssuesByIssueKeyLinks
+      x-operation-id-source: derived
     post:
-      summary: Create a link between this issue and another (by KEY-NUM). Cross-project within the workspace is supported.
+      summary: Create a link between this issue and another (by KEY-NUM).
       tags:
       - Issues
       security:
@@ -844,9 +862,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugProjectsByKeyIssuesByIssueKeyLinks
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/links/{id}:
     delete:
-      summary: Remove a link.
+      summary: Remove a link
       tags:
       - Issues
       security:
@@ -935,9 +955,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugProjectsByKeyIssuesByIssueKeyLinksById
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/commits:
     get:
-      summary: List git commit references associated with this issue (populated by the GitHub/GitLab integration).
+      summary: List git commit references associated with this issue (populated by the…
       tags:
       - Issues
       security:
@@ -1027,8 +1049,61 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeyIssuesByIssueKeyCommits
+      x-operation-id-source: derived
 components:
   schemas:
+    BulkIssueResult:
+      anyOf:
+      - type: object
+        properties:
+          index:
+            type: integer
+          ok:
+            type: boolean
+            enum:
+            - true
+          data:
+            $ref: '#/components/schemas/Issue'
+        required:
+        - index
+        - ok
+        - data
+      - type: object
+        properties:
+          index:
+            type: integer
+          ok:
+            type: boolean
+            enum:
+            - false
+          error:
+            type: object
+            properties:
+              code:
+                type: string
+                enum:
+                - unauthorized
+                - forbidden
+                - not_found
+                - validation
+                - rate_limited
+                - conflict
+                - idempotency_violation
+                - internal_error
+                example: validation
+              message:
+                type: string
+              details:
+                type: object
+                additionalProperties: {}
+            required:
+            - code
+            - message
+        required:
+        - index
+        - ok
+        - error
     Issue:
       type: object
       properties:
@@ -1204,87 +1279,17 @@ components:
       - archived_at
       - created_at
       - updated_at
-    Label:
+    BulkIssuesCreateInput:
       type: object
       properties:
-        id:
-          type: string
-        name:
-          type: string
-          example: frontend
-        color:
-          type: string
-          example: '#f5c518'
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/IssueCreateInput'
+          minItems: 1
+          maxItems: 50
       required:
-      - id
-      - name
-      - color
-      - created_at
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
-    IssueTransitionInput:
-      type: object
-      properties:
-        status:
-          type: string
-          enum:
-          - backlog
-          - todo
-          - in_progress
-          - in_review
-          - done
-          - failed
-          - cancelled
-        rank:
-          type: string
-      required:
-      - status
-    IssueLink:
-      type: object
-      properties:
-        id:
-          type: string
-        kind:
-          type: string
-          enum:
-          - relates_to
-          - blocks
-          - duplicates
-        direction:
-          type: string
-          enum:
-          - out
-          - in
-          description: '"out" = anchor → target, "in" = target → anchor.'
-        target_key:
-          type: string
-          example: WEB-12
-        target_title:
-          type: string
-        target_status:
-          type: string
-        target_project_slug:
-          type: string
-      required:
-      - id
-      - kind
-      - direction
-      - target_key
-      - target_title
-      - target_status
-      - target_project_slug
+      - items
     IssueCreateInput:
       type: object
       properties:
@@ -1356,6 +1361,73 @@ components:
       required:
       - type
       - title
+    CommitRef:
+      type: object
+      properties:
+        id:
+          type: string
+        repo:
+          type: string
+          example: utter-ae/product
+        sha:
+          type: string
+          example: a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2
+        message:
+          type: string
+        url:
+          type: string
+          example: https://github.com/utter-ae/product/commit/a1b2c3
+        author:
+          type:
+          - string
+          - 'null'
+        committed_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - repo
+      - sha
+      - message
+      - url
+      - author
+      - committed_at
+    IssueLinkCreateInput:
+      type: object
+      properties:
+        kind:
+          type: string
+          enum:
+          - relates_to
+          - blocks
+          - duplicates
+        direction:
+          type: string
+          enum:
+          - out
+          - in
+          description: '"out" = anchor blocks/relates_to/duplicates target; "in" = target → anchor.'
+        target_key:
+          type: string
+          description: Target issue KEY-NUM (e.g. WEB-12). Cross-project within the workspace is supported.
+          example: WEB-12
+      required:
+      - kind
+      - direction
+      - target_key
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
     IssuePatchInput:
       type: object
       properties:
@@ -1439,91 +1511,43 @@ components:
           type:
           - string
           - 'null'
-    CommitRef:
+    Label:
       type: object
       properties:
         id:
           type: string
-        repo:
+        name:
           type: string
-          example: utter-ae/product
-        sha:
+          example: frontend
+        color:
           type: string
-          example: a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2
-        message:
+          example: '#f5c518'
+        created_at:
           type: string
-        url:
-          type: string
-          example: https://github.com/utter-ae/product/commit/a1b2c3
-        author:
-          type:
-          - string
-          - 'null'
-        committed_at:
-          type:
-          - string
-          - 'null'
           format: date-time
           example: '2026-05-28T14:30:00Z'
       required:
       - id
-      - repo
-      - sha
-      - message
-      - url
-      - author
-      - committed_at
-    BulkIssueResult:
-      anyOf:
-      - type: object
-        properties:
-          index:
-            type: integer
-          ok:
-            type: boolean
-            enum:
-            - true
-          data:
-            $ref: '#/components/schemas/Issue'
-        required:
-        - index
-        - ok
-        - data
-      - type: object
-        properties:
-          index:
-            type: integer
-          ok:
-            type: boolean
-            enum:
-            - false
-          error:
-            type: object
-            properties:
-              code:
-                type: string
-                enum:
-                - unauthorized
-                - forbidden
-                - not_found
-                - validation
-                - rate_limited
-                - conflict
-                - idempotency_violation
-                - internal_error
-                example: validation
-              message:
-                type: string
-              details:
-                type: object
-                additionalProperties: {}
-            required:
-            - code
-            - message
-        required:
-        - index
-        - ok
-        - error
+      - name
+      - color
+      - created_at
+    IssueTransitionInput:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - backlog
+          - todo
+          - in_progress
+          - in_review
+          - done
+          - failed
+          - cancelled
+        rank:
+          type: string
+      required:
+      - status
     ErrorEnvelope:
       type: object
       properties:
@@ -1553,9 +1577,11 @@ components:
           - message
       required:
       - error
-    IssueLinkCreateInput:
+    IssueLink:
       type: object
       properties:
+        id:
+          type: string
         kind:
           type: string
           enum:
@@ -1567,26 +1593,24 @@ components:
           enum:
           - out
           - in
-          description: '"out" = anchor blocks/relates_to/duplicates target; "in" = target → anchor.'
+          description: '"out" = anchor → target, "in" = target → anchor.'
         target_key:
           type: string
-          description: Target issue KEY-NUM (e.g. WEB-12). Cross-project within the workspace is supported.
           example: WEB-12
+        target_title:
+          type: string
+        target_status:
+          type: string
+        target_project_slug:
+          type: string
       required:
+      - id
       - kind
       - direction
       - target_key
-    BulkIssuesCreateInput:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/IssueCreateInput'
-          minItems: 1
-          maxItems: 50
-      required:
-      - items
+      - target_title
+      - target_status
+      - target_project_slug
   securitySchemes:
     bearerAuth:
       type: http

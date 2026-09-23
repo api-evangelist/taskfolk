@@ -1,0 +1,69 @@
+generated: '2026-08-20'
+method: probed
+source: >-
+  Live probes of every /.well-known/ path on taskfolk.ai, the only host in apis.yml
+  baseURL and the only host in the OpenAPI servers[] of both published specs.
+  A negative control (/.well-known/nonsense-control-probe) returned 404, so this
+  host is NOT an SPA catch-all and every 200 below is a real served document.
+soft_404_control:
+  path: /.well-known/nonsense-control-probe
+  status: 404
+  note: Control probe 404s — 200s recorded here are genuine documents, not a catch-all.
+hit_count: 5
+hosts:
+  - host: https://taskfolk.ai
+    documents:
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        file: taskfolk-oauth-authorization-server.json
+        note: >-
+          RFC 8414 authorization server metadata. Carries 47 scopes, PKCE S256, dynamic
+          client registration (RFC 7591) and a non-standard agent_auth block describing
+          anonymous agent registration and the claim ceremony.
+      - path: /.well-known/oauth-protected-resource
+        status: 200
+        file: taskfolk-oauth-protected-resource.json
+        note: >-
+          RFC 9728 protected resource metadata for the MCP endpoint
+          https://taskfolk.ai/api/mcp/v1 — the same 47 scopes, bearer in header.
+      - path: /.well-known/api-catalog
+        status: 200
+        file: taskfolk-api-catalog.json
+        content_type: application/linkset+json
+        note: >-
+          RFC 9727 API catalog as an RFC 9264 linkset. Enumerates SIX distinct API
+          surfaces (REST v1, MCP, ACP, UCP, MPP, x402) with service-desc + service-doc
+          links each. This document is what led the pipeline to the ACP/UCP/MPP surfaces.
+      - path: /.well-known/mcp/server-card.json
+        status: 200
+        file: taskfolk-mcp-server-card.json
+        note: MCP server card (schemaVersion 0.1.0) — transport, capabilities, OAuth, skillBundle.
+      - path: /.well-known/agent-card.json
+        status: 200
+        file: ../a2a/taskfolk-agent-card.json
+        note: A2A agent card — saved verbatim under a2a/ and graded there.
+      - path: /.well-known/acp.json
+        status: 200
+        file: taskfolk-acp.json
+        note: Agentic Commerce Protocol discovery (protocol version 2026-01-16).
+      - path: /.well-known/ucp
+        status: 200
+        file: taskfolk-ucp.json
+        note: >-
+          Universal Commerce Protocol profile (2026-04-08) incl. Ed25519 signing_keys
+          used to sign Payment-Receipt headers.
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+        note: Legacy pre-0.3 A2A path — not served; the canonical agent-card.json is.
+      - path: /.well-known/mcp.json
+        status: 404
+notes: >-
+  No RFC 9116 security.txt is served, so no SecurityTxt pointer is emitted. No
+  OIDC discovery document — Taskfolk is an OAuth 2.0 authorization server (RFC 8414),
+  not an OpenID Provider.

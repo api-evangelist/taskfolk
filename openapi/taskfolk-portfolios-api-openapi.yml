@@ -12,7 +12,7 @@ tags:
 paths:
   /v1/workspaces/{slug}/portfolios:
     get:
-      summary: List portfolios.
+      summary: List portfolios
       tags:
       - Portfolios
       security:
@@ -86,8 +86,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugPortfolios
+      x-operation-id-source: derived
     post:
-      summary: Create a portfolio (owner/admin-tier scope; per-plan cap).
+      summary: Create a portfolio (owner/admin-tier scope; per-plan cap)
       tags:
       - Portfolios
       security:
@@ -149,9 +151,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugPortfolios
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/portfolios/{portfolioId}:
     get:
-      summary: Get a portfolio.
+      summary: Get a portfolio
       tags:
       - Portfolios
       security:
@@ -216,8 +220,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugPortfoliosByPortfolioId
+      x-operation-id-source: derived
     patch:
-      summary: Update a portfolio.
+      summary: Update a portfolio
       tags:
       - Portfolios
       security:
@@ -287,8 +293,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugPortfoliosByPortfolioId
+      x-operation-id-source: derived
     delete:
-      summary: Delete a portfolio (soft). Its goals become company goals; project links are removed.
+      summary: Delete a portfolio (soft).
       tags:
       - Portfolios
       security:
@@ -363,9 +371,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugPortfoliosByPortfolioId
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/portfolios/{portfolioId}/projects:
     get:
-      summary: List a portfolio's member projects.
+      summary: List a portfolio's member projects
       tags:
       - Portfolios
       security:
@@ -435,8 +445,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugPortfoliosByPortfolioIdProjects
+      x-operation-id-source: derived
     post:
-      summary: Add a project to a portfolio. Idempotent.
+      summary: Add a project to a portfolio. Idempotent
       tags:
       - Portfolios
       security:
@@ -506,9 +518,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugPortfoliosByPortfolioIdProjects
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/portfolios/{portfolioId}/projects/{projectId}:
     delete:
-      summary: Remove a project from a portfolio. Idempotent.
+      summary: Remove a project from a portfolio. Idempotent
       tags:
       - Portfolios
       security:
@@ -594,18 +608,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugPortfoliosByPortfolioIdProjectsByProjectId
+      x-operation-id-source: derived
 components:
   schemas:
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
     Portfolio:
       type: object
       properties:
@@ -647,14 +653,28 @@ components:
       - created_by
       - created_at
       - updated_at
-    PortfolioProjectAddInput:
+    PortfolioCreateInput:
       type: object
       properties:
-        project_id:
+        name:
           type: string
           minLength: 1
+          maxLength: 120
+        description_md:
+          type:
+          - string
+          - 'null'
+          maxLength: 10000
+        color:
+          type: string
+          pattern: ^#[0-9a-fA-F]{6}$
+          example: '#8b8f98'
+        lead_user_id:
+          type:
+          - string
+          - 'null'
       required:
-      - project_id
+      - name
     PortfolioPatchInput:
       type: object
       properties:
@@ -674,6 +694,34 @@ components:
           type:
           - string
           - 'null'
+    PortfolioProjectAddInput:
+      type: object
+      properties:
+        project_id:
+          type: string
+          minLength: 1
+      required:
+      - project_id
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    PortfolioProject:
+      type: object
+      properties:
+        portfolio_id:
+          type: string
+        project_id:
+          type: string
+      required:
+      - portfolio_id
+      - project_id
     ErrorEnvelope:
       type: object
       properties:
@@ -703,38 +751,6 @@ components:
           - message
       required:
       - error
-    PortfolioCreateInput:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 120
-        description_md:
-          type:
-          - string
-          - 'null'
-          maxLength: 10000
-        color:
-          type: string
-          pattern: ^#[0-9a-fA-F]{6}$
-          example: '#8b8f98'
-        lead_user_id:
-          type:
-          - string
-          - 'null'
-      required:
-      - name
-    PortfolioProject:
-      type: object
-      properties:
-        portfolio_id:
-          type: string
-        project_id:
-          type: string
-      required:
-      - portfolio_id
-      - project_id
   securitySchemes:
     bearerAuth:
       type: http

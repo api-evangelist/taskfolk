@@ -12,7 +12,7 @@ tags:
 paths:
   /v1/workspaces/{slug}/projects/{key}/releases:
     get:
-      summary: List releases for a project.
+      summary: List releases for a project
       tags:
       - Releases
       security:
@@ -94,8 +94,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeyReleases
+      x-operation-id-source: derived
     post:
-      summary: Create a release. Attach issues by PATCHing issue release_id.
+      summary: Create a release. Attach issues by PATCHing issue release_id
       tags:
       - Releases
       security:
@@ -165,9 +167,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugProjectsByKeyReleases
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/releases/{id}:
     get:
-      summary: Release detail.
+      summary: Release detail
       tags:
       - Releases
       security:
@@ -238,8 +242,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeyReleasesById
+      x-operation-id-source: derived
     patch:
-      summary: Update a release. Setting status=released stamps released_at.
+      summary: Update a release. Setting status=released stamps released_at
       tags:
       - Releases
       security:
@@ -315,8 +321,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugProjectsByKeyReleasesById
+      x-operation-id-source: derived
     delete:
-      summary: Delete a release (soft). Issues are detached.
+      summary: Delete a release (soft). Issues are detached
       tags:
       - Releases
       security:
@@ -397,8 +405,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugProjectsByKeyReleasesById
+      x-operation-id-source: derived
 components:
   schemas:
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
     ReleaseCreateInput:
       type: object
       properties:
@@ -432,16 +452,35 @@ components:
           description: Date (YYYY-MM-DD) or ISO 8601.
       required:
       - name
-    Pagination:
+    ReleasePatchInput:
       type: object
       properties:
-        next_cursor:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        version:
           type:
           - string
           - 'null'
-          example: null
-      required:
-      - next_cursor
+          maxLength: 64
+        description_md:
+          type:
+          - string
+          - 'null'
+        status:
+          type: string
+          enum:
+          - planned
+          - in_progress
+          - released
+          - cancelled
+          description: Setting status=released stamps released_at; leaving it clears released_at.
+        target_date:
+          type:
+          - string
+          - 'null'
+          description: Date (YYYY-MM-DD) or ISO 8601.
     ErrorEnvelope:
       type: object
       properties:
@@ -522,35 +561,6 @@ components:
       - target_date
       - released_at
       - rank
-    ReleasePatchInput:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 120
-        version:
-          type:
-          - string
-          - 'null'
-          maxLength: 64
-        description_md:
-          type:
-          - string
-          - 'null'
-        status:
-          type: string
-          enum:
-          - planned
-          - in_progress
-          - released
-          - cancelled
-          description: Setting status=released stamps released_at; leaving it clears released_at.
-        target_date:
-          type:
-          - string
-          - 'null'
-          description: Date (YYYY-MM-DD) or ISO 8601.
   securitySchemes:
     bearerAuth:
       type: http

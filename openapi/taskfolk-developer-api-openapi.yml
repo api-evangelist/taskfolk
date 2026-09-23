@@ -12,7 +12,7 @@ tags:
 paths:
   /v1/workspaces/{slug}/api-keys:
     get:
-      summary: List API keys.
+      summary: List API keys
       tags:
       - Developer
       security:
@@ -86,8 +86,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugApiKeys
+      x-operation-id-source: derived
     post:
-      summary: Create an API key. Plaintext is returned exactly once.
+      summary: Create an API key. Plaintext is returned exactly once
       tags:
       - Developer
       security:
@@ -149,9 +151,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugApiKeys
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/api-keys/{id}:
     get:
-      summary: API key detail.
+      summary: API key detail
       tags:
       - Developer
       security:
@@ -214,8 +218,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugApiKeysById
+      x-operation-id-source: derived
     patch:
-      summary: Update API key rate limit.
+      summary: Update API key rate limit
       tags:
       - Developer
       security:
@@ -283,8 +289,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugApiKeysById
+      x-operation-id-source: derived
     delete:
-      summary: Revoke an API key.
+      summary: Revoke an API key
       tags:
       - Developer
       security:
@@ -357,9 +365,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugApiKeysById
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/api-keys/{id}/usage:
     get:
-      summary: Per-day request/error/latency rollup for a single API key (max 90-day window).
+      summary: Per-day request/error/latency rollup for a single API key (max 90-day window)
       tags:
       - Developer
       security:
@@ -438,9 +448,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugApiKeysByIdUsage
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/webhooks:
     get:
-      summary: List webhooks.
+      summary: List webhooks
       tags:
       - Developer
       security:
@@ -514,8 +526,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugWebhooks
+      x-operation-id-source: derived
     post:
-      summary: Create a webhook. Signing secret is returned exactly once.
+      summary: Create a webhook. Signing secret is returned exactly once
       tags:
       - Developer
       security:
@@ -577,9 +591,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugWebhooks
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/webhooks/{id}:
     get:
-      summary: Webhook detail.
+      summary: Webhook detail
       tags:
       - Developer
       security:
@@ -642,8 +658,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugWebhooksById
+      x-operation-id-source: derived
     patch:
-      summary: Update or re-enable a webhook.
+      summary: Update or re-enable a webhook
       tags:
       - Developer
       security:
@@ -711,8 +729,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugWebhooksById
+      x-operation-id-source: derived
     delete:
-      summary: Delete a webhook.
+      summary: Delete a webhook
       tags:
       - Developer
       security:
@@ -785,9 +805,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugWebhooksById
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/webhooks/{id}/deliveries:
     get:
-      summary: List recent webhook delivery history.
+      summary: List recent webhook delivery history
       tags:
       - Developer
       security:
@@ -867,9 +889,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugWebhooksByIdDeliveries
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/webhooks/{id}/rotate-secret:
     post:
-      summary: Rotate webhook signing secret. New secret is returned exactly once.
+      summary: Rotate webhook signing secret. New secret is returned exactly once
       tags:
       - Developer
       security:
@@ -932,9 +956,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugWebhooksByIdRotateSecret
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/webhooks/{id}/test:
     post:
-      summary: Send one signed webhook.test delivery to the endpoint.
+      summary: Send one signed webhook.test delivery to the endpoint
       tags:
       - Developer
       security:
@@ -997,9 +1023,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugWebhooksByIdTest
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/oauth-apps:
     get:
-      summary: List OAuth apps.
+      summary: List OAuth apps
       tags:
       - Developer
       security:
@@ -1073,8 +1101,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugOauthApps
+      x-operation-id-source: derived
     post:
-      summary: Register an OAuth app. client_secret is returned exactly once (null for public/PKCE clients).
+      summary: Register an OAuth app.
       tags:
       - Developer
       security:
@@ -1136,9 +1166,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugOauthApps
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/oauth-apps/{clientId}:
     get:
-      summary: OAuth app detail.
+      summary: OAuth app detail
       tags:
       - Developer
       security:
@@ -1203,8 +1235,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugOauthAppsByClientId
+      x-operation-id-source: derived
     delete:
-      summary: Revoke an OAuth app.
+      summary: Revoke an OAuth app
       tags:
       - Developer
       security:
@@ -1279,31 +1313,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugOauthAppsByClientId
+      x-operation-id-source: derived
 components:
   schemas:
-    Pagination:
+    WebhookCreateInput:
       type: object
       properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
+        url:
+          type: string
+          format: uri
+          example: https://example.com/taskfolk/webhook
+        event_types:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          example:
+          - '*'
       required:
-      - next_cursor
-    CreatedOauthApp:
-      allOf:
-      - $ref: '#/components/schemas/OauthApp'
-      - type: object
-        properties:
-          client_secret:
-            type:
-            - string
-            - 'null'
-            example: utos_...
-            description: Returned exactly once on create. Null for public (PKCE) clients.
-        required:
-        - client_secret
+      - url
+      - event_types
     OauthApp:
       type: object
       properties:
@@ -1341,244 +1371,6 @@ components:
       - scopes
       - is_public
       - created_at
-    ApiKeyPatchInput:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 80
-        rate_limit_per_minute:
-          type:
-          - integer
-          - 'null'
-          minimum: 1
-          maximum: 100000
-        expires_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-    OauthAppCreateInput:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 120
-          example: My CI Integration
-        redirect_uris:
-          type: array
-          items:
-            type: string
-            format: uri
-          minItems: 1
-          maxItems: 20
-          example:
-          - https://example.com/callback
-        scopes:
-          type: array
-          items:
-            type: string
-          minItems: 1
-          example:
-          - issues:read
-        is_public:
-          type: boolean
-          description: Set true for PKCE public clients (no secret).
-          example: false
-      required:
-      - name
-      - redirect_uris
-      - scopes
-    ApiKeyUsageDayPoint:
-      type: object
-      properties:
-        date:
-          type: string
-          example: '2026-06-15'
-        requests:
-          type: integer
-        errors:
-          type: integer
-        p50_ms:
-          type: integer
-        p95_ms:
-          type: integer
-        p99_ms:
-          type: integer
-      required:
-      - date
-      - requests
-      - errors
-      - p50_ms
-      - p95_ms
-      - p99_ms
-    WebhookPatchInput:
-      type: object
-      properties:
-        url:
-          type: string
-          format: uri
-        event_types:
-          type: array
-          items:
-            type: string
-          minItems: 1
-        enabled:
-          type: boolean
-    CreatedApiKey:
-      allOf:
-      - $ref: '#/components/schemas/ApiKey'
-      - type: object
-        properties:
-          plaintext:
-            type: string
-            example: tfk_live_abcd1234...
-            description: Returned exactly once on create. Store it securely.
-        required:
-        - plaintext
-    WebhookCreateInput:
-      type: object
-      properties:
-        url:
-          type: string
-          format: uri
-          example: https://example.com/taskfolk/webhook
-        event_types:
-          type: array
-          items:
-            type: string
-          minItems: 1
-          example:
-          - '*'
-      required:
-      - url
-      - event_types
-    Webhook:
-      type: object
-      properties:
-        id:
-          type: string
-        url:
-          type: string
-          format: uri
-          example: https://example.com/taskfolk/webhook
-        event_types:
-          type: array
-          items:
-            type: string
-          example:
-          - issue.created
-          - comment.created
-        secret_prefix:
-          type: string
-        disabled_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        last_delivery_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        last_delivery_status:
-          type:
-          - integer
-          - 'null'
-        created_by:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - url
-      - event_types
-      - secret_prefix
-      - disabled_at
-      - last_delivery_at
-      - last_delivery_status
-      - created_by
-      - created_at
-    ErrorEnvelope:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
-      required:
-      - error
-    CreatedWebhook:
-      allOf:
-      - $ref: '#/components/schemas/Webhook'
-      - type: object
-        properties:
-          secret:
-            type: string
-            example: utwhsec_...
-            description: Returned exactly once on create or rotation.
-        required:
-        - secret
-    ApiKeyCreateInput:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 80
-        scopes:
-          type: array
-          items:
-            type: string
-          minItems: 1
-        project_ids:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-        expires_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        rate_limit_per_minute:
-          type:
-          - integer
-          - 'null'
-          minimum: 1
-          maximum: 100000
-      required:
-      - name
-      - scopes
     ApiKey:
       type: object
       properties:
@@ -1653,41 +1445,19 @@ components:
       - last_used_ip
       - revoked_at
       - revoke_reason
-    WebhookDelivery:
+    WebhookPatchInput:
       type: object
       properties:
-        delivery_id:
+        url:
           type: string
-        event_type:
-          type: string
-          example: webhook.test
-        attempt:
-          type: integer
-          example: 1
-        status:
-          type: integer
-          example: 200
-        latency_ms:
-          type: integer
-          example: 123
-        error:
-          type: string
-        final:
-          type: integer
-          example: 1
-        ts:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - delivery_id
-      - event_type
-      - attempt
-      - status
-      - latency_ms
-      - error
-      - final
-      - ts
+          format: uri
+        event_types:
+          type: array
+          items:
+            type: string
+          minItems: 1
+        enabled:
+          type: boolean
     ApiKeyUsage:
       type: object
       properties:
@@ -1727,6 +1497,272 @@ components:
       - granularity
       - series
       - totals
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    Webhook:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+          format: uri
+          example: https://example.com/taskfolk/webhook
+        event_types:
+          type: array
+          items:
+            type: string
+          example:
+          - issue.created
+          - comment.created
+        secret_prefix:
+          type: string
+        disabled_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        last_delivery_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        last_delivery_status:
+          type:
+          - integer
+          - 'null'
+        created_by:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - url
+      - event_types
+      - secret_prefix
+      - disabled_at
+      - last_delivery_at
+      - last_delivery_status
+      - created_by
+      - created_at
+    ApiKeyPatchInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        rate_limit_per_minute:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 100000
+        expires_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+    CreatedApiKey:
+      allOf:
+      - $ref: '#/components/schemas/ApiKey'
+      - type: object
+        properties:
+          plaintext:
+            type: string
+            example: tfk_live_abcd1234...
+            description: Returned exactly once on create. Store it securely.
+        required:
+        - plaintext
+    ApiKeyUsageDayPoint:
+      type: object
+      properties:
+        date:
+          type: string
+          example: '2026-06-15'
+        requests:
+          type: integer
+        errors:
+          type: integer
+        p50_ms:
+          type: integer
+        p95_ms:
+          type: integer
+        p99_ms:
+          type: integer
+      required:
+      - date
+      - requests
+      - errors
+      - p50_ms
+      - p95_ms
+      - p99_ms
+    CreatedOauthApp:
+      allOf:
+      - $ref: '#/components/schemas/OauthApp'
+      - type: object
+        properties:
+          client_secret:
+            type:
+            - string
+            - 'null'
+            example: utos_...
+            description: Returned exactly once on create. Null for public (PKCE) clients.
+        required:
+        - client_secret
+    WebhookDelivery:
+      type: object
+      properties:
+        delivery_id:
+          type: string
+        event_type:
+          type: string
+          example: webhook.test
+        attempt:
+          type: integer
+          example: 1
+        status:
+          type: integer
+          example: 200
+        latency_ms:
+          type: integer
+          example: 123
+        error:
+          type: string
+        final:
+          type: integer
+          example: 1
+        ts:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - delivery_id
+      - event_type
+      - attempt
+      - status
+      - latency_ms
+      - error
+      - final
+      - ts
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
+    OauthAppCreateInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+          example: My CI Integration
+        redirect_uris:
+          type: array
+          items:
+            type: string
+            format: uri
+          minItems: 1
+          maxItems: 20
+          example:
+          - https://example.com/callback
+        scopes:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          example:
+          - issues:read
+        is_public:
+          type: boolean
+          description: Set true for PKCE public clients (no secret).
+          example: false
+      required:
+      - name
+      - redirect_uris
+      - scopes
+    ApiKeyCreateInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        scopes:
+          type: array
+          items:
+            type: string
+          minItems: 1
+        project_ids:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        expires_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        rate_limit_per_minute:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 100000
+      required:
+      - name
+      - scopes
+    CreatedWebhook:
+      allOf:
+      - $ref: '#/components/schemas/Webhook'
+      - type: object
+        properties:
+          secret:
+            type: string
+            example: utwhsec_...
+            description: Returned exactly once on create or rotation.
+        required:
+        - secret
   securitySchemes:
     bearerAuth:
       type: http

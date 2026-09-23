@@ -12,7 +12,7 @@ tags:
 paths:
   /v1/workspaces/{slug}/projects/{key}/sprints:
     get:
-      summary: List sprints for a project.
+      summary: List sprints for a project
       tags:
       - Sprints
       security:
@@ -94,8 +94,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeySprints
+      x-operation-id-source: derived
     post:
-      summary: Create a sprint. Attach issues by PATCHing issue sprint_id.
+      summary: Create a sprint. Attach issues by PATCHing issue sprint_id
       tags:
       - Sprints
       security:
@@ -165,9 +167,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugProjectsByKeySprints
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/sprints/{id}:
     get:
-      summary: Sprint detail.
+      summary: Sprint detail
       tags:
       - Sprints
       security:
@@ -238,8 +242,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeySprintsById
+      x-operation-id-source: derived
     patch:
-      summary: Update a sprint. Setting status=active demotes any other active sprint.
+      summary: Update a sprint. Setting status=active demotes any other active sprint
       tags:
       - Sprints
       security:
@@ -315,8 +321,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugProjectsByKeySprintsById
+      x-operation-id-source: derived
     delete:
-      summary: Delete a sprint (soft). Issues are detached.
+      summary: Delete a sprint (soft). Issues are detached
       tags:
       - Sprints
       security:
@@ -397,18 +405,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugProjectsByKeySprintsById
+      x-operation-id-source: derived
 components:
   schemas:
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
     SprintPatchInput:
       type: object
       properties:
@@ -438,6 +438,35 @@ components:
           - string
           - 'null'
           description: Date or ISO 8601.
+    SprintCreateInput:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Sprint 7
+        goal:
+          type:
+          - string
+          - 'null'
+          description: Sprint goal (markdown).
+        status:
+          type: string
+          enum:
+          - planned
+          - active
+          - completed
+        start_at:
+          type:
+          - string
+          - 'null'
+          description: Date or ISO 8601.
+        end_at:
+          type:
+          - string
+          - 'null'
+          description: Date or ISO 8601.
+      required:
+      - name
     Sprint:
       type: object
       properties:
@@ -479,6 +508,16 @@ components:
       - start_at
       - end_at
       - rank
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
     ErrorEnvelope:
       type: object
       properties:
@@ -508,35 +547,6 @@ components:
           - message
       required:
       - error
-    SprintCreateInput:
-      type: object
-      properties:
-        name:
-          type: string
-          example: Sprint 7
-        goal:
-          type:
-          - string
-          - 'null'
-          description: Sprint goal (markdown).
-        status:
-          type: string
-          enum:
-          - planned
-          - active
-          - completed
-        start_at:
-          type:
-          - string
-          - 'null'
-          description: Date or ISO 8601.
-        end_at:
-          type:
-          - string
-          - 'null'
-          description: Date or ISO 8601.
-      required:
-      - name
   securitySchemes:
     bearerAuth:
       type: http

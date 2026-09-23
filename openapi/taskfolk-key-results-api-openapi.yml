@@ -8,13 +8,13 @@ servers:
 security:
 - bearerAuth: []
 tags:
-- name: Key results
+- name: Key Results
 paths:
   /v1/workspaces/{slug}/goals/{goalId}/key-results:
     get:
-      summary: List a goal's key results.
+      summary: List a goal's key results
       tags:
-      - Key results
+      - Key Results
       security:
       - bearerAuth:
         - goals:read
@@ -82,10 +82,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugGoalsByGoalIdKeyResults
+      x-operation-id-source: derived
     post:
-      summary: Create a key result (manual metric or auto scope roll-up).
+      summary: Create a key result (manual metric or auto scope roll-up)
       tags:
-      - Key results
+      - Key Results
       security:
       - bearerAuth:
         - goals:write
@@ -153,11 +155,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugGoalsByGoalIdKeyResults
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/goals/{goalId}/key-results/{keyResultId}:
     patch:
-      summary: Update a key result.
+      summary: Update a key result
       tags:
-      - Key results
+      - Key Results
       security:
       - bearerAuth:
         - goals:write
@@ -233,10 +237,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugGoalsByGoalIdKeyResultsByKeyResultId
+      x-operation-id-source: derived
     delete:
-      summary: Delete a key result (soft).
+      summary: Delete a key result (soft)
       tags:
-      - Key results
+      - Key Results
       security:
       - bearerAuth:
         - goals:write
@@ -317,18 +323,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugGoalsByGoalIdKeyResultsByKeyResultId
+      x-operation-id-source: derived
 components:
   schemas:
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
     KeyResultCreateInput:
       type: object
       properties:
@@ -538,6 +536,16 @@ components:
               - string
               - 'null'
           description: Applied only to auto KRs.
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
     ErrorEnvelope:
       type: object
       properties:

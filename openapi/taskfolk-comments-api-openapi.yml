@@ -12,7 +12,7 @@ tags:
 paths:
   /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/comments:
     get:
-      summary: List comments.
+      summary: List comments
       tags:
       - Comments
       security:
@@ -102,8 +102,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeyIssuesByIssueKeyComments
+      x-operation-id-source: derived
     post:
-      summary: Create a comment.
+      summary: Create a comment
       tags:
       - Comments
       security:
@@ -181,9 +183,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugProjectsByKeyIssuesByIssueKeyComments
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/comments/bulk:
     post:
-      summary: Bulk-create comments on one issue (1–50). Returns a per-item result array; 201 when all succeed, 207 when some fail.
+      summary: Bulk-create comments on one issue (1–50).
       tags:
       - Comments
       security:
@@ -266,9 +270,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugProjectsByKeyIssuesByIssueKeyCommentsBulk
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/comments/{id}:
     patch:
-      summary: Edit a comment.
+      summary: Edit a comment
       tags:
       - Comments
       security:
@@ -352,8 +358,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugProjectsByKeyIssuesByIssueKeyCommentsById
+      x-operation-id-source: derived
     delete:
-      summary: Delete a comment.
+      summary: Delete a comment
       tags:
       - Comments
       security:
@@ -442,8 +450,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugProjectsByKeyIssuesByIssueKeyCommentsById
+      x-operation-id-source: derived
 components:
   schemas:
+    BulkCommentsCreateInput:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommentCreateInput'
+          minItems: 1
+          maxItems: 50
+      required:
+      - items
     Pagination:
       type: object
       properties:
@@ -505,42 +526,6 @@ components:
         - index
         - ok
         - error
-    Comment:
-      type: object
-      properties:
-        id:
-          type: string
-        issue_id:
-          type: string
-        author_id:
-          type: string
-        body_md:
-          type: string
-        body_html:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        updated_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - issue_id
-      - author_id
-      - body_md
-      - body_html
-      - created_at
-      - updated_at
-    CommentCreateInput:
-      type: object
-      properties:
-        body_md:
-          type: string
-      required:
-      - body_md
     ErrorEnvelope:
       type: object
       properties:
@@ -570,17 +555,42 @@ components:
           - message
       required:
       - error
-    BulkCommentsCreateInput:
+    CommentCreateInput:
       type: object
       properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/CommentCreateInput'
-          minItems: 1
-          maxItems: 50
+        body_md:
+          type: string
       required:
-      - items
+      - body_md
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+        issue_id:
+          type: string
+        author_id:
+          type: string
+        body_md:
+          type: string
+        body_html:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - issue_id
+      - author_id
+      - body_md
+      - body_html
+      - created_at
+      - updated_at
   securitySchemes:
     bearerAuth:
       type: http

@@ -12,7 +12,7 @@ tags:
 paths:
   /v1/workspaces:
     get:
-      summary: List workspaces this key can access.
+      summary: List workspaces this key can access
       tags:
       - Workspaces
       security:
@@ -78,9 +78,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1Workspaces
+      x-operation-id-source: derived
   /v1/workspaces/{slug}:
     get:
-      summary: Workspace detail.
+      summary: Workspace detail
       tags:
       - Workspaces
       security:
@@ -137,8 +139,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlug
+      x-operation-id-source: derived
     patch:
-      summary: Update workspace name.
+      summary: Update workspace name
       tags:
       - Workspaces
       security:
@@ -200,9 +204,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlug
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/usage:
     get:
-      summary: Read-only plan, storage, and AI-credit usage for the workspace.
+      summary: Read-only plan, storage, and AI-credit usage for the workspace
       tags:
       - Workspaces
       security:
@@ -259,52 +265,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugUsage
+      x-operation-id-source: derived
 components:
   schemas:
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
-    Workspace:
-      type: object
-      properties:
-        id:
-          type: string
-        slug:
-          type: string
-          example: taskfolk
-        name:
-          type: string
-          example: Taskfolk
-        default_locale:
-          type: string
-          example: en
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - slug
-      - name
-      - default_locale
-      - created_at
-    WorkspacePatchInput:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 100
-          example: Taskfolk
-      required:
-      - name
     WorkspaceUsage:
       type: object
       properties:
@@ -390,6 +354,50 @@ components:
       - plan
       - storage
       - ai_credits
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    WorkspacePatchInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: Taskfolk
+      required:
+      - name
+    Workspace:
+      type: object
+      properties:
+        id:
+          type: string
+        slug:
+          type: string
+          example: taskfolk
+        name:
+          type: string
+          example: Taskfolk
+        default_locale:
+          type: string
+          example: en
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - slug
+      - name
+      - default_locale
+      - created_at
     ErrorEnvelope:
       type: object
       properties:

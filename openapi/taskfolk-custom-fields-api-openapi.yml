@@ -8,13 +8,13 @@ servers:
 security:
 - bearerAuth: []
 tags:
-- name: Custom fields
+- name: Custom Fields
 paths:
   /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/custom-fields:
     get:
-      summary: List custom-field values on an issue.
+      summary: List custom-field values on an issue
       tags:
-      - Custom fields
+      - Custom Fields
       security:
       - bearerAuth:
         - custom_fields:read
@@ -90,11 +90,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeyIssuesByIssueKeyCustomFields
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/custom-fields/{fieldId}:
     put:
-      summary: Set a custom-field value.
+      summary: Set a custom-field value
       tags:
-      - Custom fields
+      - Custom Fields
       security:
       - bearerAuth:
         - custom_fields:write
@@ -175,10 +177,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: putV1WorkspacesBySlugProjectsByKeyIssuesByIssueKeyCustomFieldsByFieldId
+      x-operation-id-source: derived
     delete:
-      summary: Clear a custom-field value.
+      summary: Clear a custom-field value
       tags:
-      - Custom fields
+      - Custom Fields
       security:
       - bearerAuth:
         - custom_fields:write
@@ -254,11 +258,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugProjectsByKeyIssuesByIssueKeyCustomFieldsByFieldId
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/custom-field-defs:
     get:
-      summary: List custom-field definitions.
+      summary: List custom-field definitions
       tags:
-      - Custom fields
+      - Custom Fields
       security:
       - bearerAuth:
         - custom_fields:read
@@ -338,10 +344,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeyCustomFieldDefs
+      x-operation-id-source: derived
     post:
-      summary: Create a custom-field definition.
+      summary: Create a custom-field definition
       tags:
-      - Custom fields
+      - Custom Fields
       security:
       - bearerAuth:
         - custom_fields:write
@@ -409,11 +417,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugProjectsByKeyCustomFieldDefs
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/custom-field-defs/{id}:
     patch:
-      summary: Update a custom-field definition.
+      summary: Update a custom-field definition
       tags:
-      - Custom fields
+      - Custom Fields
       security:
       - bearerAuth:
         - custom_fields:write
@@ -519,10 +529,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugProjectsByKeyCustomFieldDefsById
+      x-operation-id-source: derived
     delete:
-      summary: Delete a custom-field definition.
+      summary: Delete a custom-field definition
       tags:
-      - Custom fields
+      - Custom Fields
       security:
       - bearerAuth:
         - custom_fields:write
@@ -601,22 +613,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugProjectsByKeyCustomFieldDefsById
+      x-operation-id-source: derived
 components:
   schemas:
-    Pagination:
+    CustomFieldValue:
       type: object
       properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
-    CustomFieldValueInput:
-      type: object
-      properties:
+        field_id:
+          type: string
+        name:
+          type: string
+        kind:
+          type: string
         value: {}
+      required:
+      - field_id
     CustomFieldDefCreateInput:
       type: object
       properties:
@@ -654,35 +666,16 @@ components:
       required:
       - name
       - kind
-    ErrorEnvelope:
+    Pagination:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
       required:
-      - error
+      - next_cursor
     CustomFieldDef:
       type: object
       properties:
@@ -730,18 +723,39 @@ components:
       - applies_to
       - required
       - rank
-    CustomFieldValue:
+    CustomFieldValueInput:
       type: object
       properties:
-        field_id:
-          type: string
-        name:
-          type: string
-        kind:
-          type: string
         value: {}
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
       required:
-      - field_id
+      - error
   securitySchemes:
     bearerAuth:
       type: http

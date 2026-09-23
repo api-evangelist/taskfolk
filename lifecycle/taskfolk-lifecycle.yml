@@ -1,0 +1,67 @@
+generated: '2026-08-20'
+method: searched
+source: >-
+  https://taskfolk.ai/changelog, https://taskfolk.ai/feedback, https://taskfolk.ai/llms.txt,
+  https://taskfolk.ai/llms-full.txt, and openapi/taskfolk-product-api-openapi.yml
+versioning:
+  scheme: uri-path
+  current: v1
+  spec_version: 1.0.0
+  docs: https://taskfolk.ai/api/v1/reference
+  note: >-
+    Single live major version. The REST surface and the MCP tool surface are generated from
+    one OpenAPI registry, so a version bump moves both at once.
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: false
+  deprecated_operations: []
+  note: >-
+    No deprecation policy is published and no operation in the 187-operation contract carries
+    `deprecated: true`. The strings "deprecat" and "Sunset" appear zero times in the spec.
+    Honest absence — not a Deprecation pointer.
+sla:
+  url: null
+  uptime_target: null
+  published: false
+status_page:
+  url: null
+  published: false
+  probes:
+    - url: https://taskfolk.ai/status
+      status: 404
+    - host: status.taskfolk.ai
+      dns: NXDOMAIN
+  note: >-
+    No status page. status.taskfolk.ai does not resolve and /status 404s. No StatusPage
+    pointer is emitted.
+change_log:
+  url: https://taskfolk.ai/changelog
+  published: true
+  cadence: monthly groupings, server-rendered
+  detail: changelog/taskfolk-changelog.yml
+roadmap:
+  url: https://taskfolk.ai/feedback
+  published: true
+  kind: public feedback board with voting and status tracking from open to shipped
+data_lifecycle:
+  soft_delete: true
+  restore_window: 30 days
+  restore_operations:
+    - 'POST /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/restore'
+    - 'POST /v1/workspaces/{slug}/projects/{key}/restore'
+    - 'POST /v1/workspaces/{slug}/docs/{id}/versions/{versionId}/restore'
+  after_window: A storage-reclaim sweep frees attachments and the recovery door closes.
+  detail: conventions/taskfolk-conventions.yml
+credential_lifecycle:
+  access_token_ttl: 1 hour
+  refresh_token_ttl: 30 days
+  revocation: RFC 7009 at https://taskfolk.ai/api/oauth/revoke
+  webhook_secret_rotation: 'POST /v1/workspaces/{slug}/webhooks/{id}/rotate-secret'
+  source: https://taskfolk.ai/llms-full.txt
+company:
+  operator: UTTER L.L.C-FZ
+  address: Meydan Grandstand, Dubai, UAE
+  support: hi@taskfolk.ai
+  support_sla: replies within one business day
+  source: https://taskfolk.ai/llms.txt

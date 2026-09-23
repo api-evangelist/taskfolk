@@ -8,13 +8,13 @@ servers:
 security:
 - bearerAuth: []
 tags:
-- name: Saved views
+- name: Saved Views
 paths:
   /v1/workspaces/{slug}/projects/{key}/saved-views:
     get:
-      summary: List saved views.
+      summary: List saved views
       tags:
-      - Saved views
+      - Saved Views
       security:
       - bearerAuth:
         - saved_views:read
@@ -82,10 +82,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeySavedViews
+      x-operation-id-source: derived
     post:
-      summary: Create a saved view.
+      summary: Create a saved view
       tags:
-      - Saved views
+      - Saved Views
       security:
       - bearerAuth:
         - saved_views:write
@@ -153,11 +155,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugProjectsByKeySavedViews
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/saved-views/{id}:
     patch:
-      summary: Update a saved view.
+      summary: Update a saved view
       tags:
-      - Saved views
+      - Saved Views
       security:
       - bearerAuth:
         - saved_views:write
@@ -237,10 +241,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugProjectsByKeySavedViewsById
+      x-operation-id-source: derived
     delete:
-      summary: Delete a saved view.
+      summary: Delete a saved view
       tags:
-      - Saved views
+      - Saved Views
       security:
       - bearerAuth:
         - saved_views:write
@@ -319,46 +325,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugProjectsByKeySavedViewsById
+      x-operation-id-source: derived
 components:
   schemas:
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
-    SavedView:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        filter:
-          description: Opaque filter blob (issueTypes[], priorities[], assigneeId, sort…).
-        is_shared:
-          type: boolean
-        created_by:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        updated_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - name
-      - is_shared
-      - created_by
-      - created_at
-      - updated_at
     SavedViewCreateInput:
       type: object
       properties:
@@ -398,6 +368,44 @@ components:
           - message
       required:
       - error
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    SavedView:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        filter:
+          description: Opaque filter blob (issueTypes[], priorities[], assigneeId, sort…).
+        is_shared:
+          type: boolean
+        created_by:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - name
+      - is_shared
+      - created_by
+      - created_at
+      - updated_at
   securitySchemes:
     bearerAuth:
       type: http

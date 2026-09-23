@@ -12,7 +12,7 @@ tags:
 paths:
   /v1/workspaces/{slug}/projects/{key}/forms:
     get:
-      summary: List project forms.
+      summary: List project forms
       tags:
       - Forms
       security:
@@ -94,8 +94,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeyForms
+      x-operation-id-source: derived
     post:
-      summary: Create a form (admin-tier scope).
+      summary: Create a form (admin-tier scope)
       tags:
       - Forms
       security:
@@ -165,9 +167,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugProjectsByKeyForms
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/forms/{id}:
     get:
-      summary: Get a form with its ordered fields.
+      summary: Get a form with its ordered fields
       tags:
       - Forms
       security:
@@ -240,8 +244,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeyFormsById
+      x-operation-id-source: derived
     patch:
-      summary: Update form settings / publish / enable public sharing.
+      summary: Update form settings / publish / enable public sharing
       tags:
       - Forms
       security:
@@ -319,8 +325,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugProjectsByKeyFormsById
+      x-operation-id-source: derived
     delete:
-      summary: Soft-delete a form (disables public sharing).
+      summary: Soft-delete a form (disables public sharing)
       tags:
       - Forms
       security:
@@ -403,9 +411,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugProjectsByKeyFormsById
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/forms/{id}/fields:
     get:
-      summary: List a form's fields in order.
+      summary: List a form's fields in order
       tags:
       - Forms
       security:
@@ -495,9 +505,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeyFormsByIdFields
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/forms/{id}/submissions:
     get:
-      summary: List form submissions.
+      summary: List form submissions
       tags:
       - Forms
       security:
@@ -587,9 +599,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeyFormsByIdSubmissions
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/forms/{id}/submissions/{sid}:
     get:
-      summary: Get a single submission.
+      summary: Get a single submission
       tags:
       - Forms
       security:
@@ -669,183 +683,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeyFormsByIdSubmissionsBySid
+      x-operation-id-source: derived
 components:
   schemas:
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
-    FormField:
-      type: object
-      properties:
-        id:
-          type: string
-        position:
-          type: integer
-        kind:
-          type: string
-          enum:
-          - short_text
-          - long_text
-          - select
-          - multi_select
-          - number
-          - date
-          - email
-          - radio
-          - phone
-          - url
-          - rating
-          - section
-          - file
-          - checkbox
-        label:
-          type: string
-        help_text:
-          type:
-          - string
-          - 'null'
-        placeholder:
-          type:
-          - string
-          - 'null'
-        required:
-          type: boolean
-        options:
-          type: array
-          items:
-            type: string
-        mapping:
-          type: string
-          enum:
-          - none
-          - title
-          - description
-          - priority
-        min_value:
-          type:
-          - number
-          - 'null'
-        max_value:
-          type:
-          - number
-          - 'null'
-        max_length:
-          type:
-          - integer
-          - 'null'
-        default_value:
-          type:
-          - string
-          - 'null'
-        visibility_rule: {}
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - position
-      - kind
-      - label
-      - help_text
-      - placeholder
-      - required
-      - options
-      - mapping
-      - min_value
-      - max_value
-      - max_length
-      - default_value
-      - created_at
-    FormSubmission:
-      type: object
-      properties:
-        id:
-          type: string
-        answers:
-          type: object
-          additionalProperties: {}
-          description: field_id → submitted value, stored verbatim.
-        submitter_email:
-          type:
-          - string
-          - 'null'
-        source:
-          type: string
-          enum:
-          - public
-          - internal
-        created_issue_id:
-          type:
-          - string
-          - 'null'
-        created_issue_key:
-          type:
-          - string
-          - 'null'
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - answers
-      - submitter_email
-      - source
-      - created_issue_id
-      - created_issue_key
-      - created_at
-    FormSummary:
-      type: object
-      properties:
-        id:
-          type: string
-        title:
-          type: string
-        description:
-          type:
-          - string
-          - 'null'
-        status:
-          type: string
-          enum:
-          - draft
-          - published
-          - closed
-        public_enabled:
-          type: boolean
-        share_url:
-          type:
-          - string
-          - 'null'
-          description: Public /f/<token> URL; null unless public sharing is enabled.
-        submission_count:
-          type: integer
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        updated_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - title
-      - description
-      - status
-      - public_enabled
-      - share_url
-      - submission_count
-      - created_at
-      - updated_at
     FormCreateInput:
       type: object
       properties:
@@ -928,102 +769,44 @@ components:
           maxItems: 200
       required:
       - title
-    FormPatchInput:
+    FormSubmission:
       type: object
       properties:
-        title:
+        id:
           type: string
-          minLength: 1
-          maxLength: 200
-        description:
+        answers:
+          type: object
+          additionalProperties: {}
+          description: field_id → submitted value, stored verbatim.
+        submitter_email:
           type:
           - string
           - 'null'
-          maxLength: 2000
-        status:
-          type: string
-          enum:
-          - draft
-          - published
-          - closed
-        issue_type:
+        source:
           type: string
           enum:
-          - task
-          - story
-          - bug
-        priority:
+          - public
+          - internal
+        created_issue_id:
+          type:
+          - string
+          - 'null'
+        created_issue_key:
+          type:
+          - string
+          - 'null'
+        created_at:
           type: string
-        success_message:
-          type:
-          - string
-          - 'null'
-        accent_color:
-          type:
-          - string
-          - 'null'
-        header_text:
-          type:
-          - string
-          - 'null'
-        show_project_header:
-          type: boolean
-        close_at:
-          type:
-          - string
-          - 'null'
           format: date-time
           example: '2026-05-28T14:30:00Z'
-        response_limit:
-          type:
-          - integer
-          - 'null'
-          minimum: 1
-          maximum: 1000000
-        one_per_email:
-          type: boolean
-        confirmation_mode:
-          type: string
-          enum:
-          - message
-          - redirect
-        redirect_url:
-          type:
-          - string
-          - 'null'
-        default_assignee_id:
-          type:
-          - string
-          - 'null'
-        default_label_ids:
-          type: array
-          items:
-            type: string
-        default_sprint_id:
-          type:
-          - string
-          - 'null'
-        default_status_id:
-          type:
-          - string
-          - 'null'
-        access_mode:
-          type: string
-          enum:
-          - anyone
-          - members
-          - invited
-        allowed_emails:
-          type: array
-          items:
-            type: string
-          maxItems: 500
-        notify_submission:
-          type: boolean
-        confirmation_email:
-          type: boolean
-        public_enabled:
-          type: boolean
+      required:
+      - id
+      - answers
+      - submitter_email
+      - source
+      - created_issue_id
+      - created_issue_key
+      - created_at
     Form:
       allOf:
       - $ref: '#/components/schemas/FormSummary'
@@ -1130,6 +913,99 @@ components:
         - notify_submission
         - confirmation_email
         - fields
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    FormField:
+      type: object
+      properties:
+        id:
+          type: string
+        position:
+          type: integer
+        kind:
+          type: string
+          enum:
+          - short_text
+          - long_text
+          - select
+          - multi_select
+          - number
+          - date
+          - email
+          - radio
+          - phone
+          - url
+          - rating
+          - section
+          - file
+          - checkbox
+        label:
+          type: string
+        help_text:
+          type:
+          - string
+          - 'null'
+        placeholder:
+          type:
+          - string
+          - 'null'
+        required:
+          type: boolean
+        options:
+          type: array
+          items:
+            type: string
+        mapping:
+          type: string
+          enum:
+          - none
+          - title
+          - description
+          - priority
+        min_value:
+          type:
+          - number
+          - 'null'
+        max_value:
+          type:
+          - number
+          - 'null'
+        max_length:
+          type:
+          - integer
+          - 'null'
+        default_value:
+          type:
+          - string
+          - 'null'
+        visibility_rule: {}
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - position
+      - kind
+      - label
+      - help_text
+      - placeholder
+      - required
+      - options
+      - mapping
+      - min_value
+      - max_value
+      - max_length
+      - default_value
+      - created_at
     ErrorEnvelope:
       type: object
       properties:
@@ -1159,6 +1035,146 @@ components:
           - message
       required:
       - error
+    FormSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type:
+          - string
+          - 'null'
+        status:
+          type: string
+          enum:
+          - draft
+          - published
+          - closed
+        public_enabled:
+          type: boolean
+        share_url:
+          type:
+          - string
+          - 'null'
+          description: Public /f/<token> URL; null unless public sharing is enabled.
+        submission_count:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - title
+      - description
+      - status
+      - public_enabled
+      - share_url
+      - submission_count
+      - created_at
+      - updated_at
+    FormPatchInput:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type:
+          - string
+          - 'null'
+          maxLength: 2000
+        status:
+          type: string
+          enum:
+          - draft
+          - published
+          - closed
+        issue_type:
+          type: string
+          enum:
+          - task
+          - story
+          - bug
+        priority:
+          type: string
+        success_message:
+          type:
+          - string
+          - 'null'
+        accent_color:
+          type:
+          - string
+          - 'null'
+        header_text:
+          type:
+          - string
+          - 'null'
+        show_project_header:
+          type: boolean
+        close_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        response_limit:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 1000000
+        one_per_email:
+          type: boolean
+        confirmation_mode:
+          type: string
+          enum:
+          - message
+          - redirect
+        redirect_url:
+          type:
+          - string
+          - 'null'
+        default_assignee_id:
+          type:
+          - string
+          - 'null'
+        default_label_ids:
+          type: array
+          items:
+            type: string
+        default_sprint_id:
+          type:
+          - string
+          - 'null'
+        default_status_id:
+          type:
+          - string
+          - 'null'
+        access_mode:
+          type: string
+          enum:
+          - anyone
+          - members
+          - invited
+        allowed_emails:
+          type: array
+          items:
+            type: string
+          maxItems: 500
+        notify_submission:
+          type: boolean
+        confirmation_email:
+          type: boolean
+        public_enabled:
+          type: boolean
   securitySchemes:
     bearerAuth:
       type: http

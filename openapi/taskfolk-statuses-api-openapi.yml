@@ -12,7 +12,7 @@ tags:
 paths:
   /v1/workspaces/{slug}/projects/{key}/statuses:
     get:
-      summary: List a project's board statuses (ordered).
+      summary: List a project's board statuses (ordered)
       tags:
       - Statuses
       security:
@@ -82,8 +82,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeyStatuses
+      x-operation-id-source: derived
     post:
-      summary: Create a board status column (max 12 per project).
+      summary: Create a board status column (max 12 per project)
       tags:
       - Statuses
       security:
@@ -153,9 +155,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugProjectsByKeyStatuses
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/statuses/{id}:
     patch:
-      summary: Update a board status. Changing category re-categorises all issues in the column.
+      summary: Update a board status. Changing category re-categorises all issues in the column
       tags:
       - Statuses
       security:
@@ -231,8 +235,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugProjectsByKeyStatusesById
+      x-operation-id-source: derived
     delete:
-      summary: Delete a board status (soft). All issues in the column are soft-deleted. Refuses if it is the last status.
+      summary: Delete a board status (soft).
       tags:
       - Statuses
       security:
@@ -316,18 +322,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugProjectsByKeyStatusesById
+      x-operation-id-source: derived
 components:
   schemas:
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
     ProjectStatus:
       type: object
       properties:
@@ -396,6 +394,42 @@ components:
       - name
       - color
       - category
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    StatusPatchInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        name_ar:
+          type:
+          - string
+          - 'null'
+          maxLength: 80
+        color:
+          type: string
+          description: 'Hex color #RRGGBB.'
+        category:
+          type: string
+          enum:
+          - backlog
+          - todo
+          - in_progress
+          - in_review
+          - done
+          - failed
+          - cancelled
+          description: System category the column maps to (drives open/done semantics).
     ErrorEnvelope:
       type: object
       properties:
@@ -425,32 +459,6 @@ components:
           - message
       required:
       - error
-    StatusPatchInput:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 80
-        name_ar:
-          type:
-          - string
-          - 'null'
-          maxLength: 80
-        color:
-          type: string
-          description: 'Hex color #RRGGBB.'
-        category:
-          type: string
-          enum:
-          - backlog
-          - todo
-          - in_progress
-          - in_review
-          - done
-          - failed
-          - cancelled
-          description: System category the column maps to (drives open/done semantics).
   securitySchemes:
     bearerAuth:
       type: http

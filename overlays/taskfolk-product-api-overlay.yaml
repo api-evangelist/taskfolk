@@ -1,0 +1,52 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enrichment overlay for Taskfolk API
+  version: 1.0.0
+extends: openapi/taskfolk-product-api-openapi.yml
+x-generated: '2026-08-20'
+x-method: generated
+x-source: API Evangelist enrichment pipeline (local-v1) — captures OUR annotations; the harvested spec is never
+  mutated.
+actions:
+- target: $.info
+  update:
+    x-apievangelist-slug: taskfolk
+    x-apievangelist-harvested: '2026-08-20'
+    x-apievangelist-source: https://taskfolk.ai/api/v1/openapi.json
+    x-apievangelist-operations: 187
+    x-apievangelist-paths: 111
+- target: $.info
+  update:
+    x-apievangelist-finding-no-operation-ids: None of the 187 operations declares an operationId. Generated clients
+      and the provider's own one-to-one MCP tool generator must therefore name methods from the path. Highest-value
+      zero-cost contract fix available to this provider.
+    x-apievangelist-finding-no-oauth-in-securityschemes: securitySchemes declares only bearerAuth, yet a full OAuth
+      2.0 AS with 47 scopes, PKCE and dynamic client registration is published at /.well-known/oauth-authorization-server.
+      Adding an oauth2 scheme with the scope map would put the authorization model inside the contract.
+    x-apievangelist-finding-errors-not-rfc9457: 'Errors use a vendor { error: { code, message, details } } envelope;
+      no application/problem+json anywhere. Error coverage is otherwise complete — all 187 operations declare 400/401/403/404/429
+      against one schema.'
+    x-apievangelist-finding-idempotency-not-in-contract: Idempotency-Key is documented in prose and has a dedicated
+      idempotency_violation error code, but appears as a header parameter on ZERO operations (the spec declares
+      no header parameters at all). An agent reading only the contract cannot discover it.
+    x-apievangelist-finding-low-ref-reuse: Only 7 of 127 schemas $ref another schema. The entity graph is carried
+      in flat *_id strings, so relationships are invisible to a generator. See data-model/.
+- target: $
+  update:
+    x-apievangelist-reversibility:
+      grade: verified
+      window: 30 days
+      restore_operations:
+      - POST /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/restore
+      - POST /v1/workspaces/{slug}/projects/{key}/restore
+      - POST /v1/workspaces/{slug}/docs/{id}/versions/{versionId}/restore
+      source: conventions/taskfolk-conventions.yml
+- target: $
+  update:
+    x-apievangelist-agent-surfaces:
+      mcp: https://taskfolk.ai/api/mcp/v1
+      agent_card: https://taskfolk.ai/.well-known/agent-card.json
+      api_catalog: https://taskfolk.ai/.well-known/api-catalog
+      llms_txt: https://taskfolk.ai/llms.txt
+      skill_bundle: https://taskfolk.ai/api/skill/taskfolk-product.skill.md
+      auth_skill: https://taskfolk.ai/auth.md

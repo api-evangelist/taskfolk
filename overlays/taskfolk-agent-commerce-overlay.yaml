@@ -1,0 +1,24 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enrichment overlay for Taskfolk Agent Commerce API
+  version: 1.0.0
+extends: openapi/taskfolk-agent-commerce-openapi.yml
+x-generated: '2026-08-20'
+x-method: generated
+x-source: API Evangelist enrichment pipeline (local-v1) — captures OUR annotations; the harvested spec is never
+  mutated.
+actions:
+- target: $.info
+  update:
+    x-apievangelist-slug: taskfolk
+    x-apievangelist-harvested: '2026-08-20'
+    x-apievangelist-source: https://taskfolk.ai/openapi.json
+    x-apievangelist-operations: 4
+    x-apievangelist-paths: 4
+- target: $.info
+  update:
+    x-apievangelist-finding-commerce-protocol-stack: 'Four machine-payment protocols over ONE checkout core: MPP
+      (this spec, HTTP 402 + x-payment-info), ACP (/.well-known/acp.json), UCP (/.well-known/ucp) and x402. All
+      four are declared in /.well-known/api-catalog.'
+    x-apievangelist-finding-no-reversal: No refund, void or cancel operation is published for a completed credit
+      purchase. An agent must treat POST /api/mpp/v1/credits/* as irreversible.

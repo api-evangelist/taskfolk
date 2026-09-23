@@ -12,7 +12,7 @@ tags:
 paths:
   /v1/workspaces/{slug}/docs:
     get:
-      summary: List docs (workspace or project-scoped).
+      summary: List docs (workspace or project-scoped)
       tags:
       - Docs
       security:
@@ -93,8 +93,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugDocs
+      x-operation-id-source: derived
     post:
-      summary: Create a doc.
+      summary: Create a doc
       tags:
       - Docs
       security:
@@ -156,9 +158,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugDocs
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/docs/bulk:
     post:
-      summary: Bulk-create docs (1–50). Returns a per-item result array; 201 when all succeed, 207 when some fail.
+      summary: Bulk-create docs (1–50).
       tags:
       - Docs
       security:
@@ -225,9 +229,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugDocsBulk
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/docs/{id}:
     get:
-      summary: Doc detail.
+      summary: Doc detail
       tags:
       - Docs
       security:
@@ -290,8 +296,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugDocsById
+      x-operation-id-source: derived
     patch:
-      summary: Update a doc.
+      summary: Update a doc
       tags:
       - Docs
       security:
@@ -372,8 +380,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugDocsById
+      x-operation-id-source: derived
     delete:
-      summary: Archive a doc (soft).
+      summary: Archive a doc (soft)
       tags:
       - Docs
       security:
@@ -446,9 +456,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugDocsById
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/docs/{id}/export:
     get:
-      summary: Export a doc as md / html / pdf.
+      summary: Export a doc as md / html / pdf
       tags:
       - Docs
       security:
@@ -528,9 +540,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugDocsByIdExport
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/docs/{id}/comments:
     get:
-      summary: List doc comments (oldest first).
+      summary: List doc comments (oldest first)
       tags:
       - Docs
       security:
@@ -612,8 +626,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugDocsByIdComments
+      x-operation-id-source: derived
     post:
-      summary: Add a doc comment (optionally threaded).
+      summary: Add a doc comment (optionally threaded)
       tags:
       - Docs
       security:
@@ -694,9 +710,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugDocsByIdComments
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/docs/{id}/comments/{commentId}:
     patch:
-      summary: Edit a doc comment (author; owner/admin may edit any).
+      summary: Edit a doc comment (author; owner/admin may edit any)
       tags:
       - Docs
       security:
@@ -778,8 +796,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugDocsByIdCommentsByCommentId
+      x-operation-id-source: derived
     delete:
-      summary: Delete a doc comment.
+      summary: Delete a doc comment
       tags:
       - Docs
       security:
@@ -859,9 +879,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugDocsByIdCommentsByCommentId
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/docs/{id}/versions:
     get:
-      summary: List doc version snapshots (newest first; no bodies).
+      summary: List doc version snapshots (newest first; no bodies)
       tags:
       - Docs
       security:
@@ -943,9 +965,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugDocsByIdVersions
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/docs/{id}/versions/{versionId}:
     get:
-      summary: Get a full version snapshot.
+      summary: Get a full version snapshot
       tags:
       - Docs
       security:
@@ -1015,9 +1039,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugDocsByIdVersionsByVersionId
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/docs/{id}/versions/{versionId}/restore:
     post:
-      summary: Restore the doc to this snapshot.
+      summary: Restore the doc to this snapshot
       tags:
       - Docs
       security:
@@ -1087,58 +1113,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugDocsByIdVersionsByVersionIdRestore
+      x-operation-id-source: derived
 components:
   schemas:
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
-    DocVersion:
-      type: object
-      properties:
-        id:
-          type: string
-        doc_id:
-          type: string
-        title:
-          type: string
-        body_json: {}
-        body_md:
-          type:
-          - string
-          - 'null'
-        created_by:
-          type: object
-          properties:
-            id:
-              type: string
-            email:
-              type: string
-            name:
-              type:
-              - string
-              - 'null'
-          required:
-          - id
-          - email
-          - name
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - doc_id
-      - title
-      - body_md
-      - created_by
-      - created_at
     Doc:
       type: object
       properties:
@@ -1180,6 +1158,61 @@ components:
       - body_md
       - created_at
       - updated_at
+    DocVersion:
+      type: object
+      properties:
+        id:
+          type: string
+        doc_id:
+          type: string
+        title:
+          type: string
+        body_json: {}
+        body_md:
+          type:
+          - string
+          - 'null'
+        created_by:
+          type: object
+          properties:
+            id:
+              type: string
+            email:
+              type: string
+            name:
+              type:
+              - string
+              - 'null'
+          required:
+          - id
+          - email
+          - name
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - doc_id
+      - title
+      - body_md
+      - created_by
+      - created_at
+    DocCreateInput:
+      type: object
+      properties:
+        title:
+          type: string
+        project:
+          type: string
+          description: project key to scope the doc
+        parent_id:
+          type: string
+        body_md:
+          type: string
+        body_json: {}
+        icon:
+          type: string
     DocComment:
       type: object
       properties:
@@ -1227,6 +1260,43 @@ components:
       - body_html
       - created_at
       - updated_at
+    DocVersionSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        doc_id:
+          type: string
+        title:
+          type: string
+        created_by:
+          type: object
+          properties:
+            id:
+              type: string
+            email:
+              type: string
+            name:
+              type:
+              - string
+              - 'null'
+          required:
+          - id
+          - email
+          - name
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        body_md_length:
+          type: integer
+      required:
+      - id
+      - doc_id
+      - title
+      - created_by
+      - created_at
+      - body_md_length
     BulkDocsCreateInput:
       type: object
       properties:
@@ -1238,35 +1308,16 @@ components:
           maxItems: 50
       required:
       - items
-    ErrorEnvelope:
+    Pagination:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
       required:
-      - error
+      - next_cursor
     BulkDocResult:
       anyOf:
       - type: object
@@ -1318,58 +1369,35 @@ components:
         - index
         - ok
         - error
-    DocVersionSummary:
+    ErrorEnvelope:
       type: object
       properties:
-        id:
-          type: string
-        doc_id:
-          type: string
-        title:
-          type: string
-        created_by:
+        error:
           type: object
           properties:
-            id:
+            code:
               type: string
-            email:
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
               type: string
-            name:
-              type:
-              - string
-              - 'null'
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
           required:
-          - id
-          - email
-          - name
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        body_md_length:
-          type: integer
+          - code
+          - message
       required:
-      - id
-      - doc_id
-      - title
-      - created_by
-      - created_at
-      - body_md_length
-    DocCreateInput:
-      type: object
-      properties:
-        title:
-          type: string
-        project:
-          type: string
-          description: project key to scope the doc
-        parent_id:
-          type: string
-        body_md:
-          type: string
-        body_json: {}
-        icon:
-          type: string
+      - error
   securitySchemes:
     bearerAuth:
       type: http

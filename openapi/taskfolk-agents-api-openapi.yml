@@ -12,7 +12,7 @@ tags:
 paths:
   /v1/workspaces/{slug}/agents:
     get:
-      summary: List the workspace's connected agents (named coding agents like Claude Code, Codex, Cursor). Assign issues to an agent's agent_id like any member.
+      summary: List the workspace's connected agents (named coding agents like Claude Code…
       tags:
       - Agents
       security:
@@ -86,9 +86,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugAgents
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/agents/{id}:
     get:
-      summary: 'Get one agent''s full profile: identity, owner, key state + scopes, field policy, spend cap, and cost + token totals. {id} is the agent_id.'
+      summary: 'Get one agent''s full profile: identity, owner, key state + scopes, field…'
       tags:
       - Agents
       security:
@@ -151,9 +153,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugAgentsById
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/agent-sessions:
     get:
-      summary: List agent work sessions, newest activity first. Filter by state to see which agents are running, blocked (needs_input), or ready for review.
+      summary: List agent work sessions, newest activity first.
       tags:
       - Agents
       security:
@@ -246,8 +250,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugAgentSessions
+      x-operation-id-source: derived
     post:
-      summary: Start an agent work session. Call this when you pick up an issue so the team can follow your progress on the ticket and the Agents hub.
+      summary: Start an agent work session.
       tags:
       - Agents
       security:
@@ -332,9 +338,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugAgentSessions
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/agent-sessions/{id}:
     get:
-      summary: Get one agent session.
+      summary: Get one agent session
       tags:
       - Agents
       security:
@@ -397,8 +405,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugAgentSessionsById
+      x-operation-id-source: derived
     patch:
-      summary: 'Update your session: heartbeat (any PATCH bumps last_activity_at), progress note, state change (needs_input when blocked, review when the PR is ready, done/failed to finish), or the PR link.'
+      summary: 'Update your session: heartbeat (any PATCH bumps last_activity_at), progress…'
       tags:
       - Agents
       security:
@@ -496,9 +506,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugAgentSessionsById
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/agent-sessions/{id}/usage:
     post:
-      summary: Report your token usage / cost for this session (one call per turn, additive). Send cost_usd from your provider, or send tokens + model and Taskfolk estimates the cost. Shows a live cost + burn rate next to the session. Agent-reported.
+      summary: Report your token usage / cost for this session (one call per turn, additive).
       tags:
       - Agents
       security:
@@ -592,6 +604,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugAgentSessionsByIdUsage
+      x-operation-id-source: derived
 components:
   schemas:
     Pagination:
@@ -604,6 +618,74 @@ components:
           example: null
       required:
       - next_cursor
+    Agent:
+      type: object
+      properties:
+        agent_id:
+          type: string
+          example: 019e6f12-…
+          description: The agent's user id — the value to pass as agent_id elsewhere and the id used when assigning issues to the agent.
+        name:
+          type: string
+          example: Omar's Claude Code
+        kind:
+          type: string
+          example: claude
+          description: 'Provider: claude, openai, cursor, copilot, gemini, deepseek, kimi, perplexity, or custom.'
+        owner_user_id:
+          type: string
+          description: The human member who connected this agent.
+        running_sessions:
+          type: integer
+          example: 1
+        last_activity_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        cost_total:
+          type:
+          - number
+          - 'null'
+          description: Total agent-reported cost across the agent's sessions (USD). Agent-reported; Taskfolk never runs the model.
+        key_prefix:
+          type:
+          - string
+          - 'null'
+          description: The agent's API key prefix (masked).
+        key_revoked:
+          type: boolean
+          description: Whether the agent's API key is revoked.
+        field_policy:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: FIELD-POLICY-01 allowlist of writable issue fields; null = all fields writable.
+        spend_cap_usd:
+          type:
+          - number
+          - 'null'
+          description: Per-agent soft spend cap (USD), or null when unset. Alert-only.
+      required:
+      - agent_id
+      - name
+      - kind
+      - owner_user_id
+      - running_sessions
+      - last_activity_at
+      - created_at
+      - cost_total
+      - key_prefix
+      - key_revoked
+      - field_policy
+      - spend_cap_usd
     AgentSession:
       type: object
       properties:
@@ -818,74 +900,6 @@ components:
       - key_revoked
       - key_scopes
       - key_last_used_at
-      - field_policy
-      - spend_cap_usd
-    Agent:
-      type: object
-      properties:
-        agent_id:
-          type: string
-          example: 019e6f12-…
-          description: The agent's user id — the value to pass as agent_id elsewhere and the id used when assigning issues to the agent.
-        name:
-          type: string
-          example: Omar's Claude Code
-        kind:
-          type: string
-          example: claude
-          description: 'Provider: claude, openai, cursor, copilot, gemini, deepseek, kimi, perplexity, or custom.'
-        owner_user_id:
-          type: string
-          description: The human member who connected this agent.
-        running_sessions:
-          type: integer
-          example: 1
-        last_activity_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        cost_total:
-          type:
-          - number
-          - 'null'
-          description: Total agent-reported cost across the agent's sessions (USD). Agent-reported; Taskfolk never runs the model.
-        key_prefix:
-          type:
-          - string
-          - 'null'
-          description: The agent's API key prefix (masked).
-        key_revoked:
-          type: boolean
-          description: Whether the agent's API key is revoked.
-        field_policy:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-          description: FIELD-POLICY-01 allowlist of writable issue fields; null = all fields writable.
-        spend_cap_usd:
-          type:
-          - number
-          - 'null'
-          description: Per-agent soft spend cap (USD), or null when unset. Alert-only.
-      required:
-      - agent_id
-      - name
-      - kind
-      - owner_user_id
-      - running_sessions
-      - last_activity_at
-      - created_at
-      - cost_total
-      - key_prefix
-      - key_revoked
       - field_policy
       - spend_cap_usd
   securitySchemes:

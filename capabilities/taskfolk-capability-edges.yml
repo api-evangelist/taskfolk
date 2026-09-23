@@ -1,0 +1,97 @@
+slug: taskfolk
+provider: Taskfolk
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 8
+edges:
+- tag: Projects
+  spec_file: taskfolk-projects-api-openapi.yml
+  capability_id: BC-900.30
+  capability_id_l1: BC-900
+  capability_name: Project Management
+  confidence: 0.88
+  evidence: '"Create a project." / "Archive a project (soft)." / "Add or update a project member."'
+  reason: CRUD over projects and project membership in a project-management/issue-tracking platform —
+    project execution and team assignment.
+- tag: Portfolios
+  spec_file: taskfolk-portfolios-api-openapi.yml
+  capability_id: BC-900.10
+  capability_id_l1: BC-900
+  capability_name: Portfolio Management
+  confidence: 0.85
+  evidence: '"Create a portfolio (owner/admin-tier scope; per-plan cap)." / "Add a project to a portfolio.
+    Idempotent."'
+  reason: Operations group projects into portfolios (with goals rolling up), which is portfolio-level
+    grouping and prioritisation of project work.
+- tag: Goals
+  spec_file: taskfolk-goals-api-openapi.yml
+  capability_id: BC-100.20
+  capability_id_l1: BC-100
+  capability_name: Strategy Execution Management
+  confidence: 0.8
+  evidence: '"Get a goal with its rolled-up progress, status, key results, and alignment." and vendor
+    description "OKR goals"'
+  reason: Goals with key results, parent alignment hierarchy and rolled-up progress are an OKR/cascaded-objective
+    mechanism, which is Strategy Execution Management. Some ambiguity versus performance/portfolio management,
+    hence 0.8.
+- tag: Key results
+  spec_file: taskfolk-key-results-api-openapi.yml
+  capability_id: BC-100.20
+  capability_id_l1: BC-100
+  capability_name: Strategy Execution Management
+  confidence: 0.8
+  evidence: '"Create a key result (manual metric or auto scope roll-up)." under /goals/{goalId}/key-results'
+  reason: Key results attached to goals are the measurable half of an OKR framework, i.e. translating
+    strategy into measurable objectives — Strategy Execution Management.
+- tag: Sprints
+  spec_file: taskfolk-sprints-api-openapi.yml
+  capability_id: BC-900.30
+  capability_id_l1: BC-900
+  capability_name: Project Management
+  confidence: 0.8
+  evidence: '"Create a sprint. Attach issues by PATCHing issue sprint_id." / "Setting status=active demotes
+    any other active sprint."'
+  reason: Sprint lifecycle with issue attachment is iteration planning and tracking of project work execution.
+- tag: Developer
+  spec_file: taskfolk-developer-api-openapi.yml
+  capability_id: BC-4270.40
+  capability_id_l1: BC-4270
+  capability_name: Developer Identity & Credential Management
+  confidence: 0.75
+  evidence: '"Create an API key. Plaintext is returned exactly once.", "Revoke an API key.", "Create a
+    webhook. Signing secret is returned exactly once.", schemas OauthApp, WebhookDelivery, ApiKeyUsage'
+  reason: This surface issues and revokes API keys and OAuth apps and manages outbound webhook subscriptions
+    plus per-key usage rollups — precisely the developer-platform credential and event-subscription surface
+    described by BC-4270. Credential issuance (.40) dominates the operation count, though webhook lifecycle
+    (.80) and consumption analytics (.50) are also present, so the L2 choice carries some ambiguity.
+- tag: Issues
+  spec_file: taskfolk-issues-api-openapi.yml
+  capability_id: BC-900.30
+  capability_id_l1: BC-900
+  capability_name: Project Management
+  confidence: 0.7
+  evidence: '"Create an issue.", "Transition status (board move).", "List links for an issue (both directions).";
+    vendor: "projects contain issues moved across board, backlog, list, calendar and timeline views"'
+  reason: Core work-item tracking and status transitions within projects — the execution and tracking
+    surface of project management. Could alternatively be read as software defect management (BC-4200.50),
+    but the issues are generic project work items, so project execution is the better fit; confidence
+    tempered by that overlap.
+- tag: Milestones
+  spec_file: taskfolk-milestones-api-openapi.yml
+  capability_id: BC-900.30
+  capability_id_l1: BC-900
+  capability_name: Project Management
+  confidence: 0.7
+  evidence: '"List milestones for a project.", "Create a milestone.", "Delete a milestone (soft). Issues
+    are detached."'
+  reason: Project milestones with issues attached are schedule/plan artefacts used to track project execution.
+    Thin surface (plain CRUD) so confidence is moderate.

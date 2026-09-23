@@ -12,7 +12,7 @@ tags:
 paths:
   /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/watchers:
     get:
-      summary: List watchers.
+      summary: List watchers
       tags:
       - Watchers
       security:
@@ -90,8 +90,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeyIssuesByIssueKeyWatchers
+      x-operation-id-source: derived
     post:
-      summary: Watch the issue (current key's user).
+      summary: Watch the issue (current key's user)
       tags:
       - Watchers
       security:
@@ -164,9 +166,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugProjectsByKeyIssuesByIssueKeyWatchers
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/watchers/{userId}:
     delete:
-      summary: Unwatch the issue.
+      summary: Unwatch the issue
       tags:
       - Watchers
       security:
@@ -254,18 +258,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugProjectsByKeyIssuesByIssueKeyWatchersByUserId
+      x-operation-id-source: derived
 components:
   schemas:
-    Pagination:
+    Watcher:
       type: object
       properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
+        user_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
       required:
-      - next_cursor
+      - user_id
+      - created_at
     ErrorEnvelope:
       type: object
       properties:
@@ -295,18 +303,16 @@ components:
           - message
       required:
       - error
-    Watcher:
+    Pagination:
       type: object
       properties:
-        user_id:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
       required:
-      - user_id
-      - created_at
+      - next_cursor
   securitySchemes:
     bearerAuth:
       type: http

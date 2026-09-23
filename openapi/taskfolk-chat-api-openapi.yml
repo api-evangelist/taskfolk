@@ -12,7 +12,7 @@ tags:
 paths:
   /v1/workspaces/{slug}/chat/channels:
     get:
-      summary: List channels visible to the key's user (public + own private/DM).
+      summary: List channels visible to the key's user (public + own private/DM)
       tags:
       - Chat
       security:
@@ -86,8 +86,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugChatChannels
+      x-operation-id-source: derived
     post:
-      summary: Create a channel.
+      summary: Create a channel
       tags:
       - Chat
       security:
@@ -149,9 +151,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugChatChannels
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/chat/channels/{channelId}:
     get:
-      summary: Get a channel.
+      summary: Get a channel
       tags:
       - Chat
       security:
@@ -216,8 +220,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugChatChannelsByChannelId
+      x-operation-id-source: derived
     patch:
-      summary: Rename, set topic, or (un)archive a channel.
+      summary: Rename, set topic, or (un)archive a channel
       tags:
       - Chat
       security:
@@ -287,9 +293,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugChatChannelsByChannelId
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/chat/channels/{channelId}/members:
     get:
-      summary: List channel members.
+      summary: List channel members
       tags:
       - Chat
       security:
@@ -371,8 +379,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugChatChannelsByChannelIdMembers
+      x-operation-id-source: derived
     post:
-      summary: Add a member (self-join on public channels).
+      summary: Add a member (self-join on public channels)
       tags:
       - Chat
       security:
@@ -447,9 +457,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugChatChannelsByChannelIdMembers
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/chat/channels/{channelId}/members/{userId}:
     delete:
-      summary: Remove a member (self always; others need manage rights).
+      summary: Remove a member (self always; others need manage rights)
       tags:
       - Chat
       security:
@@ -532,9 +544,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugChatChannelsByChannelIdMembersByUserId
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/chat/channels/{channelId}/messages:
     get:
-      summary: List messages (newest first, cursor-paginated).
+      summary: List messages (newest first, cursor-paginated)
       tags:
       - Chat
       security:
@@ -616,8 +630,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugChatChannelsByChannelIdMessages
+      x-operation-id-source: derived
     post:
-      summary: Send a message (optionally as a thread reply).
+      summary: Send a message (optionally as a thread reply)
       tags:
       - Chat
       security:
@@ -687,9 +703,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugChatChannelsByChannelIdMessages
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/chat/channels/{channelId}/messages/stream:
     post:
-      summary: 'Stream a message live (AGENT-COLLAB-01): omit message_id to open, then append deltas, then send done:true to finalize. Members watch it grow in real time.'
+      summary: 'Stream a message live (AGENT-COLLAB-01): omit message_id to open, then append…'
       tags:
       - Chat
       security:
@@ -775,9 +793,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugChatChannelsByChannelIdMessagesStream
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/chat/channels/{channelId}/messages/{messageId}:
     patch:
-      summary: Edit your own message.
+      summary: Edit your own message
       tags:
       - Chat
       security:
@@ -862,8 +882,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugChatChannelsByChannelIdMessagesByMessageId
+      x-operation-id-source: derived
     delete:
-      summary: Delete a message (own; owner/admin may delete any).
+      summary: Delete a message (own; owner/admin may delete any)
       tags:
       - Chat
       security:
@@ -946,9 +968,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugChatChannelsByChannelIdMessagesByMessageId
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/chat/channels/{channelId}/messages/{messageId}/reactions:
     post:
-      summary: Add a reaction (idempotent).
+      summary: Add a reaction (idempotent)
       tags:
       - Chat
       security:
@@ -1033,9 +1057,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugChatChannelsByChannelIdMessagesByMessageIdReactions
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/chat/channels/{channelId}/messages/{messageId}/reactions/{emoji}:
     delete:
-      summary: Remove your reaction.
+      summary: Remove your reaction
       tags:
       - Chat
       security:
@@ -1114,8 +1140,92 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugChatChannelsByChannelIdMessagesByMessageIdReactionsByEmoji
+      x-operation-id-source: derived
 components:
   schemas:
+    ChatMessageCreateInput:
+      type: object
+      properties:
+        body_md:
+          type: string
+          minLength: 1
+          maxLength: 64000
+        parent_id:
+          type: string
+          description: Reply to this message — the thread root or any reply within it (nested replies are supported).
+      required:
+      - body_md
+    ChatChannel:
+      type: object
+      properties:
+        id:
+          type: string
+        kind:
+          type: string
+          enum:
+          - public
+          - private
+          - dm
+        name:
+          type:
+          - string
+          - 'null'
+          description: Null for DM channels.
+        slug:
+          type:
+          - string
+          - 'null'
+        topic:
+          type:
+          - string
+          - 'null'
+        created_by:
+          type: string
+        archived_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        last_message_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        member_count:
+          type: integer
+        is_member:
+          type: boolean
+      required:
+      - id
+      - kind
+      - name
+      - slug
+      - topic
+      - created_by
+      - archived_at
+      - last_message_at
+      - created_at
+    ChatChannelPatchInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        topic:
+          type:
+          - string
+          - 'null'
+          maxLength: 280
+        archived:
+          type: boolean
     Pagination:
       type: object
       properties:
@@ -1212,36 +1322,6 @@ components:
       - edited_at
       - created_at
       - reactions
-    ChatChannelMember:
-      type: object
-      properties:
-        user_id:
-          type: string
-        role:
-          type: string
-          enum:
-          - owner
-          - member
-        joined_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - user_id
-      - role
-      - joined_at
-    ChatMessageCreateInput:
-      type: object
-      properties:
-        body_md:
-          type: string
-          minLength: 1
-          maxLength: 64000
-        parent_id:
-          type: string
-          description: Reply to this message — the thread root or any reply within it (nested replies are supported).
-      required:
-      - body_md
     ErrorEnvelope:
       type: object
       properties:
@@ -1271,20 +1351,24 @@ components:
           - message
       required:
       - error
-    ChatChannelPatchInput:
+    ChatChannelMember:
       type: object
       properties:
-        name:
+        user_id:
           type: string
-          minLength: 1
-          maxLength: 80
-        topic:
-          type:
-          - string
-          - 'null'
-          maxLength: 280
-        archived:
-          type: boolean
+        role:
+          type: string
+          enum:
+          - owner
+          - member
+        joined_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - user_id
+      - role
+      - joined_at
     ChatReactions:
       type: object
       properties:
@@ -1310,62 +1394,6 @@ components:
       required:
       - message_id
       - reactions
-    ChatChannel:
-      type: object
-      properties:
-        id:
-          type: string
-        kind:
-          type: string
-          enum:
-          - public
-          - private
-          - dm
-        name:
-          type:
-          - string
-          - 'null'
-          description: Null for DM channels.
-        slug:
-          type:
-          - string
-          - 'null'
-        topic:
-          type:
-          - string
-          - 'null'
-        created_by:
-          type: string
-        archived_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        last_message_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        member_count:
-          type: integer
-        is_member:
-          type: boolean
-      required:
-      - id
-      - kind
-      - name
-      - slug
-      - topic
-      - created_by
-      - archived_at
-      - last_message_at
-      - created_at
   securitySchemes:
     bearerAuth:
       type: http

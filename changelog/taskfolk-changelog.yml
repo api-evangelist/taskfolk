@@ -1,0 +1,132 @@
+generated: '2026-08-20'
+method: searched
+source: https://taskfolk.ai/changelog
+url: https://taskfolk.ai/changelog
+title: What's new in Taskfolk
+scheme: dated, grouped by month, each entry labelled New / Improvement / Fix
+current_version: v1 (REST + MCP, generated from one OpenAPI registry; spec info.version 1.0.0)
+machine_readable: false
+machine_readable_note: >-
+  No RSS/Atom/JSON feed is published for the changelog. The page is server-rendered HTML, so
+  the text below was read from the live page, not from a feed.
+window: 'June 2026 – July 2026 (the full contents of the page as of 2026-08-20)'
+entry_count: 19  # condensed from 27 cards on the page; one row groups the remaining July product entries
+entries:
+  - date: '2026-07'
+    kind: new
+    title: Cost per AI agent session
+    breaking: false
+    highlight: >-
+      Per-session token/cost reporting rolled up per agent and per workflow. Figures are
+      labelled agent-reported — Taskfolk never runs the model. Backs
+      'POST /v1/workspaces/{slug}/agent-sessions/{id}/usage'.
+  - date: '2026-07'
+    kind: new
+    title: Visual workflows
+    breaking: false
+    highlight: Canvas workflows with agent and person stages, parallel fan-out and conditional branching. Backs the Workflows tag (12 operations).
+  - date: '2026-07'
+    kind: new
+    title: Chat with your AI agents
+    breaking: false
+    highlight: Agents become participants in team chat (DM and @mention). Backs the Chat tag (14 operations).
+  - date: '2026-07'
+    kind: new
+    title: Story points
+    breaking: false
+    highlight: Fibonacci point estimation per project alongside time-based estimates; velocity and burndown report in points.
+  - date: '2026-07'
+    kind: new
+    title: Parallel sprints
+    breaking: false
+    highlight: More than one active sprint per project.
+  - date: '2026-07'
+    kind: new
+    title: Portfolios and goals (OKRs)
+    breaking: false
+    highlight: Cross-project portfolios and measurable key results. Backs the Portfolios (8), Goals (5) and Key results (4) tags.
+  - date: '2026-07'
+    kind: new
+    title: AI agents in your workspace
+    breaking: false
+    highlight: >-
+      Agents as named members with live sessions, field-level permissions, and no billed seat.
+      Backs the Agents tag (7 operations).
+  - date: '2026-07'
+    kind: new
+    title: Custom workflow rules and WIP limits
+    breaking: false
+    highlight: Transition enforcement on every write path including the API; per-column WIP caps.
+  - date: '2026-07'
+    kind: improvement
+    title: Faster pages with Load more everywhere
+    breaking: false
+    highlight: 'Keyset paging across boards, backlogs, search, reports and activity. "Large lists in the REST API page the same way."'
+  - date: '2026-07'
+    kind: new
+    title: Custom fields
+    breaking: false
+    highlight: Text, number, date, dropdown, checkbox and URL fields on issues. Backs the Custom fields tag (7 operations).
+  - date: '2026-07'
+    kind: new
+    title: Single sign-on and SCIM provisioning
+    breaking: false
+    highlight: >-
+      SAML / OpenID Connect sign-in and SCIM member provisioning for enterprise workspaces.
+      NOT present in the public 187-operation contract — see conformance/taskfolk-conformance.yml.
+  - date: '2026-07'
+    kind: new
+    title: Custom board statuses
+    breaking: false
+    highlight: >-
+      Per-project named columns each mapped to a status category (to-do, in progress, done,
+      cancelled, failed) "so reports and the API stay consistent".
+  - date: '2026-07'
+    kind: new
+    title: Public intake forms
+    breaking: false
+    highlight: Public forms creating routed issues, 14 field types including file upload. Backs the Forms tag (8 operations).
+  - date: '2026-07'
+    kind: new
+    title: Releases and versions
+    breaking: false
+    highlight: Release grouping with GitHub tag/release auto-ship. Backs the Releases tag (5 operations).
+  - date: '2026-07'
+    kind: new
+    title: Team chat, mind maps, feedback board and public roadmap, AI issue triage, guest access, multiple assignees, themes, invoices, keyboard shortcuts, drag-reorder columns
+    breaking: false
+    highlight: The remainder of the July 2026 batch, condensed. Full text at https://taskfolk.ai/changelog.
+  - date: '2026-06'
+    kind: improvement
+    title: MCP server and REST API improvements
+    breaking: false
+    api_relevant: true
+    highlight: >-
+      v1 REST now returns the inviter name (not the UUID) in invite emails, accepts
+      1-character project keys in all resolvers, and returns 400 (not 500) on invalid JSON to
+      the project create endpoint. The MCP server surfaces all board views via the agent skill
+      surface. This is the only entry on the page that is explicitly an API change.
+  - date: '2026-06'
+    kind: improvement
+    title: 'Reports: failed status in CFD and burnup'
+    breaking: false
+    highlight: Cumulative flow and burnup now include the failed bucket; previously excluded, understating scope.
+  - date: '2026-06'
+    kind: new
+    title: Security and trust strip on pricing
+    breaking: false
+    highlight: >-
+      GDPR-aligned data handling, magic-link sign-in with no password database, no advertising
+      trackers, files on Cloudflare R2.
+  - date: '2026-06'
+    kind: fix
+    title: 'Forms: one submission per email address'
+    breaking: false
+    highlight: Enforced at the database level via a unique index.
+observations:
+  breaking_changes_in_window: 0
+  api_specific_entries: 1
+  note: >-
+    The changelog is product-led, not API-led. In the two months on the page exactly one entry
+    describes a REST/MCP change. A developer watching this page for contract movement gets
+    almost no signal; there is no separate API changelog and no feed to subscribe to.

@@ -12,7 +12,7 @@ tags:
 paths:
   /v1/workspaces/{slug}/automations:
     get:
-      summary: List automation rules.
+      summary: List automation rules
       tags:
       - Automations
       security:
@@ -86,8 +86,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugAutomations
+      x-operation-id-source: derived
     post:
-      summary: Create an automation rule (admin-tier scope; Pro/Business plans).
+      summary: Create an automation rule (admin-tier scope; Pro/Business plans)
       tags:
       - Automations
       security:
@@ -149,9 +151,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugAutomations
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/automations/{id}:
     get:
-      summary: Get an automation rule.
+      summary: Get an automation rule
       tags:
       - Automations
       security:
@@ -214,8 +218,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugAutomationsById
+      x-operation-id-source: derived
     patch:
-      summary: Update or enable/disable an automation rule.
+      summary: Update or enable/disable an automation rule
       tags:
       - Automations
       security:
@@ -283,8 +289,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugAutomationsById
+      x-operation-id-source: derived
     delete:
-      summary: Delete an automation rule.
+      summary: Delete an automation rule
       tags:
       - Automations
       security:
@@ -357,9 +365,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugAutomationsById
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/automations/{id}/runs:
     get:
-      summary: List an automation's run history (newest first).
+      summary: List an automation's run history (newest first)
       tags:
       - Automations
       security:
@@ -439,147 +449,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugAutomationsByIdRuns
+      x-operation-id-source: derived
 components:
   schemas:
-    Automation:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        enabled:
-          type: boolean
-        trigger:
-          type: string
-          enum:
-          - issue.created
-          - issue.status_changed
-          - issue.priority_changed
-          - issue.assigned
-          - issue.unassigned
-          - comment.added
-        conditions:
-          type:
-          - object
-          - 'null'
-          properties:
-            match:
-              type: string
-              enum:
-              - all
-              - any
-            rules:
-              type: array
-              items:
-                type: object
-                properties:
-                  field:
-                    type: string
-                    enum:
-                    - project
-                    - type
-                    - priority
-                    - status
-                    - assignee
-                    - label
-                    - title
-                  op:
-                    type: string
-                    enum:
-                    - is
-                    - is_not
-                    - is_one_of
-                    - contains
-                    - is_set
-                    - is_empty
-                  value:
-                    anyOf:
-                    - type: string
-                      maxLength: 500
-                    - type: array
-                      items:
-                        type: string
-                        maxLength: 100
-                      maxItems: 50
-                required:
-                - field
-                - op
-              maxItems: 10
-          required:
-          - match
-          - rules
-        actions:
-          type: array
-          items:
-            type: object
-            properties:
-              type:
-                type: string
-                enum:
-                - set_status
-                - set_priority
-                - assign_to
-                - unassign
-                - add_label
-                - remove_label
-                - move_to_sprint
-                - add_comment
-                - notify_agent
-              status:
-                type: string
-              priority:
-                type: string
-              assign_target:
-                type: string
-                enum:
-                - member
-                - triggering_user
-              member_id:
-                type: string
-              label_id:
-                type: string
-              sprint_target:
-                type: string
-                enum:
-                - active
-                - specific
-                - backlog
-              sprint_id:
-                type: string
-              comment:
-                type: string
-                maxLength: 2000
-              agent_user_id:
-                type: string
-            required:
-            - type
-        project_id:
-          type:
-          - string
-          - 'null'
-          description: Derived from a project-is condition; null = all projects.
-        created_by:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        updated_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - name
-      - enabled
-      - trigger
-      - conditions
-      - actions
-      - project_id
-      - created_by
-      - created_at
-      - updated_at
     Pagination:
       type: object
       properties:
@@ -590,87 +463,6 @@ components:
           example: null
       required:
       - next_cursor
-    AutomationRun:
-      type: object
-      properties:
-        id:
-          type: string
-        automation_id:
-          type: string
-        issue_id:
-          type:
-          - string
-          - 'null'
-        trigger:
-          type: string
-        status:
-          type: string
-          enum:
-          - ok
-          - partial
-          - error
-        actions_applied:
-          type:
-          - array
-          - 'null'
-          items:
-            type: object
-            properties:
-              type:
-                type: string
-              ok:
-                type: boolean
-              detail:
-                type: string
-            required:
-            - type
-            - ok
-        detail:
-          type:
-          - string
-          - 'null'
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - automation_id
-      - issue_id
-      - trigger
-      - status
-      - actions_applied
-      - detail
-      - created_at
-    ErrorEnvelope:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
-      required:
-      - error
     AutomationPatchInput:
       type: object
       properties:
@@ -913,6 +705,226 @@ components:
       - name
       - trigger
       - actions
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
+    Automation:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        enabled:
+          type: boolean
+        trigger:
+          type: string
+          enum:
+          - issue.created
+          - issue.status_changed
+          - issue.priority_changed
+          - issue.assigned
+          - issue.unassigned
+          - comment.added
+        conditions:
+          type:
+          - object
+          - 'null'
+          properties:
+            match:
+              type: string
+              enum:
+              - all
+              - any
+            rules:
+              type: array
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                    enum:
+                    - project
+                    - type
+                    - priority
+                    - status
+                    - assignee
+                    - label
+                    - title
+                  op:
+                    type: string
+                    enum:
+                    - is
+                    - is_not
+                    - is_one_of
+                    - contains
+                    - is_set
+                    - is_empty
+                  value:
+                    anyOf:
+                    - type: string
+                      maxLength: 500
+                    - type: array
+                      items:
+                        type: string
+                        maxLength: 100
+                      maxItems: 50
+                required:
+                - field
+                - op
+              maxItems: 10
+          required:
+          - match
+          - rules
+        actions:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                enum:
+                - set_status
+                - set_priority
+                - assign_to
+                - unassign
+                - add_label
+                - remove_label
+                - move_to_sprint
+                - add_comment
+                - notify_agent
+              status:
+                type: string
+              priority:
+                type: string
+              assign_target:
+                type: string
+                enum:
+                - member
+                - triggering_user
+              member_id:
+                type: string
+              label_id:
+                type: string
+              sprint_target:
+                type: string
+                enum:
+                - active
+                - specific
+                - backlog
+              sprint_id:
+                type: string
+              comment:
+                type: string
+                maxLength: 2000
+              agent_user_id:
+                type: string
+            required:
+            - type
+        project_id:
+          type:
+          - string
+          - 'null'
+          description: Derived from a project-is condition; null = all projects.
+        created_by:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - name
+      - enabled
+      - trigger
+      - conditions
+      - actions
+      - project_id
+      - created_by
+      - created_at
+      - updated_at
+    AutomationRun:
+      type: object
+      properties:
+        id:
+          type: string
+        automation_id:
+          type: string
+        issue_id:
+          type:
+          - string
+          - 'null'
+        trigger:
+          type: string
+        status:
+          type: string
+          enum:
+          - ok
+          - partial
+          - error
+        actions_applied:
+          type:
+          - array
+          - 'null'
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              ok:
+                type: boolean
+              detail:
+                type: string
+            required:
+            - type
+            - ok
+        detail:
+          type:
+          - string
+          - 'null'
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - automation_id
+      - issue_id
+      - trigger
+      - status
+      - actions_applied
+      - detail
+      - created_at
   securitySchemes:
     bearerAuth:
       type: http

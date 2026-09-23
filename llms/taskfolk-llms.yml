@@ -1,0 +1,37 @@
+generated: '2026-08-20'
+method: searched
+source: https://taskfolk.ai/llms.txt
+file: taskfolk-llms.txt
+http_status: 200
+content_type: text/plain; charset=utf-8
+bytes: 45410
+lines: 324
+provider_last_updated: '2026-08-18'
+verbatim: true
+sections: [Pricing, Product structure, Capabilities and focus, Features, For developers and AI agents, Blog, Community, Company]
+developer_subsections: [Authentication, REST API, MCP server, Installable agent skills, 'Agentic commerce (ACP + UCP + MPP)', Webhooks]
+quality_notes:
+  - >-
+    Unusually strong for the format: carries a "Capabilities and focus" section written as an
+    explicit source of truth for "does Taskfolk have X", including what it does NOT do (no ITSM
+    SLA timers, no asset management, no on-call, no code hosting, GitHub only for repos).
+  - >-
+    Carries a machine-readable content licence line — "search=yes, ai-input=yes, ai-train=yes"
+    — matching the Content-Signal header in robots.txt.
+  - >-
+    Every link in it that this pipeline probed resolved 200. No dead pointers, unlike the
+    common failure mode where an llms.txt advertises paths the site no longer serves.
+defect_reported:
+  webhook_event_list: >-
+    The Webhooks section lists SIX events including `issue.deleted`. The provider's own
+    llms-full.txt states the v1 publisher emits FOURTEEN and does NOT include `issue.deleted`
+    (the soft-delete event is `issue.archived`). A consumer subscribing from llms.txt to
+    `issue.deleted` would receive nothing. See asyncapi/taskfolk-webhooks.yml.
+llms_full:
+  url: https://taskfolk.ai/llms-full.txt
+  http_status: 200
+  bytes: 2162181
+  committed: false
+  note: >-
+    Fetched for research and read, but NOT committed — *-llms-full.txt is gitignored because
+    these verbatim dumps embed vendor example tokens that trip GitHub push protection.

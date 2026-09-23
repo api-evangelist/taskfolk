@@ -12,7 +12,7 @@ tags:
 paths:
   /v1/workspaces/{slug}/projects:
     get:
-      summary: List projects.
+      summary: List projects
       tags:
       - Projects
       security:
@@ -86,8 +86,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjects
+      x-operation-id-source: derived
     post:
-      summary: Create a project.
+      summary: Create a project
       tags:
       - Projects
       security:
@@ -149,9 +151,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugProjects
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}:
     get:
-      summary: Project detail.
+      summary: Project detail
       tags:
       - Projects
       security:
@@ -216,8 +220,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKey
+      x-operation-id-source: derived
     patch:
-      summary: Update a project.
+      summary: Update a project
       tags:
       - Projects
       security:
@@ -287,8 +293,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugProjectsByKey
+      x-operation-id-source: derived
     delete:
-      summary: Archive a project (soft).
+      summary: Archive a project (soft)
       tags:
       - Projects
       security:
@@ -353,9 +361,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugProjectsByKey
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/restore:
     post:
-      summary: Restore an archived project.
+      summary: Restore an archived project
       tags:
       - Projects
       security:
@@ -420,9 +430,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugProjectsByKeyRestore
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/members:
     get:
-      summary: List project members (explicit access list for scoped projects).
+      summary: List project members (explicit access list for scoped projects)
       tags:
       - Projects
       security:
@@ -504,8 +516,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeyMembers
+      x-operation-id-source: derived
     post:
-      summary: Add or update a project member. Idempotent — updates role if already a member. User must be a workspace member. Admin-only scope.
+      summary: Add or update a project member.
       tags:
       - Projects
       security:
@@ -575,9 +589,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugProjectsByKeyMembers
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/members/{userId}:
     delete:
-      summary: Remove a user from the project member list. Admin-only scope.
+      summary: Remove a user from the project member list. Admin-only scope
       tags:
       - Projects
       security:
@@ -657,23 +673,46 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugProjectsByKeyMembersByUserId
+      x-operation-id-source: derived
 components:
   schemas:
-    ProjectMemberAddInput:
+    ProjectCreateInput:
       type: object
       properties:
-        user_id:
+        key:
           type: string
-          description: ID of an existing workspace member.
-        role:
+          example: WEB
+        name:
+          type: string
+        slug:
+          type: string
+        description_md:
+          type: string
+        lead_user_id:
+          type: string
+      required:
+      - key
+      - name
+    ProjectPatchInput:
+      type: object
+      properties:
+        name:
+          type: string
+        description_md:
+          type:
+          - string
+          - 'null'
+        lead_user_id:
+          type:
+          - string
+          - 'null'
+        estimation_unit:
           type: string
           enum:
-          - admin
-          - member
-          - viewer
-      required:
-      - user_id
-      - role
+          - time
+          - points
+          - none
     Pagination:
       type: object
       properties:
@@ -711,25 +750,6 @@ components:
       - name
       - role
       - added_at
-    ProjectPatchInput:
-      type: object
-      properties:
-        name:
-          type: string
-        description_md:
-          type:
-          - string
-          - 'null'
-        lead_user_id:
-          type:
-          - string
-          - 'null'
-        estimation_unit:
-          type: string
-          enum:
-          - time
-          - points
-          - none
     Project:
       type: object
       properties:
@@ -788,6 +808,21 @@ components:
       - archived_at
       - created_at
       - updated_at
+    ProjectMemberAddInput:
+      type: object
+      properties:
+        user_id:
+          type: string
+          description: ID of an existing workspace member.
+        role:
+          type: string
+          enum:
+          - admin
+          - member
+          - viewer
+      required:
+      - user_id
+      - role
     ErrorEnvelope:
       type: object
       properties:
@@ -817,23 +852,6 @@ components:
           - message
       required:
       - error
-    ProjectCreateInput:
-      type: object
-      properties:
-        key:
-          type: string
-          example: WEB
-        name:
-          type: string
-        slug:
-          type: string
-        description_md:
-          type: string
-        lead_user_id:
-          type: string
-      required:
-      - key
-      - name
   securitySchemes:
     bearerAuth:
       type: http

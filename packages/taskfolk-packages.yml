@@ -1,0 +1,72 @@
+generated: '2026-08-20'
+method: searched
+source: >-
+  Registry metadata probes of npm, PyPI, RubyGems, crates.io, Packagist and the Go module
+  proxy, plus https://taskfolk.ai/llms-full.txt (Developer console SDK tab) and
+  https://github.com/taskfolk
+package_count: 0
+official_package_count: 0
+finding: >-
+  Taskfolk publishes NO client library on any public registry as of 2026-08-20. Its own docs say
+  so plainly: the Developer console's SDK tab previews a first-party `@taskfolk/sdk-node`
+  TypeScript client and "marks the npm package as coming soon". The supported path today is
+  generating a typed client from the live spec with openapi-typescript. NO SDKs pointer is
+  emitted — there is no SDK to point at.
+packages: []
+announced_not_published:
+  - language: typescript
+    registry: npm
+    name: '@taskfolk/sdk-node'
+    version: null
+    published: null
+    status: announced-coming-soon
+    official: true
+    url: null
+    registry_status: 404
+    note: >-
+      Registry metadata endpoint registry.npmjs.org/@taskfolk%2Fsdk-node returns 404 — the
+      package does not exist. Recorded as an announced-but-unshipped SDK, not as a package.
+      version is null because there is nothing to read, not because it was not checked.
+probes:
+  - {registry: npm, name: '@taskfolk/sdk-node', url: 'https://registry.npmjs.org/@taskfolk%2Fsdk-node', status: 404}
+  - {registry: npm, name: '@taskfolk/sdk', status: 404}
+  - {registry: npm, name: '@taskfolk/mcp', status: 404}
+  - {registry: npm, name: taskfolk, status: 404}
+  - {registry: npm, name: taskfolk-mcp, status: 404}
+  - {registry: pypi, name: taskfolk, url: 'https://pypi.org/pypi/taskfolk/json', status: 404}
+  - {registry: rubygems, name: taskfolk, url: 'https://rubygems.org/api/v1/gems/taskfolk.json', status: 404}
+  - {registry: crates.io, name: taskfolk, url: 'https://crates.io/api/v1/crates/taskfolk', status: 404}
+  - {registry: packagist, name: taskfolk/taskfolk, status: 404}
+  - {registry: go-proxy, name: github.com/taskfolk/taskfolk, status: 404}
+github_org:
+  url: https://github.com/taskfolk
+  type: Organization
+  verified_first_party: true
+  verification: >-
+    GitHub org `taskfolk`, name "Taskfolk", blog https://taskfolk.ai, bio "Project management for
+    teams and AI agents", created 2026-08-19.
+  public_repos: 1
+  repos:
+    - name: mcp
+      url: https://github.com/taskfolk/mcp
+      description: Official Taskfolk MCP server (hosted). Registry id ai.taskfolk/mcp
+      contains: README.md only — a listing for the hosted server, no code and no installable artifact
+supported_client_path:
+  method: generate from the public spec
+  spec: https://taskfolk.ai/api/v1/openapi.json
+  tool: openapi-typescript
+  provider_quote: >-
+    "Until that lands, the supported path is generating a typed client from the live spec with
+    openapi-typescript, which gives you typed request and response shapes for every endpoint,
+    most of what an SDK buys you anyway."
+  caveat: >-
+    The 187 operations carry NO operationIds, so a generated client names its methods from the
+    path, not from the contract. Adding operationIds would materially improve every generated
+    SDK at zero wire-format cost.
+mcp_registry_entry:
+  registry: https://registry.modelcontextprotocol.io
+  id: ai.taskfolk/mcp
+  version: 1.0.0
+  published: '2026-08-19'
+  status: active
+  distribution: remote (streamable-http). No installable package — the registry entry carries a `remotes` block, not `packages`.

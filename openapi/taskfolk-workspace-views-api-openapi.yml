@@ -12,7 +12,7 @@ tags:
 paths:
   /v1/workspaces/{slug}/views:
     get:
-      summary: List cross-project workspace views (shared + own).
+      summary: List cross-project workspace views (shared + own)
       tags:
       - Workspace views
       security:
@@ -86,8 +86,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugViews
+      x-operation-id-source: derived
     post:
-      summary: Create a workspace view.
+      summary: Create a workspace view
       tags:
       - Workspace views
       security:
@@ -149,9 +151,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugViews
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/views/{id}:
     get:
-      summary: Get a workspace view.
+      summary: Get a workspace view
       tags:
       - Workspace views
       security:
@@ -214,8 +218,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugViewsById
+      x-operation-id-source: derived
     patch:
-      summary: Update a workspace view (creator or owner/admin).
+      summary: Update a workspace view (creator or owner/admin)
       tags:
       - Workspace views
       security:
@@ -328,8 +334,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugViewsById
+      x-operation-id-source: derived
     delete:
-      summary: Delete a workspace view.
+      summary: Delete a workspace view
       tags:
       - Workspace views
       security:
@@ -402,46 +410,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugViewsById
+      x-operation-id-source: derived
 components:
   schemas:
-    WorkspaceView:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        filter:
-          description: Cross-project filter blob (projectIds[], statuses[], priorities[], types[], assigneeId, sort).
-        is_shared:
-          type: boolean
-        created_by:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        updated_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - name
-      - is_shared
-      - created_by
-      - created_at
-      - updated_at
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
     ErrorEnvelope:
       type: object
       properties:
@@ -520,6 +492,44 @@ components:
           description: Defaults to true.
       required:
       - name
+    WorkspaceView:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        filter:
+          description: Cross-project filter blob (projectIds[], statuses[], priorities[], types[], assigneeId, sort).
+        is_shared:
+          type: boolean
+        created_by:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - name
+      - is_shared
+      - created_by
+      - created_at
+      - updated_at
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
   securitySchemes:
     bearerAuth:
       type: http

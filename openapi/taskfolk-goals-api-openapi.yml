@@ -12,7 +12,7 @@ tags:
 paths:
   /v1/workspaces/{slug}/goals:
     get:
-      summary: List goals (optionally filtered by portfolio or company scope).
+      summary: List goals (optionally filtered by portfolio or company scope)
       tags:
       - Goals
       security:
@@ -102,8 +102,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugGoals
+      x-operation-id-source: derived
     post:
-      summary: Create a goal (per-plan cap; acyclic parent).
+      summary: Create a goal (per-plan cap; acyclic parent)
       tags:
       - Goals
       security:
@@ -165,9 +167,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugGoals
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/goals/{goalId}:
     get:
-      summary: Get a goal with its rolled-up progress, status, key results, and alignment.
+      summary: Get a goal with its rolled-up progress, status, key results, and alignment
       tags:
       - Goals
       security:
@@ -232,8 +236,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugGoalsByGoalId
+      x-operation-id-source: derived
     patch:
-      summary: Update a goal.
+      summary: Update a goal
       tags:
       - Goals
       security:
@@ -303,8 +309,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugGoalsByGoalId
+      x-operation-id-source: derived
     delete:
-      summary: Delete a goal (soft). Child goals are orphaned (kept, unaligned).
+      summary: Delete a goal (soft). Child goals are orphaned (kept, unaligned)
       tags:
       - Goals
       security:
@@ -379,8 +387,101 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugGoalsByGoalId
+      x-operation-id-source: derived
 components:
   schemas:
+    Goal:
+      type: object
+      properties:
+        id:
+          type: string
+        workspace_id:
+          type: string
+        title:
+          type: string
+          example: Reach 1,000 active workspaces
+        description_md:
+          type:
+          - string
+          - 'null'
+        portfolio_id:
+          type:
+          - string
+          - 'null'
+          description: null = company goal (not grouped under a portfolio).
+        parent_goal_id:
+          type:
+          - string
+          - 'null'
+        owner_user_id:
+          type:
+          - string
+          - 'null'
+        cycle_start_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        cycle_due_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        status_override:
+          type:
+          - string
+          - 'null'
+          enum:
+          - on_track
+          - at_risk
+          - off_track
+          - done
+          - not_started
+          - null
+          description: Manual status override, or null when the status is fully derived.
+        status:
+          type: string
+          enum:
+          - on_track
+          - at_risk
+          - off_track
+          - done
+          - not_started
+          description: Derived roll-up status (override applied). not_started = no measured progress yet.
+        progress_pct:
+          type:
+          - integer
+          - 'null'
+          description: Rolled-up 0-100, or null when nothing is measured.
+        created_by:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - workspace_id
+      - title
+      - description_md
+      - portfolio_id
+      - parent_goal_id
+      - owner_user_id
+      - cycle_start_at
+      - cycle_due_at
+      - status_override
+      - status
+      - progress_pct
+      - created_by
+      - created_at
+      - updated_at
     GoalCreateInput:
       type: object
       properties:
@@ -429,49 +530,6 @@ components:
           example: null
       required:
       - next_cursor
-    GoalPatchInput:
-      type: object
-      properties:
-        title:
-          type: string
-          minLength: 1
-          maxLength: 200
-        description_md:
-          type:
-          - string
-          - 'null'
-          maxLength: 20000
-        portfolio_id:
-          type:
-          - string
-          - 'null'
-        parent_goal_id:
-          type:
-          - string
-          - 'null'
-        owner_user_id:
-          type:
-          - string
-          - 'null'
-        cycle_start_at:
-          type:
-          - string
-          - 'null'
-        cycle_due_at:
-          type:
-          - string
-          - 'null'
-        status_override:
-          type:
-          - string
-          - 'null'
-          enum:
-          - on_track
-          - at_risk
-          - off_track
-          - done
-          - null
-          description: Set a manual status, or null to clear the override.
     GoalDetail:
       allOf:
       - $ref: '#/components/schemas/Goal'
@@ -624,25 +682,22 @@ components:
           - message
       required:
       - error
-    Goal:
+    GoalPatchInput:
       type: object
       properties:
-        id:
-          type: string
-        workspace_id:
-          type: string
         title:
           type: string
-          example: Reach 1,000 active workspaces
+          minLength: 1
+          maxLength: 200
         description_md:
           type:
           - string
           - 'null'
+          maxLength: 20000
         portfolio_id:
           type:
           - string
           - 'null'
-          description: null = company goal (not grouped under a portfolio).
         parent_goal_id:
           type:
           - string
@@ -655,14 +710,10 @@ components:
           type:
           - string
           - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
         cycle_due_at:
           type:
           - string
           - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
         status_override:
           type:
           - string
@@ -672,49 +723,8 @@ components:
           - at_risk
           - off_track
           - done
-          - not_started
           - null
-          description: Manual status override, or null when the status is fully derived.
-        status:
-          type: string
-          enum:
-          - on_track
-          - at_risk
-          - off_track
-          - done
-          - not_started
-          description: Derived roll-up status (override applied). not_started = no measured progress yet.
-        progress_pct:
-          type:
-          - integer
-          - 'null'
-          description: Rolled-up 0-100, or null when nothing is measured.
-        created_by:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        updated_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - workspace_id
-      - title
-      - description_md
-      - portfolio_id
-      - parent_goal_id
-      - owner_user_id
-      - cycle_start_at
-      - cycle_due_at
-      - status_override
-      - status
-      - progress_pct
-      - created_by
-      - created_at
-      - updated_at
+          description: Set a manual status, or null to clear the override.
   securitySchemes:
     bearerAuth:
       type: http

@@ -12,7 +12,7 @@ tags:
 paths:
   /v1/workspaces/{slug}/projects/{key}/issues/{issueKey}/time:
     get:
-      summary: Get time tracking.
+      summary: Get time tracking
       tags:
       - Time
       security:
@@ -85,8 +85,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeyIssuesByIssueKeyTime
+      x-operation-id-source: derived
     patch:
-      summary: Update time tracking.
+      summary: Update time tracking
       tags:
       - Time
       security:
@@ -164,6 +166,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugProjectsByKeyIssuesByIssueKeyTime
+      x-operation-id-source: derived
 components:
   schemas:
     TimePatchInput:

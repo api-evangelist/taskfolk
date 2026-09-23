@@ -12,7 +12,7 @@ tags:
 paths:
   /v1/workspaces/{slug}/projects/{key}/milestones:
     get:
-      summary: List milestones for a project.
+      summary: List milestones for a project
       tags:
       - Milestones
       security:
@@ -94,8 +94,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeyMilestones
+      x-operation-id-source: derived
     post:
-      summary: Create a milestone.
+      summary: Create a milestone
       tags:
       - Milestones
       security:
@@ -165,9 +167,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugProjectsByKeyMilestones
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/projects/{key}/milestones/{id}:
     get:
-      summary: Milestone detail.
+      summary: Milestone detail
       tags:
       - Milestones
       security:
@@ -238,8 +242,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugProjectsByKeyMilestonesById
+      x-operation-id-source: derived
     patch:
-      summary: Update a milestone.
+      summary: Update a milestone
       tags:
       - Milestones
       security:
@@ -315,8 +321,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugProjectsByKeyMilestonesById
+      x-operation-id-source: derived
     delete:
-      summary: Delete a milestone (soft). Issues are detached.
+      summary: Delete a milestone (soft). Issues are detached
       tags:
       - Milestones
       security:
@@ -397,6 +405,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: deleteV1WorkspacesBySlugProjectsByKeyMilestonesById
+      x-operation-id-source: derived
 components:
   schemas:
     Pagination:
@@ -409,31 +419,6 @@ components:
           example: null
       required:
       - next_cursor
-    MilestonePatchInput:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 120
-        description_md:
-          type:
-          - string
-          - 'null'
-        status:
-          type: string
-          enum:
-          - planned
-          - active
-          - completed
-        start_at:
-          type:
-          - string
-          - 'null'
-        due_at:
-          type:
-          - string
-          - 'null'
     MilestoneCreateInput:
       type: object
       properties:
@@ -506,6 +491,31 @@ components:
       - start_at
       - due_at
       - rank
+    MilestonePatchInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        description_md:
+          type:
+          - string
+          - 'null'
+        status:
+          type: string
+          enum:
+          - planned
+          - active
+          - completed
+        start_at:
+          type:
+          - string
+          - 'null'
+        due_at:
+          type:
+          - string
+          - 'null'
     ErrorEnvelope:
       type: object
       properties:

@@ -12,7 +12,7 @@ tags:
 paths:
   /v1/workspaces/{slug}/notifications:
     get:
-      summary: List notifications for the key's user.
+      summary: List notifications for the key's user
       tags:
       - Notifications
       security:
@@ -86,9 +86,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: getV1WorkspacesBySlugNotifications
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/notifications/{id}:
     patch:
-      summary: Mark a notification read.
+      summary: Mark a notification read
       tags:
       - Notifications
       security:
@@ -161,9 +163,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: patchV1WorkspacesBySlugNotificationsById
+      x-operation-id-source: derived
   /v1/workspaces/{slug}/notifications/mark-all-read:
     post:
-      summary: Mark all unread notifications as read for the calling user in this workspace. Returns the count of rows updated.
+      summary: Mark all unread notifications as read for the calling user in this workspace.
       tags:
       - Notifications
       security:
@@ -225,6 +229,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+      operationId: postV1WorkspacesBySlugNotificationsMarkAllRead
+      x-operation-id-source: derived
 components:
   schemas:
     Pagination:
