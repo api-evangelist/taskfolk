@@ -262,18 +262,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Watcher:
-      type: object
-      properties:
-        user_id:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - user_id
-      - created_at
     ErrorEnvelope:
       type: object
       properties:
@@ -313,6 +301,18 @@ components:
           example: null
       required:
       - next_cursor
+    Watcher:
+      type: object
+      properties:
+        user_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - user_id
+      - created_at
   securitySchemes:
     bearerAuth:
       type: http

@@ -677,23 +677,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ProjectCreateInput:
-      type: object
-      properties:
-        key:
-          type: string
-          example: WEB
-        name:
-          type: string
-        slug:
-          type: string
-        description_md:
-          type: string
-        lead_user_id:
-          type: string
-      required:
-      - key
-      - name
     ProjectPatchInput:
       type: object
       properties:
@@ -713,43 +696,6 @@ components:
           - time
           - points
           - none
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
-    ProjectMember:
-      type: object
-      properties:
-        user_id:
-          type: string
-        email:
-          type: string
-        name:
-          type:
-          - string
-          - 'null'
-        role:
-          type: string
-          enum:
-          - admin
-          - member
-          - viewer
-        added_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - user_id
-      - email
-      - name
-      - role
-      - added_at
     Project:
       type: object
       properties:
@@ -808,21 +754,16 @@ components:
       - archived_at
       - created_at
       - updated_at
-    ProjectMemberAddInput:
+    Pagination:
       type: object
       properties:
-        user_id:
-          type: string
-          description: ID of an existing workspace member.
-        role:
-          type: string
-          enum:
-          - admin
-          - member
-          - viewer
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
       required:
-      - user_id
-      - role
+      - next_cursor
     ErrorEnvelope:
       type: object
       properties:
@@ -852,6 +793,65 @@ components:
           - message
       required:
       - error
+    ProjectMemberAddInput:
+      type: object
+      properties:
+        user_id:
+          type: string
+          description: ID of an existing workspace member.
+        role:
+          type: string
+          enum:
+          - admin
+          - member
+          - viewer
+      required:
+      - user_id
+      - role
+    ProjectMember:
+      type: object
+      properties:
+        user_id:
+          type: string
+        email:
+          type: string
+        name:
+          type:
+          - string
+          - 'null'
+        role:
+          type: string
+          enum:
+          - admin
+          - member
+          - viewer
+        added_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - user_id
+      - email
+      - name
+      - role
+      - added_at
+    ProjectCreateInput:
+      type: object
+      properties:
+        key:
+          type: string
+          example: WEB
+        name:
+          type: string
+        slug:
+          type: string
+        description_md:
+          type: string
+        lead_user_id:
+          type: string
+      required:
+      - key
+      - name
   securitySchemes:
     bearerAuth:
       type: http

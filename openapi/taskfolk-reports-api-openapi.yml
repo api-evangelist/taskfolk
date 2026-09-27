@@ -99,6 +99,24 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    Report:
+      type: object
+      properties:
+        report:
+          type: string
+          enum:
+          - velocity
+          - burndown
+          - cycle-time
+          - throughput
+          - status-breakdown
+          - type-breakdown
+          - workload
+          description: Which report this payload describes.
+        data:
+          description: 'Report-specific payload. Shape depends on `report`: velocity (bars + average), burndown (points), cycle-time (buckets + percentiles), throughput (weekly created vs resolved), status/type-breakdown (slices), workload (rows by assignee). Sprint-dependent reports may be null when the project has no sprints.'
+      required:
+      - report
     ErrorEnvelope:
       type: object
       properties:
@@ -128,24 +146,6 @@ components:
           - message
       required:
       - error
-    Report:
-      type: object
-      properties:
-        report:
-          type: string
-          enum:
-          - velocity
-          - burndown
-          - cycle-time
-          - throughput
-          - status-breakdown
-          - type-breakdown
-          - workload
-          description: Which report this payload describes.
-        data:
-          description: 'Report-specific payload. Shape depends on `report`: velocity (bars + average), burndown (points), cycle-time (buckets + percentiles), throughput (weekly created vs resolved), status/type-breakdown (slices), workload (rows by assignee). Sprint-dependent reports may be null when the project has no sprints.'
-      required:
-      - report
   securitySchemes:
     bearerAuth:
       type: http

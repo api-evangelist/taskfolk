@@ -904,136 +904,35 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    WorkflowRun:
+    WorkflowStartInput:
       type: object
       properties:
-        id:
-          type: string
-        issue_id:
-          type: string
-        status:
-          type: string
-          enum:
-          - running
-          - completed
-          - failed
-          - cancelled
-        current_summary:
-          type:
-          - string
-          - 'null'
-        started_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        ended_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - issue_id
-      - status
-      - current_summary
-      - started_at
-      - ended_at
-    WorkflowRunDetail:
-      type: object
-      properties:
-        id:
-          type: string
         workflow_id:
           type: string
-        workflow_name:
-          type: string
-        issue_id:
-          type: string
-        status:
-          type: string
-          enum:
-          - running
-          - completed
-          - failed
-          - cancelled
-        current_summary:
-          type:
-          - string
-          - 'null'
-        nodes:
-          type: array
-          items:
-            $ref: '#/components/schemas/WorkflowRunNode'
-        started_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        ended_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - workflow_id
-      - workflow_name
-      - issue_id
-      - status
-      - current_summary
-      - nodes
-      - started_at
-      - ended_at
-    WorkflowPatchInput:
-      type: object
-      properties:
-        name:
-          type: string
           minLength: 1
-          maxLength: 120
-        description:
-          type:
-          - string
-          - 'null'
-          maxLength: 500
-        status:
-          type: string
-          enum:
-          - draft
-          - enabled
-    Workflow:
+      required:
+      - workflow_id
+    WorkflowRunNode:
       type: object
       properties:
-        id:
+        node_id:
           type: string
-        name:
+        state:
           type: string
-          example: Triage and build
-        description:
+          enum:
+          - pending
+          - active
+          - done
+          - skipped
+          - failed
+        branch_taken:
           type:
           - string
           - 'null'
-        status:
-          type: string
-          enum:
-          - draft
-          - enabled
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        updated_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
       required:
-      - id
-      - name
-      - description
-      - status
-      - created_at
-      - updated_at
+      - node_id
+      - state
+      - branch_taken
     WorkflowEdge:
       type: object
       properties:
@@ -1053,16 +952,35 @@ components:
       - source_node_id
       - target_node_id
       - branch_label
-    Pagination:
+    WorkflowCreateInput:
       type: object
       properties:
-        next_cursor:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        description:
+          type: string
+          maxLength: 500
+      required:
+      - name
+    WorkflowPatchInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        description:
           type:
           - string
           - 'null'
-          example: null
-      required:
-      - next_cursor
+          maxLength: 500
+        status:
+          type: string
+          enum:
+          - draft
+          - enabled
     WorkflowDetail:
       type: object
       properties:
@@ -1104,27 +1022,73 @@ components:
       - edges
       - created_at
       - updated_at
-    WorkflowRunNode:
+    Workflow:
       type: object
       properties:
-        node_id:
+        id:
           type: string
-        state:
+        name:
           type: string
-          enum:
-          - pending
-          - active
-          - done
-          - skipped
-          - failed
-        branch_taken:
+          example: Triage and build
+        description:
           type:
           - string
           - 'null'
+        status:
+          type: string
+          enum:
+          - draft
+          - enabled
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
       required:
-      - node_id
-      - state
-      - branch_taken
+      - id
+      - name
+      - description
+      - status
+      - created_at
+      - updated_at
+    WorkflowRun:
+      type: object
+      properties:
+        id:
+          type: string
+        issue_id:
+          type: string
+        status:
+          type: string
+          enum:
+          - running
+          - completed
+          - failed
+          - cancelled
+        current_summary:
+          type:
+          - string
+          - 'null'
+        started_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        ended_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - issue_id
+      - status
+      - current_summary
+      - started_at
+      - ended_at
     WorkflowNode:
       type: object
       properties:
@@ -1161,18 +1125,6 @@ components:
       - label
       - pos_x
       - pos_y
-    WorkflowCreateInput:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 120
-        description:
-          type: string
-          maxLength: 500
-      required:
-      - name
     WorkflowGraphInput:
       type: object
       properties:
@@ -1240,6 +1192,16 @@ components:
       required:
       - nodes
       - edges
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
     ErrorEnvelope:
       type: object
       properties:
@@ -1276,14 +1238,52 @@ components:
           type: string
           minLength: 1
           description: Complete this active stage; omit to complete all active stages.
-    WorkflowStartInput:
+    WorkflowRunDetail:
       type: object
       properties:
+        id:
+          type: string
         workflow_id:
           type: string
-          minLength: 1
+        workflow_name:
+          type: string
+        issue_id:
+          type: string
+        status:
+          type: string
+          enum:
+          - running
+          - completed
+          - failed
+          - cancelled
+        current_summary:
+          type:
+          - string
+          - 'null'
+        nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkflowRunNode'
+        started_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        ended_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
       required:
+      - id
       - workflow_id
+      - workflow_name
+      - issue_id
+      - status
+      - current_summary
+      - nodes
+      - started_at
+      - ended_at
   securitySchemes:
     bearerAuth:
       type: http

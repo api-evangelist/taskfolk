@@ -1144,18 +1144,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ChatMessageCreateInput:
-      type: object
-      properties:
-        body_md:
-          type: string
-          minLength: 1
-          maxLength: 64000
-        parent_id:
-          type: string
-          description: Reply to this message — the thread root or any reply within it (nested replies are supported).
-      required:
-      - body_md
     ChatChannel:
       type: object
       properties:
@@ -1212,30 +1200,18 @@ components:
       - archived_at
       - last_message_at
       - created_at
-    ChatChannelPatchInput:
+    ChatMessageCreateInput:
       type: object
       properties:
-        name:
+        body_md:
           type: string
           minLength: 1
-          maxLength: 80
-        topic:
-          type:
-          - string
-          - 'null'
-          maxLength: 280
-        archived:
-          type: boolean
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
+          maxLength: 64000
+        parent_id:
+          type: string
+          description: Reply to this message — the thread root or any reply within it (nested replies are supported).
       required:
-      - next_cursor
+      - body_md
     ChatChannelCreateInput:
       type: object
       properties:
@@ -1254,6 +1230,70 @@ components:
           maxLength: 280
       required:
       - name
+    ChatReactions:
+      type: object
+      properties:
+        message_id:
+          type: string
+        reactions:
+          type: array
+          items:
+            type: object
+            properties:
+              emoji:
+                type: string
+              count:
+                type: integer
+              user_ids:
+                type: array
+                items:
+                  type: string
+            required:
+            - emoji
+            - count
+            - user_ids
+      required:
+      - message_id
+      - reactions
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
     ChatMessage:
       type: object
       properties:
@@ -1322,35 +1362,6 @@ components:
       - edited_at
       - created_at
       - reactions
-    ErrorEnvelope:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
-      required:
-      - error
     ChatChannelMember:
       type: object
       properties:
@@ -1369,31 +1380,20 @@ components:
       - user_id
       - role
       - joined_at
-    ChatReactions:
+    ChatChannelPatchInput:
       type: object
       properties:
-        message_id:
+        name:
           type: string
-        reactions:
-          type: array
-          items:
-            type: object
-            properties:
-              emoji:
-                type: string
-              count:
-                type: integer
-              user_ids:
-                type: array
-                items:
-                  type: string
-            required:
-            - emoji
-            - count
-            - user_ids
-      required:
-      - message_id
-      - reactions
+          minLength: 1
+          maxLength: 80
+        topic:
+          type:
+          - string
+          - 'null'
+          maxLength: 280
+        archived:
+          type: boolean
   securitySchemes:
     bearerAuth:
       type: http

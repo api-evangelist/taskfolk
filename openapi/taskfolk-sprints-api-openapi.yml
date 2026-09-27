@@ -409,35 +409,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    SprintPatchInput:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 120
-          example: Sprint 7
-        goal:
-          type:
-          - string
-          - 'null'
-          description: Sprint goal (markdown).
-        status:
-          type: string
-          enum:
-          - planned
-          - active
-          - completed
-        start_at:
-          type:
-          - string
-          - 'null'
-          description: Date or ISO 8601.
-        end_at:
-          type:
-          - string
-          - 'null'
-          description: Date or ISO 8601.
     SprintCreateInput:
       type: object
       properties:
@@ -547,6 +518,35 @@ components:
           - message
       required:
       - error
+    SprintPatchInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+          example: Sprint 7
+        goal:
+          type:
+          - string
+          - 'null'
+          description: Sprint goal (markdown).
+        status:
+          type: string
+          enum:
+          - planned
+          - active
+          - completed
+        start_at:
+          type:
+          - string
+          - 'null'
+          description: Date or ISO 8601.
+        end_at:
+          type:
+          - string
+          - 'null'
+          description: Date or ISO 8601.
   securitySchemes:
     bearerAuth:
       type: http

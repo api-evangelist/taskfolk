@@ -454,6 +454,13 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    CommentCreateInput:
+      type: object
+      properties:
+        body_md:
+          type: string
+      required:
+      - body_md
     BulkCommentsCreateInput:
       type: object
       properties:
@@ -465,6 +472,35 @@ components:
           maxItems: 50
       required:
       - items
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+        issue_id:
+          type: string
+        author_id:
+          type: string
+        body_md:
+          type: string
+        body_html:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - issue_id
+      - author_id
+      - body_md
+      - body_html
+      - created_at
+      - updated_at
     Pagination:
       type: object
       properties:
@@ -475,6 +511,35 @@ components:
           example: null
       required:
       - next_cursor
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
     BulkCommentResult:
       anyOf:
       - type: object
@@ -526,71 +591,6 @@ components:
         - index
         - ok
         - error
-    ErrorEnvelope:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
-      required:
-      - error
-    CommentCreateInput:
-      type: object
-      properties:
-        body_md:
-          type: string
-      required:
-      - body_md
-    Comment:
-      type: object
-      properties:
-        id:
-          type: string
-        issue_id:
-          type: string
-        author_id:
-          type: string
-        body_md:
-          type: string
-        body_html:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        updated_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - issue_id
-      - author_id
-      - body_md
-      - body_html
-      - created_at
-      - updated_at
   securitySchemes:
     bearerAuth:
       type: http

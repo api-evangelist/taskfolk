@@ -409,16 +409,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
     MilestoneCreateInput:
       type: object
       properties:
@@ -491,6 +481,16 @@ components:
       - start_at
       - due_at
       - rank
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
     MilestonePatchInput:
       type: object
       properties:

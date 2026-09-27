@@ -608,16 +608,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
     Agent:
       type: object
       properties:
@@ -686,108 +676,16 @@ components:
       - key_revoked
       - field_policy
       - spend_cap_usd
-    AgentSession:
+    Pagination:
       type: object
       properties:
-        id:
-          type: string
-        agent_id:
-          type: string
-        agent_name:
-          type: string
-          example: Omar's Claude Code
-        agent_kind:
-          type: string
-          example: claude
-        state:
-          type: string
-          enum:
-          - running
-          - needs_input
-          - review
-          - done
-          - failed
-          - cancelled
-          example: running
-        title:
-          type: string
-          example: Fix flaky auth test
-        note:
+        next_cursor:
           type:
           - string
           - 'null'
-          description: The agent's latest status note.
-        external_url:
-          type:
-          - string
-          - 'null'
-          description: Where the output lives — typically the PR URL.
-        cost_usd:
-          type:
-          - number
-          - 'null'
-          description: Cumulative agent-reported cost of this session in USD (null if never reported). Agent-reported — Taskfolk does not run the model or verify spend.
-        tokens_in:
-          type:
-          - integer
-          - 'null'
-          description: Cumulative input tokens the agent reported.
-        tokens_out:
-          type:
-          - integer
-          - 'null'
-          description: Cumulative output tokens the agent reported.
-        model:
-          type:
-          - string
-          - 'null'
-          example: claude-opus-4-8
-          description: The model of the latest usage report.
-        usage_reports:
-          type: integer
-          description: How many usage reports the agent has posted.
-        issue_id:
-          type:
-          - string
-          - 'null'
-        issue_key:
-          type:
-          - string
-          - 'null'
-          example: WEB-39
-        started_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        last_activity_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        ended_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
+          example: null
       required:
-      - id
-      - agent_id
-      - agent_name
-      - agent_kind
-      - state
-      - title
-      - note
-      - external_url
-      - cost_usd
-      - tokens_in
-      - tokens_out
-      - model
-      - usage_reports
-      - issue_id
-      - issue_key
-      - started_at
-      - last_activity_at
-      - ended_at
+      - next_cursor
     ErrorEnvelope:
       type: object
       properties:
@@ -902,6 +800,108 @@ components:
       - key_last_used_at
       - field_policy
       - spend_cap_usd
+    AgentSession:
+      type: object
+      properties:
+        id:
+          type: string
+        agent_id:
+          type: string
+        agent_name:
+          type: string
+          example: Omar's Claude Code
+        agent_kind:
+          type: string
+          example: claude
+        state:
+          type: string
+          enum:
+          - running
+          - needs_input
+          - review
+          - done
+          - failed
+          - cancelled
+          example: running
+        title:
+          type: string
+          example: Fix flaky auth test
+        note:
+          type:
+          - string
+          - 'null'
+          description: The agent's latest status note.
+        external_url:
+          type:
+          - string
+          - 'null'
+          description: Where the output lives — typically the PR URL.
+        cost_usd:
+          type:
+          - number
+          - 'null'
+          description: Cumulative agent-reported cost of this session in USD (null if never reported). Agent-reported — Taskfolk does not run the model or verify spend.
+        tokens_in:
+          type:
+          - integer
+          - 'null'
+          description: Cumulative input tokens the agent reported.
+        tokens_out:
+          type:
+          - integer
+          - 'null'
+          description: Cumulative output tokens the agent reported.
+        model:
+          type:
+          - string
+          - 'null'
+          example: claude-opus-4-8
+          description: The model of the latest usage report.
+        usage_reports:
+          type: integer
+          description: How many usage reports the agent has posted.
+        issue_id:
+          type:
+          - string
+          - 'null'
+        issue_key:
+          type:
+          - string
+          - 'null'
+          example: WEB-39
+        started_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        last_activity_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        ended_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - agent_id
+      - agent_name
+      - agent_kind
+      - state
+      - title
+      - note
+      - external_url
+      - cost_usd
+      - tokens_in
+      - tokens_out
+      - model
+      - usage_reports
+      - issue_id
+      - issue_key
+      - started_at
+      - last_activity_at
+      - ended_at
   securitySchemes:
     bearerAuth:
       type: http

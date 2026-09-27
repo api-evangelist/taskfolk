@@ -335,26 +335,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    LabelCreateInput:
-      type: object
-      properties:
-        name:
-          type: string
-        color:
-          type: string
-      required:
-      - name
-      - color
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
     LabelPatchInput:
       type: object
       properties:
@@ -382,6 +362,26 @@ components:
       - name
       - color
       - created_at
+    LabelCreateInput:
+      type: object
+      properties:
+        name:
+          type: string
+        color:
+          type: string
+      required:
+      - name
+      - color
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
     ErrorEnvelope:
       type: object
       properties:

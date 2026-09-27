@@ -1371,6 +1371,90 @@ components:
       - scopes
       - is_public
       - created_at
+    ApiKeyCreateInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        scopes:
+          type: array
+          items:
+            type: string
+          minItems: 1
+        project_ids:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        expires_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        rate_limit_per_minute:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 100000
+      required:
+      - name
+      - scopes
+    ApiKeyPatchInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        rate_limit_per_minute:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 100000
+        expires_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+    OauthAppCreateInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+          example: My CI Integration
+        redirect_uris:
+          type: array
+          items:
+            type: string
+            format: uri
+          minItems: 1
+          maxItems: 20
+          example:
+          - https://example.com/callback
+        scopes:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          example:
+          - issues:read
+        is_public:
+          type: boolean
+          description: Set true for PKCE public clients (no secret).
+          example: false
+      required:
+      - name
+      - redirect_uris
+      - scopes
     ApiKey:
       type: object
       properties:
@@ -1445,68 +1529,77 @@ components:
       - last_used_ip
       - revoked_at
       - revoke_reason
-    WebhookPatchInput:
+    CreatedOauthApp:
+      allOf:
+      - $ref: '#/components/schemas/OauthApp'
+      - type: object
+        properties:
+          client_secret:
+            type:
+            - string
+            - 'null'
+            example: utos_...
+            description: Returned exactly once on create. Null for public (PKCE) clients.
+        required:
+        - client_secret
+    WebhookDelivery:
       type: object
       properties:
-        url:
+        delivery_id:
           type: string
-          format: uri
-        event_types:
-          type: array
-          items:
-            type: string
-          minItems: 1
-        enabled:
-          type: boolean
-    ApiKeyUsage:
+        event_type:
+          type: string
+          example: webhook.test
+        attempt:
+          type: integer
+          example: 1
+        status:
+          type: integer
+          example: 200
+        latency_ms:
+          type: integer
+          example: 123
+        error:
+          type: string
+        final:
+          type: integer
+          example: 1
+        ts:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - delivery_id
+      - event_type
+      - attempt
+      - status
+      - latency_ms
+      - error
+      - final
+      - ts
+    ApiKeyUsageDayPoint:
       type: object
       properties:
-        key_id:
-          type: string
-        from:
-          type: string
-          example: '2026-05-17'
-        to:
+        date:
           type: string
           example: '2026-06-15'
-        granularity:
-          type: string
-          enum:
-          - day
-        series:
-          type: array
-          items:
-            $ref: '#/components/schemas/ApiKeyUsageDayPoint'
-        totals:
-          type: object
-          properties:
-            requests:
-              type: integer
-            errors:
-              type: integer
-            p95_ms:
-              type: integer
-          required:
-          - requests
-          - errors
-          - p95_ms
+        requests:
+          type: integer
+        errors:
+          type: integer
+        p50_ms:
+          type: integer
+        p95_ms:
+          type: integer
+        p99_ms:
+          type: integer
       required:
-      - key_id
-      - from
-      - to
-      - granularity
-      - series
-      - totals
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
+      - date
+      - requests
+      - errors
+      - p50_ms
+      - p95_ms
+      - p99_ms
     Webhook:
       type: object
       properties:
@@ -1557,107 +1650,19 @@ components:
       - last_delivery_status
       - created_by
       - created_at
-    ApiKeyPatchInput:
+    WebhookPatchInput:
       type: object
       properties:
-        name:
+        url:
           type: string
-          minLength: 1
-          maxLength: 80
-        rate_limit_per_minute:
-          type:
-          - integer
-          - 'null'
-          minimum: 1
-          maximum: 100000
-        expires_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-    CreatedApiKey:
-      allOf:
-      - $ref: '#/components/schemas/ApiKey'
-      - type: object
-        properties:
-          plaintext:
+          format: uri
+        event_types:
+          type: array
+          items:
             type: string
-            example: tfk_live_abcd1234...
-            description: Returned exactly once on create. Store it securely.
-        required:
-        - plaintext
-    ApiKeyUsageDayPoint:
-      type: object
-      properties:
-        date:
-          type: string
-          example: '2026-06-15'
-        requests:
-          type: integer
-        errors:
-          type: integer
-        p50_ms:
-          type: integer
-        p95_ms:
-          type: integer
-        p99_ms:
-          type: integer
-      required:
-      - date
-      - requests
-      - errors
-      - p50_ms
-      - p95_ms
-      - p99_ms
-    CreatedOauthApp:
-      allOf:
-      - $ref: '#/components/schemas/OauthApp'
-      - type: object
-        properties:
-          client_secret:
-            type:
-            - string
-            - 'null'
-            example: utos_...
-            description: Returned exactly once on create. Null for public (PKCE) clients.
-        required:
-        - client_secret
-    WebhookDelivery:
-      type: object
-      properties:
-        delivery_id:
-          type: string
-        event_type:
-          type: string
-          example: webhook.test
-        attempt:
-          type: integer
-          example: 1
-        status:
-          type: integer
-          example: 200
-        latency_ms:
-          type: integer
-          example: 123
-        error:
-          type: string
-        final:
-          type: integer
-          example: 1
-        ts:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - delivery_id
-      - event_type
-      - attempt
-      - status
-      - latency_ms
-      - error
-      - final
-      - ts
+          minItems: 1
+        enabled:
+          type: boolean
     ErrorEnvelope:
       type: object
       properties:
@@ -1687,71 +1692,55 @@ components:
           - message
       required:
       - error
-    OauthAppCreateInput:
+    Pagination:
       type: object
       properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 120
-          example: My CI Integration
-        redirect_uris:
-          type: array
-          items:
-            type: string
-            format: uri
-          minItems: 1
-          maxItems: 20
-          example:
-          - https://example.com/callback
-        scopes:
-          type: array
-          items:
-            type: string
-          minItems: 1
-          example:
-          - issues:read
-        is_public:
-          type: boolean
-          description: Set true for PKCE public clients (no secret).
-          example: false
-      required:
-      - name
-      - redirect_uris
-      - scopes
-    ApiKeyCreateInput:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 80
-        scopes:
-          type: array
-          items:
-            type: string
-          minItems: 1
-        project_ids:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-        expires_at:
+        next_cursor:
           type:
           - string
           - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        rate_limit_per_minute:
-          type:
-          - integer
-          - 'null'
-          minimum: 1
-          maximum: 100000
+          example: null
       required:
-      - name
-      - scopes
+      - next_cursor
+    ApiKeyUsage:
+      type: object
+      properties:
+        key_id:
+          type: string
+        from:
+          type: string
+          example: '2026-05-17'
+        to:
+          type: string
+          example: '2026-06-15'
+        granularity:
+          type: string
+          enum:
+          - day
+        series:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiKeyUsageDayPoint'
+        totals:
+          type: object
+          properties:
+            requests:
+              type: integer
+            errors:
+              type: integer
+            p95_ms:
+              type: integer
+          required:
+          - requests
+          - errors
+          - p95_ms
+      required:
+      - key_id
+      - from
+      - to
+      - granularity
+      - series
+      - totals
     CreatedWebhook:
       allOf:
       - $ref: '#/components/schemas/Webhook'
@@ -1763,6 +1752,17 @@ components:
             description: Returned exactly once on create or rotation.
         required:
         - secret
+    CreatedApiKey:
+      allOf:
+      - $ref: '#/components/schemas/ApiKey'
+      - type: object
+        properties:
+          plaintext:
+            type: string
+            example: tfk_live_abcd1234...
+            description: Returned exactly once on create. Store it securely.
+        required:
+        - plaintext
   securitySchemes:
     bearerAuth:
       type: http

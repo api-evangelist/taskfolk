@@ -391,6 +391,172 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    GoalPatchInput:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description_md:
+          type:
+          - string
+          - 'null'
+          maxLength: 20000
+        portfolio_id:
+          type:
+          - string
+          - 'null'
+        parent_goal_id:
+          type:
+          - string
+          - 'null'
+        owner_user_id:
+          type:
+          - string
+          - 'null'
+        cycle_start_at:
+          type:
+          - string
+          - 'null'
+        cycle_due_at:
+          type:
+          - string
+          - 'null'
+        status_override:
+          type:
+          - string
+          - 'null'
+          enum:
+          - on_track
+          - at_risk
+          - off_track
+          - done
+          - null
+          description: Set a manual status, or null to clear the override.
+    GoalDetail:
+      allOf:
+      - $ref: '#/components/schemas/Goal'
+      - type: object
+        properties:
+          portfolio_name:
+            type:
+            - string
+            - 'null'
+          parent_title:
+            type:
+            - string
+            - 'null'
+          key_results:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                title:
+                  type: string
+                kind:
+                  type: string
+                  enum:
+                  - manual
+                  - auto
+                unit:
+                  type:
+                  - string
+                  - 'null'
+                start_value:
+                  type:
+                  - number
+                  - 'null'
+                target_value:
+                  type:
+                  - number
+                  - 'null'
+                current_value:
+                  type:
+                  - number
+                  - 'null'
+                weight:
+                  type: number
+                scope:
+                  type:
+                  - object
+                  - 'null'
+                  properties:
+                    project_ids:
+                      type: array
+                      items:
+                        type: string
+                    issue_types:
+                      type: array
+                      items:
+                        type: string
+                        enum:
+                        - epic
+                        - story
+                        - task
+                        - bug
+                        - subtask
+                    label_ids:
+                      type: array
+                      items:
+                        type: string
+                    assignee_id:
+                      type:
+                      - string
+                      - 'null'
+                  description: Auto-KR work scope; null = inherit the goal's portfolio/workspace scope. Unknown ids are dropped.
+                progress_pct:
+                  type:
+                  - integer
+                  - 'null'
+              required:
+              - id
+              - title
+              - kind
+              - unit
+              - start_value
+              - target_value
+              - current_value
+              - weight
+              - scope
+              - progress_pct
+          children:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                title:
+                  type: string
+                progress_pct:
+                  type:
+                  - integer
+                  - 'null'
+                status:
+                  type: string
+                  enum:
+                  - on_track
+                  - at_risk
+                  - off_track
+                  - done
+                  - not_started
+                  description: Derived roll-up status (override applied). not_started = no measured progress yet.
+              required:
+              - id
+              - title
+              - progress_pct
+              - status
+          watcher_count:
+            type: integer
+        required:
+        - portfolio_name
+        - parent_title
+        - key_results
+        - children
+        - watcher_count
     Goal:
       type: object
       properties:
@@ -530,129 +696,6 @@ components:
           example: null
       required:
       - next_cursor
-    GoalDetail:
-      allOf:
-      - $ref: '#/components/schemas/Goal'
-      - type: object
-        properties:
-          portfolio_name:
-            type:
-            - string
-            - 'null'
-          parent_title:
-            type:
-            - string
-            - 'null'
-          key_results:
-            type: array
-            items:
-              type: object
-              properties:
-                id:
-                  type: string
-                title:
-                  type: string
-                kind:
-                  type: string
-                  enum:
-                  - manual
-                  - auto
-                unit:
-                  type:
-                  - string
-                  - 'null'
-                start_value:
-                  type:
-                  - number
-                  - 'null'
-                target_value:
-                  type:
-                  - number
-                  - 'null'
-                current_value:
-                  type:
-                  - number
-                  - 'null'
-                weight:
-                  type: number
-                scope:
-                  type:
-                  - object
-                  - 'null'
-                  properties:
-                    project_ids:
-                      type: array
-                      items:
-                        type: string
-                    issue_types:
-                      type: array
-                      items:
-                        type: string
-                        enum:
-                        - epic
-                        - story
-                        - task
-                        - bug
-                        - subtask
-                    label_ids:
-                      type: array
-                      items:
-                        type: string
-                    assignee_id:
-                      type:
-                      - string
-                      - 'null'
-                  description: Auto-KR work scope; null = inherit the goal's portfolio/workspace scope. Unknown ids are dropped.
-                progress_pct:
-                  type:
-                  - integer
-                  - 'null'
-              required:
-              - id
-              - title
-              - kind
-              - unit
-              - start_value
-              - target_value
-              - current_value
-              - weight
-              - scope
-              - progress_pct
-          children:
-            type: array
-            items:
-              type: object
-              properties:
-                id:
-                  type: string
-                title:
-                  type: string
-                progress_pct:
-                  type:
-                  - integer
-                  - 'null'
-                status:
-                  type: string
-                  enum:
-                  - on_track
-                  - at_risk
-                  - off_track
-                  - done
-                  - not_started
-                  description: Derived roll-up status (override applied). not_started = no measured progress yet.
-              required:
-              - id
-              - title
-              - progress_pct
-              - status
-          watcher_count:
-            type: integer
-        required:
-        - portfolio_name
-        - parent_title
-        - key_results
-        - children
-        - watcher_count
     ErrorEnvelope:
       type: object
       properties:
@@ -682,49 +725,6 @@ components:
           - message
       required:
       - error
-    GoalPatchInput:
-      type: object
-      properties:
-        title:
-          type: string
-          minLength: 1
-          maxLength: 200
-        description_md:
-          type:
-          - string
-          - 'null'
-          maxLength: 20000
-        portfolio_id:
-          type:
-          - string
-          - 'null'
-        parent_goal_id:
-          type:
-          - string
-          - 'null'
-        owner_user_id:
-          type:
-          - string
-          - 'null'
-        cycle_start_at:
-          type:
-          - string
-          - 'null'
-        cycle_due_at:
-          type:
-          - string
-          - 'null'
-        status_override:
-          type:
-          - string
-          - 'null'
-          enum:
-          - on_track
-          - at_risk
-          - off_track
-          - done
-          - null
-          description: Set a manual status, or null to clear the override.
   securitySchemes:
     bearerAuth:
       type: http

@@ -414,35 +414,34 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ErrorEnvelope:
+    WorkspaceView:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
+        id:
+          type: string
+        name:
+          type: string
+        filter:
+          description: Cross-project filter blob (projectIds[], statuses[], priorities[], types[], assigneeId, sort).
+        is_shared:
+          type: boolean
+        created_by:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
       required:
-      - error
+      - id
+      - name
+      - is_shared
+      - created_by
+      - created_at
+      - updated_at
     WorkspaceViewCreateInput:
       type: object
       properties:
@@ -492,34 +491,6 @@ components:
           description: Defaults to true.
       required:
       - name
-    WorkspaceView:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        filter:
-          description: Cross-project filter blob (projectIds[], statuses[], priorities[], types[], assigneeId, sort).
-        is_shared:
-          type: boolean
-        created_by:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        updated_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - name
-      - is_shared
-      - created_by
-      - created_at
-      - updated_at
     Pagination:
       type: object
       properties:
@@ -530,6 +501,35 @@ components:
           example: null
       required:
       - next_cursor
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
   securitySchemes:
     bearerAuth:
       type: http

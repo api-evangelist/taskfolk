@@ -453,16 +453,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
     AutomationPatchInput:
       type: object
       properties:
@@ -582,129 +572,68 @@ components:
           - 'null'
         enabled:
           type: boolean
-    AutomationCreateInput:
+    AutomationRun:
       type: object
       properties:
-        name:
+        id:
           type: string
-          minLength: 1
-          maxLength: 100
+        automation_id:
+          type: string
+        issue_id:
+          type:
+          - string
+          - 'null'
         trigger:
           type: string
+        status:
+          type: string
           enum:
-          - issue.created
-          - issue.status_changed
-          - issue.priority_changed
-          - issue.assigned
-          - issue.unassigned
-          - comment.added
-        conditions:
+          - ok
+          - partial
+          - error
+        actions_applied:
           type:
-          - object
+          - array
           - 'null'
-          properties:
-            match:
-              type: string
-              enum:
-              - all
-              - any
-            rules:
-              type: array
-              items:
-                type: object
-                properties:
-                  field:
-                    type: string
-                    enum:
-                    - project
-                    - type
-                    - priority
-                    - status
-                    - assignee
-                    - label
-                    - title
-                  op:
-                    type: string
-                    enum:
-                    - is
-                    - is_not
-                    - is_one_of
-                    - contains
-                    - is_set
-                    - is_empty
-                  value:
-                    anyOf:
-                    - type: string
-                      maxLength: 500
-                    - type: array
-                      items:
-                        type: string
-                        maxLength: 100
-                      maxItems: 50
-                required:
-                - field
-                - op
-              maxItems: 10
-          required:
-          - match
-          - rules
-        actions:
-          type: array
           items:
             type: object
             properties:
               type:
                 type: string
-                enum:
-                - set_status
-                - set_priority
-                - assign_to
-                - unassign
-                - add_label
-                - remove_label
-                - move_to_sprint
-                - add_comment
-                - notify_agent
-              status:
-                type: string
-              priority:
-                type: string
-              assign_target:
-                type: string
-                enum:
-                - member
-                - triggering_user
-              member_id:
-                type: string
-              label_id:
-                type: string
-              sprint_target:
-                type: string
-                enum:
-                - active
-                - specific
-                - backlog
-              sprint_id:
-                type: string
-              comment:
-                type: string
-                maxLength: 2000
-              agent_user_id:
+              ok:
+                type: boolean
+              detail:
                 type: string
             required:
             - type
-          minItems: 1
-          maxItems: 10
-        project_id:
+            - ok
+        detail:
           type:
           - string
           - 'null'
-        enabled:
-          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
       required:
-      - name
+      - id
+      - automation_id
+      - issue_id
       - trigger
-      - actions
+      - status
+      - actions_applied
+      - detail
+      - created_at
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
     ErrorEnvelope:
       type: object
       properties:
@@ -873,58 +802,129 @@ components:
       - created_by
       - created_at
       - updated_at
-    AutomationRun:
+    AutomationCreateInput:
       type: object
       properties:
-        id:
+        name:
           type: string
-        automation_id:
-          type: string
-        issue_id:
-          type:
-          - string
-          - 'null'
+          minLength: 1
+          maxLength: 100
         trigger:
           type: string
-        status:
-          type: string
           enum:
-          - ok
-          - partial
-          - error
-        actions_applied:
+          - issue.created
+          - issue.status_changed
+          - issue.priority_changed
+          - issue.assigned
+          - issue.unassigned
+          - comment.added
+        conditions:
           type:
-          - array
+          - object
           - 'null'
+          properties:
+            match:
+              type: string
+              enum:
+              - all
+              - any
+            rules:
+              type: array
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                    enum:
+                    - project
+                    - type
+                    - priority
+                    - status
+                    - assignee
+                    - label
+                    - title
+                  op:
+                    type: string
+                    enum:
+                    - is
+                    - is_not
+                    - is_one_of
+                    - contains
+                    - is_set
+                    - is_empty
+                  value:
+                    anyOf:
+                    - type: string
+                      maxLength: 500
+                    - type: array
+                      items:
+                        type: string
+                        maxLength: 100
+                      maxItems: 50
+                required:
+                - field
+                - op
+              maxItems: 10
+          required:
+          - match
+          - rules
+        actions:
+          type: array
           items:
             type: object
             properties:
               type:
                 type: string
-              ok:
-                type: boolean
-              detail:
+                enum:
+                - set_status
+                - set_priority
+                - assign_to
+                - unassign
+                - add_label
+                - remove_label
+                - move_to_sprint
+                - add_comment
+                - notify_agent
+              status:
+                type: string
+              priority:
+                type: string
+              assign_target:
+                type: string
+                enum:
+                - member
+                - triggering_user
+              member_id:
+                type: string
+              label_id:
+                type: string
+              sprint_target:
+                type: string
+                enum:
+                - active
+                - specific
+                - backlog
+              sprint_id:
+                type: string
+              comment:
+                type: string
+                maxLength: 2000
+              agent_user_id:
                 type: string
             required:
             - type
-            - ok
-        detail:
+          minItems: 1
+          maxItems: 10
+        project_id:
           type:
           - string
           - 'null'
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
+        enabled:
+          type: boolean
       required:
-      - id
-      - automation_id
-      - issue_id
+      - name
       - trigger
-      - status
-      - actions_applied
-      - detail
-      - created_at
+      - actions
   securitySchemes:
     bearerAuth:
       type: http
