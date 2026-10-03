@@ -461,56 +461,6 @@ components:
           type: string
       required:
       - body_md
-    BulkCommentsCreateInput:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/CommentCreateInput'
-          minItems: 1
-          maxItems: 50
-      required:
-      - items
-    Comment:
-      type: object
-      properties:
-        id:
-          type: string
-        issue_id:
-          type: string
-        author_id:
-          type: string
-        body_md:
-          type: string
-        body_html:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        updated_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - issue_id
-      - author_id
-      - body_md
-      - body_html
-      - created_at
-      - updated_at
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
     ErrorEnvelope:
       type: object
       properties:
@@ -591,6 +541,56 @@ components:
         - index
         - ok
         - error
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+        issue_id:
+          type: string
+        author_id:
+          type: string
+        body_md:
+          type: string
+        body_html:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - issue_id
+      - author_id
+      - body_md
+      - body_html
+      - created_at
+      - updated_at
+    BulkCommentsCreateInput:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommentCreateInput'
+          minItems: 1
+          maxItems: 50
+      required:
+      - items
   securitySchemes:
     bearerAuth:
       type: http

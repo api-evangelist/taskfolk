@@ -391,22 +391,25 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    GoalPatchInput:
+    Goal:
       type: object
       properties:
+        id:
+          type: string
+        workspace_id:
+          type: string
         title:
           type: string
-          minLength: 1
-          maxLength: 200
+          example: Reach 1,000 active workspaces
         description_md:
           type:
           - string
           - 'null'
-          maxLength: 20000
         portfolio_id:
           type:
           - string
           - 'null'
+          description: null = company goal (not grouped under a portfolio).
         parent_goal_id:
           type:
           - string
@@ -419,10 +422,14 @@ components:
           type:
           - string
           - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
         cycle_due_at:
           type:
           - string
           - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
         status_override:
           type:
           - string
@@ -432,8 +439,78 @@ components:
           - at_risk
           - off_track
           - done
+          - not_started
           - null
-          description: Set a manual status, or null to clear the override.
+          description: Manual status override, or null when the status is fully derived.
+        status:
+          type: string
+          enum:
+          - on_track
+          - at_risk
+          - off_track
+          - done
+          - not_started
+          description: Derived roll-up status (override applied). not_started = no measured progress yet.
+        progress_pct:
+          type:
+          - integer
+          - 'null'
+          description: Rolled-up 0-100, or null when nothing is measured.
+        created_by:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - workspace_id
+      - title
+      - description_md
+      - portfolio_id
+      - parent_goal_id
+      - owner_user_id
+      - cycle_start_at
+      - cycle_due_at
+      - status_override
+      - status
+      - progress_pct
+      - created_by
+      - created_at
+      - updated_at
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
     GoalDetail:
       allOf:
       - $ref: '#/components/schemas/Goal'
@@ -557,97 +634,6 @@ components:
         - key_results
         - children
         - watcher_count
-    Goal:
-      type: object
-      properties:
-        id:
-          type: string
-        workspace_id:
-          type: string
-        title:
-          type: string
-          example: Reach 1,000 active workspaces
-        description_md:
-          type:
-          - string
-          - 'null'
-        portfolio_id:
-          type:
-          - string
-          - 'null'
-          description: null = company goal (not grouped under a portfolio).
-        parent_goal_id:
-          type:
-          - string
-          - 'null'
-        owner_user_id:
-          type:
-          - string
-          - 'null'
-        cycle_start_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        cycle_due_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        status_override:
-          type:
-          - string
-          - 'null'
-          enum:
-          - on_track
-          - at_risk
-          - off_track
-          - done
-          - not_started
-          - null
-          description: Manual status override, or null when the status is fully derived.
-        status:
-          type: string
-          enum:
-          - on_track
-          - at_risk
-          - off_track
-          - done
-          - not_started
-          description: Derived roll-up status (override applied). not_started = no measured progress yet.
-        progress_pct:
-          type:
-          - integer
-          - 'null'
-          description: Rolled-up 0-100, or null when nothing is measured.
-        created_by:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        updated_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - workspace_id
-      - title
-      - description_md
-      - portfolio_id
-      - parent_goal_id
-      - owner_user_id
-      - cycle_start_at
-      - cycle_due_at
-      - status_override
-      - status
-      - progress_pct
-      - created_by
-      - created_at
-      - updated_at
     GoalCreateInput:
       type: object
       properties:
@@ -696,35 +682,49 @@ components:
           example: null
       required:
       - next_cursor
-    ErrorEnvelope:
+    GoalPatchInput:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
-      required:
-      - error
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description_md:
+          type:
+          - string
+          - 'null'
+          maxLength: 20000
+        portfolio_id:
+          type:
+          - string
+          - 'null'
+        parent_goal_id:
+          type:
+          - string
+          - 'null'
+        owner_user_id:
+          type:
+          - string
+          - 'null'
+        cycle_start_at:
+          type:
+          - string
+          - 'null'
+        cycle_due_at:
+          type:
+          - string
+          - 'null'
+        status_override:
+          type:
+          - string
+          - 'null'
+          enum:
+          - on_track
+          - at_risk
+          - off_track
+          - done
+          - null
+          description: Set a manual status, or null to clear the override.
   securitySchemes:
     bearerAuth:
       type: http

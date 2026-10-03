@@ -329,44 +329,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    SavedView:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        filter:
-          description: Opaque filter blob (issueTypes[], priorities[], assigneeId, sort…).
-        is_shared:
-          type: boolean
-        created_by:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        updated_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - name
-      - is_shared
-      - created_by
-      - created_at
-      - updated_at
-    SavedViewCreateInput:
-      type: object
-      properties:
-        name:
-          type: string
-        filter: {}
-        is_shared:
-          type: boolean
-      required:
-      - name
     Pagination:
       type: object
       properties:
@@ -377,6 +339,16 @@ components:
           example: null
       required:
       - next_cursor
+    SavedViewCreateInput:
+      type: object
+      properties:
+        name:
+          type: string
+        filter: {}
+        is_shared:
+          type: boolean
+      required:
+      - name
     ErrorEnvelope:
       type: object
       properties:
@@ -406,6 +378,34 @@ components:
           - message
       required:
       - error
+    SavedView:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        filter:
+          description: Opaque filter blob (issueTypes[], priorities[], assigneeId, sort…).
+        is_shared:
+          type: boolean
+        created_by:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - name
+      - is_shared
+      - created_by
+      - created_at
+      - updated_at
   securitySchemes:
     bearerAuth:
       type: http

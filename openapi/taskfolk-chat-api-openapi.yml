@@ -1144,6 +1144,92 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    ChatReactions:
+      type: object
+      properties:
+        message_id:
+          type: string
+        reactions:
+          type: array
+          items:
+            type: object
+            properties:
+              emoji:
+                type: string
+              count:
+                type: integer
+              user_ids:
+                type: array
+                items:
+                  type: string
+            required:
+            - emoji
+            - count
+            - user_ids
+      required:
+      - message_id
+      - reactions
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
+    ChatChannelCreateInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        kind:
+          type: string
+          enum:
+          - public
+          - private
+          description: Defaults to public. DMs cannot be created over the API.
+        topic:
+          type: string
+          maxLength: 280
+      required:
+      - name
+    ChatChannelPatchInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        topic:
+          type:
+          - string
+          - 'null'
+          maxLength: 280
+        archived:
+          type: boolean
     ChatChannel:
       type: object
       properties:
@@ -1200,6 +1286,24 @@ components:
       - archived_at
       - last_message_at
       - created_at
+    ChatChannelMember:
+      type: object
+      properties:
+        user_id:
+          type: string
+        role:
+          type: string
+          enum:
+          - owner
+          - member
+        joined_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - user_id
+      - role
+      - joined_at
     ChatMessageCreateInput:
       type: object
       properties:
@@ -1212,49 +1316,6 @@ components:
           description: Reply to this message — the thread root or any reply within it (nested replies are supported).
       required:
       - body_md
-    ChatChannelCreateInput:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 80
-        kind:
-          type: string
-          enum:
-          - public
-          - private
-          description: Defaults to public. DMs cannot be created over the API.
-        topic:
-          type: string
-          maxLength: 280
-      required:
-      - name
-    ChatReactions:
-      type: object
-      properties:
-        message_id:
-          type: string
-        reactions:
-          type: array
-          items:
-            type: object
-            properties:
-              emoji:
-                type: string
-              count:
-                type: integer
-              user_ids:
-                type: array
-                items:
-                  type: string
-            required:
-            - emoji
-            - count
-            - user_ids
-      required:
-      - message_id
-      - reactions
     Pagination:
       type: object
       properties:
@@ -1265,35 +1326,6 @@ components:
           example: null
       required:
       - next_cursor
-    ErrorEnvelope:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
-      required:
-      - error
     ChatMessage:
       type: object
       properties:
@@ -1362,38 +1394,6 @@ components:
       - edited_at
       - created_at
       - reactions
-    ChatChannelMember:
-      type: object
-      properties:
-        user_id:
-          type: string
-        role:
-          type: string
-          enum:
-          - owner
-          - member
-        joined_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - user_id
-      - role
-      - joined_at
-    ChatChannelPatchInput:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 80
-        topic:
-          type:
-          - string
-          - 'null'
-          maxLength: 280
-        archived:
-          type: boolean
   securitySchemes:
     bearerAuth:
       type: http

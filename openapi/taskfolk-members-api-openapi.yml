@@ -456,6 +456,67 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
+    Invite:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          example: user@example.com
+        role:
+          type: string
+          enum:
+          - admin
+          - member
+          - viewer
+          - guest
+        invited_by_user_id:
+          type: string
+        expires_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - email
+      - role
+      - invited_by_user_id
+      - expires_at
+      - created_at
     MemberPatchInput:
       type: object
       properties:
@@ -518,67 +579,6 @@ components:
           example: null
       required:
       - next_cursor
-    ErrorEnvelope:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
-      required:
-      - error
-    Invite:
-      type: object
-      properties:
-        id:
-          type: string
-        email:
-          type: string
-          example: user@example.com
-        role:
-          type: string
-          enum:
-          - admin
-          - member
-          - viewer
-          - guest
-        invited_by_user_id:
-          type: string
-        expires_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - email
-      - role
-      - invited_by_user_id
-      - expires_at
-      - created_at
   securitySchemes:
     bearerAuth:
       type: http

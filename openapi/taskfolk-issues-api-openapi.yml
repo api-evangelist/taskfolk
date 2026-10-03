@@ -1053,74 +1053,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    IssueLink:
-      type: object
-      properties:
-        id:
-          type: string
-        kind:
-          type: string
-          enum:
-          - relates_to
-          - blocks
-          - duplicates
-        direction:
-          type: string
-          enum:
-          - out
-          - in
-          description: '"out" = anchor → target, "in" = target → anchor.'
-        target_key:
-          type: string
-          example: WEB-12
-        target_title:
-          type: string
-        target_status:
-          type: string
-        target_project_slug:
-          type: string
-      required:
-      - id
-      - kind
-      - direction
-      - target_key
-      - target_title
-      - target_status
-      - target_project_slug
-    CommitRef:
-      type: object
-      properties:
-        id:
-          type: string
-        repo:
-          type: string
-          example: utter-ae/product
-        sha:
-          type: string
-          example: a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2
-        message:
-          type: string
-        url:
-          type: string
-          example: https://github.com/utter-ae/product/commit/a1b2c3
-        author:
-          type:
-          - string
-          - 'null'
-        committed_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - repo
-      - sha
-      - message
-      - url
-      - author
-      - committed_at
     IssueTransitionInput:
       type: object
       properties:
@@ -1138,68 +1070,35 @@ components:
           type: string
       required:
       - status
-    BulkIssuesCreateInput:
+    ErrorEnvelope:
       type: object
       properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/IssueCreateInput'
-          minItems: 1
-          maxItems: 50
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
       required:
-      - items
-    BulkIssueResult:
-      anyOf:
-      - type: object
-        properties:
-          index:
-            type: integer
-          ok:
-            type: boolean
-            enum:
-            - true
-          data:
-            $ref: '#/components/schemas/Issue'
-        required:
-        - index
-        - ok
-        - data
-      - type: object
-        properties:
-          index:
-            type: integer
-          ok:
-            type: boolean
-            enum:
-            - false
-          error:
-            type: object
-            properties:
-              code:
-                type: string
-                enum:
-                - unauthorized
-                - forbidden
-                - not_found
-                - validation
-                - rate_limited
-                - conflict
-                - idempotency_violation
-                - internal_error
-                example: validation
-              message:
-                type: string
-              details:
-                type: object
-                additionalProperties: {}
-            required:
-            - code
-            - message
-        required:
-        - index
-        - ok
-        - error
+      - error
     Issue:
       type: object
       properties:
@@ -1375,6 +1274,29 @@ components:
       - archived_at
       - created_at
       - updated_at
+    IssueLinkCreateInput:
+      type: object
+      properties:
+        kind:
+          type: string
+          enum:
+          - relates_to
+          - blocks
+          - duplicates
+        direction:
+          type: string
+          enum:
+          - out
+          - in
+          description: '"out" = anchor blocks/relates_to/duplicates target; "in" = target → anchor.'
+        target_key:
+          type: string
+          description: Target issue KEY-NUM (e.g. WEB-12). Cross-project within the workspace is supported.
+          example: WEB-12
+      required:
+      - kind
+      - direction
+      - target_key
     Label:
       type: object
       properties:
@@ -1395,6 +1317,173 @@ components:
       - name
       - color
       - created_at
+    BulkIssueResult:
+      anyOf:
+      - type: object
+        properties:
+          index:
+            type: integer
+          ok:
+            type: boolean
+            enum:
+            - true
+          data:
+            $ref: '#/components/schemas/Issue'
+        required:
+        - index
+        - ok
+        - data
+      - type: object
+        properties:
+          index:
+            type: integer
+          ok:
+            type: boolean
+            enum:
+            - false
+          error:
+            type: object
+            properties:
+              code:
+                type: string
+                enum:
+                - unauthorized
+                - forbidden
+                - not_found
+                - validation
+                - rate_limited
+                - conflict
+                - idempotency_violation
+                - internal_error
+                example: validation
+              message:
+                type: string
+              details:
+                type: object
+                additionalProperties: {}
+            required:
+            - code
+            - message
+        required:
+        - index
+        - ok
+        - error
+    BulkIssuesCreateInput:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/IssueCreateInput'
+          minItems: 1
+          maxItems: 50
+      required:
+      - items
+    IssueCreateInput:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - epic
+          - story
+          - task
+          - bug
+          - subtask
+        title:
+          type: string
+        description_md:
+          type: string
+        status:
+          type: string
+          enum:
+          - backlog
+          - todo
+          - in_progress
+          - in_review
+          - done
+          - failed
+          - cancelled
+        status_id:
+          type: string
+          description: Board status id (project_statuses); wins over status.
+        priority:
+          type: string
+          enum:
+          - lowest
+          - low
+          - medium
+          - high
+          - highest
+          - critical
+        assignee:
+          type: string
+          description: user_id or email
+          example: omar@haris.bz
+        labels:
+          type: array
+          items:
+            type: string
+          description: label ids or names
+        parent:
+          type: string
+          example: WEB-2
+        epic:
+          type: string
+          example: WEB-2
+        start_at:
+          type:
+          - string
+          - 'null'
+        due_at:
+          type:
+          - string
+          - 'null'
+        estimate_minutes:
+          type:
+          - integer
+          - 'null'
+        story_points:
+          type:
+          - integer
+          - 'null'
+      required:
+      - type
+      - title
+    CommitRef:
+      type: object
+      properties:
+        id:
+          type: string
+        repo:
+          type: string
+          example: utter-ae/product
+        sha:
+          type: string
+          example: a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2
+        message:
+          type: string
+        url:
+          type: string
+          example: https://github.com/utter-ae/product/commit/a1b2c3
+        author:
+          type:
+          - string
+          - 'null'
+        committed_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - repo
+      - sha
+      - message
+      - url
+      - author
+      - committed_at
     Pagination:
       type: object
       properties:
@@ -1405,35 +1494,40 @@ components:
           example: null
       required:
       - next_cursor
-    ErrorEnvelope:
+    IssueLink:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
+        id:
+          type: string
+        kind:
+          type: string
+          enum:
+          - relates_to
+          - blocks
+          - duplicates
+        direction:
+          type: string
+          enum:
+          - out
+          - in
+          description: '"out" = anchor → target, "in" = target → anchor.'
+        target_key:
+          type: string
+          example: WEB-12
+        target_title:
+          type: string
+        target_status:
+          type: string
+        target_project_slug:
+          type: string
       required:
-      - error
+      - id
+      - kind
+      - direction
+      - target_key
+      - target_title
+      - target_status
+      - target_project_slug
     IssuePatchInput:
       type: object
       properties:
@@ -1517,100 +1611,6 @@ components:
           type:
           - string
           - 'null'
-    IssueLinkCreateInput:
-      type: object
-      properties:
-        kind:
-          type: string
-          enum:
-          - relates_to
-          - blocks
-          - duplicates
-        direction:
-          type: string
-          enum:
-          - out
-          - in
-          description: '"out" = anchor blocks/relates_to/duplicates target; "in" = target → anchor.'
-        target_key:
-          type: string
-          description: Target issue KEY-NUM (e.g. WEB-12). Cross-project within the workspace is supported.
-          example: WEB-12
-      required:
-      - kind
-      - direction
-      - target_key
-    IssueCreateInput:
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-          - epic
-          - story
-          - task
-          - bug
-          - subtask
-        title:
-          type: string
-        description_md:
-          type: string
-        status:
-          type: string
-          enum:
-          - backlog
-          - todo
-          - in_progress
-          - in_review
-          - done
-          - failed
-          - cancelled
-        status_id:
-          type: string
-          description: Board status id (project_statuses); wins over status.
-        priority:
-          type: string
-          enum:
-          - lowest
-          - low
-          - medium
-          - high
-          - highest
-          - critical
-        assignee:
-          type: string
-          description: user_id or email
-          example: omar@haris.bz
-        labels:
-          type: array
-          items:
-            type: string
-          description: label ids or names
-        parent:
-          type: string
-          example: WEB-2
-        epic:
-          type: string
-          example: WEB-2
-        start_at:
-          type:
-          - string
-          - 'null'
-        due_at:
-          type:
-          - string
-          - 'null'
-        estimate_minutes:
-          type:
-          - integer
-          - 'null'
-        story_points:
-          type:
-          - integer
-          - 'null'
-      required:
-      - type
-      - title
   securitySchemes:
     bearerAuth:
       type: http

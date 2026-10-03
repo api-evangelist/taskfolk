@@ -170,6 +170,34 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    TimeTracking:
+      type: object
+      properties:
+        issue_key:
+          type: string
+          example: WEB-12
+        estimate_minutes:
+          type:
+          - integer
+          - 'null'
+        story_points:
+          type:
+          - integer
+          - 'null'
+        spent_minutes:
+          type:
+          - integer
+          - 'null'
+        completion_pct:
+          type:
+          - integer
+          - 'null'
+      required:
+      - issue_key
+      - estimate_minutes
+      - story_points
+      - spent_minutes
+      - completion_pct
     TimePatchInput:
       type: object
       properties:
@@ -218,34 +246,6 @@ components:
           - message
       required:
       - error
-    TimeTracking:
-      type: object
-      properties:
-        issue_key:
-          type: string
-          example: WEB-12
-        estimate_minutes:
-          type:
-          - integer
-          - 'null'
-        story_points:
-          type:
-          - integer
-          - 'null'
-        spent_minutes:
-          type:
-          - integer
-          - 'null'
-        completion_pct:
-          type:
-          - integer
-          - 'null'
-      required:
-      - issue_key
-      - estimate_minutes
-      - story_points
-      - spent_minutes
-      - completion_pct
   securitySchemes:
     bearerAuth:
       type: http

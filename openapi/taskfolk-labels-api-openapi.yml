@@ -335,13 +335,35 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    LabelPatchInput:
+    ErrorEnvelope:
       type: object
       properties:
-        name:
-          type: string
-        color:
-          type: string
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
     Label:
       type: object
       properties:
@@ -382,35 +404,13 @@ components:
           example: null
       required:
       - next_cursor
-    ErrorEnvelope:
+    LabelPatchInput:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
-      required:
-      - error
+        name:
+          type: string
+        color:
+          type: string
   securitySchemes:
     bearerAuth:
       type: http

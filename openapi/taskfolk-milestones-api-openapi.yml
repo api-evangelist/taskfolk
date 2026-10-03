@@ -409,6 +409,35 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
     MilestoneCreateInput:
       type: object
       properties:
@@ -481,16 +510,6 @@ components:
       - start_at
       - due_at
       - rank
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
     MilestonePatchInput:
       type: object
       properties:
@@ -516,35 +535,16 @@ components:
           type:
           - string
           - 'null'
-    ErrorEnvelope:
+    Pagination:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
       required:
-      - error
+      - next_cursor
   securitySchemes:
     bearerAuth:
       type: http

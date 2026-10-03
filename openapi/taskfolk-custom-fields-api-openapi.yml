@@ -617,6 +617,51 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    CustomFieldValue:
+      type: object
+      properties:
+        field_id:
+          type: string
+        name:
+          type: string
+        kind:
+          type: string
+        value: {}
+      required:
+      - field_id
+    CustomFieldValueInput:
+      type: object
+      properties:
+        value: {}
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
     CustomFieldDef:
       type: object
       properties:
@@ -701,22 +746,6 @@ components:
       required:
       - name
       - kind
-    CustomFieldValueInput:
-      type: object
-      properties:
-        value: {}
-    CustomFieldValue:
-      type: object
-      properties:
-        field_id:
-          type: string
-        name:
-          type: string
-        kind:
-          type: string
-        value: {}
-      required:
-      - field_id
     Pagination:
       type: object
       properties:
@@ -727,35 +756,6 @@ components:
           example: null
       required:
       - next_cursor
-    ErrorEnvelope:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
-      required:
-      - error
   securitySchemes:
     bearerAuth:
       type: http

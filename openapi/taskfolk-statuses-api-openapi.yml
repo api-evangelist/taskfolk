@@ -326,6 +326,66 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
+    StatusCreateInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+          example: In Review
+        name_ar:
+          type: string
+          maxLength: 80
+          example: قيد المراجعة
+        color:
+          type: string
+          example: '#4FE8E5'
+          description: 'Hex color #RRGGBB.'
+        category:
+          type: string
+          enum:
+          - backlog
+          - todo
+          - in_progress
+          - in_review
+          - done
+          - failed
+          - cancelled
+          description: System category the column maps to (drives open/done semantics).
+      required:
+      - name
+      - color
+      - category
     ProjectStatus:
       type: object
       properties:
@@ -363,47 +423,6 @@ components:
       - color
       - category
       - rank
-    StatusCreateInput:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 80
-          example: In Review
-        name_ar:
-          type: string
-          maxLength: 80
-          example: قيد المراجعة
-        color:
-          type: string
-          example: '#4FE8E5'
-          description: 'Hex color #RRGGBB.'
-        category:
-          type: string
-          enum:
-          - backlog
-          - todo
-          - in_progress
-          - in_review
-          - done
-          - failed
-          - cancelled
-          description: System category the column maps to (drives open/done semantics).
-      required:
-      - name
-      - color
-      - category
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
     StatusPatchInput:
       type: object
       properties:
@@ -430,35 +449,16 @@ components:
           - failed
           - cancelled
           description: System category the column maps to (drives open/done semantics).
-    ErrorEnvelope:
+    Pagination:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
       required:
-      - error
+      - next_cursor
   securitySchemes:
     bearerAuth:
       type: http
