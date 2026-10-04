@@ -409,48 +409,17 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ErrorEnvelope:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
-      required:
-      - error
-    MilestoneCreateInput:
+    MilestonePatchInput:
       type: object
       properties:
         name:
           type: string
           minLength: 1
           maxLength: 120
-          example: v2.0 Release
         description_md:
           type:
           - string
           - 'null'
-          description: Description (markdown).
         status:
           type: string
           enum:
@@ -461,14 +430,10 @@ components:
           type:
           - string
           - 'null'
-          description: Date (YYYY-MM-DD) or ISO 8601.
         due_at:
           type:
           - string
           - 'null'
-          description: Date (YYYY-MM-DD) or ISO 8601.
-      required:
-      - name
     Milestone:
       type: object
       properties:
@@ -510,31 +475,6 @@ components:
       - start_at
       - due_at
       - rank
-    MilestonePatchInput:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 120
-        description_md:
-          type:
-          - string
-          - 'null'
-        status:
-          type: string
-          enum:
-          - planned
-          - active
-          - completed
-        start_at:
-          type:
-          - string
-          - 'null'
-        due_at:
-          type:
-          - string
-          - 'null'
     Pagination:
       type: object
       properties:
@@ -545,6 +485,66 @@ components:
           example: null
       required:
       - next_cursor
+    MilestoneCreateInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+          example: v2.0 Release
+        description_md:
+          type:
+          - string
+          - 'null'
+          description: Description (markdown).
+        status:
+          type: string
+          enum:
+          - planned
+          - active
+          - completed
+        start_at:
+          type:
+          - string
+          - 'null'
+          description: Date (YYYY-MM-DD) or ISO 8601.
+        due_at:
+          type:
+          - string
+          - 'null'
+          description: Date (YYYY-MM-DD) or ISO 8601.
+      required:
+      - name
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
   securitySchemes:
     bearerAuth:
       type: http

@@ -1169,35 +1169,42 @@ components:
       required:
       - message_id
       - reactions
-    ErrorEnvelope:
+    ChatMessageCreateInput:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
+        body_md:
+          type: string
+          minLength: 1
+          maxLength: 64000
+        parent_id:
+          type: string
+          description: Reply to this message — the thread root or any reply within it (nested replies are supported).
       required:
-      - error
+      - body_md
+    ChatChannelPatchInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        topic:
+          type:
+          - string
+          - 'null'
+          maxLength: 280
+        archived:
+          type: boolean
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
     ChatChannelCreateInput:
       type: object
       properties:
@@ -1216,76 +1223,6 @@ components:
           maxLength: 280
       required:
       - name
-    ChatChannelPatchInput:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 80
-        topic:
-          type:
-          - string
-          - 'null'
-          maxLength: 280
-        archived:
-          type: boolean
-    ChatChannel:
-      type: object
-      properties:
-        id:
-          type: string
-        kind:
-          type: string
-          enum:
-          - public
-          - private
-          - dm
-        name:
-          type:
-          - string
-          - 'null'
-          description: Null for DM channels.
-        slug:
-          type:
-          - string
-          - 'null'
-        topic:
-          type:
-          - string
-          - 'null'
-        created_by:
-          type: string
-        archived_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        last_message_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        member_count:
-          type: integer
-        is_member:
-          type: boolean
-      required:
-      - id
-      - kind
-      - name
-      - slug
-      - topic
-      - created_by
-      - archived_at
-      - last_message_at
-      - created_at
     ChatChannelMember:
       type: object
       properties:
@@ -1304,28 +1241,6 @@ components:
       - user_id
       - role
       - joined_at
-    ChatMessageCreateInput:
-      type: object
-      properties:
-        body_md:
-          type: string
-          minLength: 1
-          maxLength: 64000
-        parent_id:
-          type: string
-          description: Reply to this message — the thread root or any reply within it (nested replies are supported).
-      required:
-      - body_md
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
     ChatMessage:
       type: object
       properties:
@@ -1394,6 +1309,91 @@ components:
       - edited_at
       - created_at
       - reactions
+    ChatChannel:
+      type: object
+      properties:
+        id:
+          type: string
+        kind:
+          type: string
+          enum:
+          - public
+          - private
+          - dm
+        name:
+          type:
+          - string
+          - 'null'
+          description: Null for DM channels.
+        slug:
+          type:
+          - string
+          - 'null'
+        topic:
+          type:
+          - string
+          - 'null'
+        created_by:
+          type: string
+        archived_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        last_message_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        member_count:
+          type: integer
+        is_member:
+          type: boolean
+      required:
+      - id
+      - kind
+      - name
+      - slug
+      - topic
+      - created_by
+      - archived_at
+      - last_message_at
+      - created_at
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
   securitySchemes:
     bearerAuth:
       type: http

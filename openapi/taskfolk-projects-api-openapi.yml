@@ -677,71 +677,48 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ProjectPatchInput:
+    ProjectMemberAddInput:
       type: object
       properties:
-        name:
+        user_id:
           type: string
-        description_md:
-          type:
-          - string
-          - 'null'
-        lead_user_id:
-          type:
-          - string
-          - 'null'
-        estimation_unit:
+          description: ID of an existing workspace member.
+        role:
           type: string
           enum:
-          - time
-          - points
-          - none
-    ErrorEnvelope:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
+          - admin
+          - member
+          - viewer
       required:
-      - error
-    ProjectCreateInput:
+      - user_id
+      - role
+    ProjectMember:
       type: object
       properties:
-        key:
+        user_id:
           type: string
-          example: WEB
+        email:
+          type: string
         name:
+          type:
+          - string
+          - 'null'
+        role:
           type: string
-        slug:
+          enum:
+          - admin
+          - member
+          - viewer
+        added_at:
           type: string
-        description_md:
-          type: string
-        lead_user_id:
-          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
       required:
-      - key
+      - user_id
+      - email
       - name
+      - role
+      - added_at
     Project:
       type: object
       properties:
@@ -800,33 +777,25 @@ components:
       - archived_at
       - created_at
       - updated_at
-    ProjectMember:
+    ProjectPatchInput:
       type: object
       properties:
-        user_id:
-          type: string
-        email:
-          type: string
         name:
+          type: string
+        description_md:
           type:
           - string
           - 'null'
-        role:
+        lead_user_id:
+          type:
+          - string
+          - 'null'
+        estimation_unit:
           type: string
           enum:
-          - admin
-          - member
-          - viewer
-        added_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - user_id
-      - email
-      - name
-      - role
-      - added_at
+          - time
+          - points
+          - none
     Pagination:
       type: object
       properties:
@@ -837,21 +806,52 @@ components:
           example: null
       required:
       - next_cursor
-    ProjectMemberAddInput:
+    ErrorEnvelope:
       type: object
       properties:
-        user_id:
-          type: string
-          description: ID of an existing workspace member.
-        role:
-          type: string
-          enum:
-          - admin
-          - member
-          - viewer
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
       required:
-      - user_id
-      - role
+      - error
+    ProjectCreateInput:
+      type: object
+      properties:
+        key:
+          type: string
+          example: WEB
+        name:
+          type: string
+        slug:
+          type: string
+        description_md:
+          type: string
+        lead_user_id:
+          type: string
+      required:
+      - key
+      - name
   securitySchemes:
     bearerAuth:
       type: http

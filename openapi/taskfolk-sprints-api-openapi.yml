@@ -409,35 +409,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ErrorEnvelope:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
-      required:
-      - error
     SprintCreateInput:
       type: object
       properties:
@@ -467,6 +438,16 @@ components:
           description: Date or ISO 8601.
       required:
       - name
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
     Sprint:
       type: object
       properties:
@@ -508,16 +489,6 @@ components:
       - start_at
       - end_at
       - rank
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
     SprintPatchInput:
       type: object
       properties:
@@ -547,6 +518,35 @@ components:
           - string
           - 'null'
           description: Date or ISO 8601.
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
   securitySchemes:
     bearerAuth:
       type: http

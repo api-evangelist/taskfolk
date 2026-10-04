@@ -327,166 +327,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ErrorEnvelope:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
-      required:
-      - error
-    KeyResultPatchInput:
-      type: object
-      properties:
-        title:
-          type: string
-          minLength: 1
-          maxLength: 200
-        unit:
-          type:
-          - string
-          - 'null'
-          maxLength: 24
-        start_value:
-          type:
-          - number
-          - 'null'
-        target_value:
-          type:
-          - number
-          - 'null'
-        current_value:
-          type:
-          - number
-          - 'null'
-        weight:
-          type: number
-          exclusiveMinimum: 0
-          maximum: 999
-        scope:
-          type:
-          - object
-          - 'null'
-          properties:
-            project_ids:
-              type: array
-              items:
-                type: string
-            issue_types:
-              type: array
-              items:
-                type: string
-                enum:
-                - epic
-                - story
-                - task
-                - bug
-                - subtask
-            label_ids:
-              type: array
-              items:
-                type: string
-            assignee_id:
-              type:
-              - string
-              - 'null'
-          description: Applied only to auto KRs.
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
-    KeyResultCreateInput:
-      type: object
-      properties:
-        title:
-          type: string
-          minLength: 1
-          maxLength: 200
-        kind:
-          type: string
-          enum:
-          - manual
-          - auto
-        unit:
-          type:
-          - string
-          - 'null'
-          maxLength: 24
-        start_value:
-          type:
-          - number
-          - 'null'
-        target_value:
-          type:
-          - number
-          - 'null'
-        current_value:
-          type:
-          - number
-          - 'null'
-        weight:
-          type: number
-          exclusiveMinimum: 0
-          maximum: 999
-          description: Relative weight in the goal roll-up (default 1).
-        scope:
-          type:
-          - object
-          - 'null'
-          properties:
-            project_ids:
-              type: array
-              items:
-                type: string
-            issue_types:
-              type: array
-              items:
-                type: string
-                enum:
-                - epic
-                - story
-                - task
-                - bug
-                - subtask
-            label_ids:
-              type: array
-              items:
-                type: string
-            assignee_id:
-              type:
-              - string
-              - 'null'
-          description: Auto KRs only; ignored for manual.
-      required:
-      - title
-      - kind
     KeyResult:
       type: object
       properties:
@@ -575,6 +415,166 @@ components:
       - progress_pct
       - created_at
       - updated_at
+    KeyResultPatchInput:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        unit:
+          type:
+          - string
+          - 'null'
+          maxLength: 24
+        start_value:
+          type:
+          - number
+          - 'null'
+        target_value:
+          type:
+          - number
+          - 'null'
+        current_value:
+          type:
+          - number
+          - 'null'
+        weight:
+          type: number
+          exclusiveMinimum: 0
+          maximum: 999
+        scope:
+          type:
+          - object
+          - 'null'
+          properties:
+            project_ids:
+              type: array
+              items:
+                type: string
+            issue_types:
+              type: array
+              items:
+                type: string
+                enum:
+                - epic
+                - story
+                - task
+                - bug
+                - subtask
+            label_ids:
+              type: array
+              items:
+                type: string
+            assignee_id:
+              type:
+              - string
+              - 'null'
+          description: Applied only to auto KRs.
+    KeyResultCreateInput:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        kind:
+          type: string
+          enum:
+          - manual
+          - auto
+        unit:
+          type:
+          - string
+          - 'null'
+          maxLength: 24
+        start_value:
+          type:
+          - number
+          - 'null'
+        target_value:
+          type:
+          - number
+          - 'null'
+        current_value:
+          type:
+          - number
+          - 'null'
+        weight:
+          type: number
+          exclusiveMinimum: 0
+          maximum: 999
+          description: Relative weight in the goal roll-up (default 1).
+        scope:
+          type:
+          - object
+          - 'null'
+          properties:
+            project_ids:
+              type: array
+              items:
+                type: string
+            issue_types:
+              type: array
+              items:
+                type: string
+                enum:
+                - epic
+                - story
+                - task
+                - bug
+                - subtask
+            label_ids:
+              type: array
+              items:
+                type: string
+            assignee_id:
+              type:
+              - string
+              - 'null'
+          description: Auto KRs only; ignored for manual.
+      required:
+      - title
+      - kind
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
   securitySchemes:
     bearerAuth:
       type: http

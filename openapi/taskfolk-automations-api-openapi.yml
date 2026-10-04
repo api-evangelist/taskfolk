@@ -453,35 +453,58 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ErrorEnvelope:
+    AutomationRun:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
+        id:
+          type: string
+        automation_id:
+          type: string
+        issue_id:
+          type:
+          - string
+          - 'null'
+        trigger:
+          type: string
+        status:
+          type: string
+          enum:
+          - ok
+          - partial
+          - error
+        actions_applied:
+          type:
+          - array
+          - 'null'
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              ok:
+                type: boolean
+              detail:
+                type: string
+            required:
+            - type
+            - ok
+        detail:
+          type:
+          - string
+          - 'null'
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
       required:
-      - error
+      - id
+      - automation_id
+      - issue_id
+      - trigger
+      - status
+      - actions_applied
+      - detail
+      - created_at
     Automation:
       type: object
       properties:
@@ -740,68 +763,6 @@ components:
           - 'null'
         enabled:
           type: boolean
-    AutomationRun:
-      type: object
-      properties:
-        id:
-          type: string
-        automation_id:
-          type: string
-        issue_id:
-          type:
-          - string
-          - 'null'
-        trigger:
-          type: string
-        status:
-          type: string
-          enum:
-          - ok
-          - partial
-          - error
-        actions_applied:
-          type:
-          - array
-          - 'null'
-          items:
-            type: object
-            properties:
-              type:
-                type: string
-              ok:
-                type: boolean
-              detail:
-                type: string
-            required:
-            - type
-            - ok
-        detail:
-          type:
-          - string
-          - 'null'
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - automation_id
-      - issue_id
-      - trigger
-      - status
-      - actions_applied
-      - detail
-      - created_at
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
     AutomationCreateInput:
       type: object
       properties:
@@ -925,6 +886,45 @@ components:
       - name
       - trigger
       - actions
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
   securitySchemes:
     bearerAuth:
       type: http

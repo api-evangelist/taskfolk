@@ -233,6 +233,16 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
     Notification:
       type: object
       properties:
@@ -256,16 +266,6 @@ components:
       - kind
       - read_at
       - created_at
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
     ErrorEnvelope:
       type: object
       properties:

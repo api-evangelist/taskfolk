@@ -456,6 +456,68 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    InviteCreateInput:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        role:
+          type: string
+          enum:
+          - admin
+          - member
+          - viewer
+          - guest
+      required:
+      - email
+      - role
+    MemberPatchInput:
+      type: object
+      properties:
+        role:
+          type: string
+          enum:
+          - admin
+          - member
+          - viewer
+          description: New role for the member. Cannot promote to owner; use the ownership-transfer flow.
+      required:
+      - role
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    Member:
+      type: object
+      properties:
+        user_id:
+          type: string
+        email:
+          type: string
+        name:
+          type:
+          - string
+          - 'null'
+        role:
+          type: string
+          enum:
+          - owner
+          - admin
+          - member
+          - viewer
+      required:
+      - user_id
+      - email
+      - name
+      - role
     ErrorEnvelope:
       type: object
       properties:
@@ -517,68 +579,6 @@ components:
       - invited_by_user_id
       - expires_at
       - created_at
-    MemberPatchInput:
-      type: object
-      properties:
-        role:
-          type: string
-          enum:
-          - admin
-          - member
-          - viewer
-          description: New role for the member. Cannot promote to owner; use the ownership-transfer flow.
-      required:
-      - role
-    Member:
-      type: object
-      properties:
-        user_id:
-          type: string
-        email:
-          type: string
-        name:
-          type:
-          - string
-          - 'null'
-        role:
-          type: string
-          enum:
-          - owner
-          - admin
-          - member
-          - viewer
-      required:
-      - user_id
-      - email
-      - name
-      - role
-    InviteCreateInput:
-      type: object
-      properties:
-        email:
-          type: string
-          format: email
-          example: user@example.com
-        role:
-          type: string
-          enum:
-          - admin
-          - member
-          - viewer
-          - guest
-      required:
-      - email
-      - role
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
   securitySchemes:
     bearerAuth:
       type: http

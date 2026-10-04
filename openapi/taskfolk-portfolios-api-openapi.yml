@@ -612,6 +612,33 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    PortfolioProjectAddInput:
+      type: object
+      properties:
+        project_id:
+          type: string
+          minLength: 1
+      required:
+      - project_id
+    PortfolioPatchInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        description_md:
+          type:
+          - string
+          - 'null'
+          maxLength: 10000
+        color:
+          type: string
+          pattern: ^#[0-9a-fA-F]{6}$
+        lead_user_id:
+          type:
+          - string
+          - 'null'
     Portfolio:
       type: object
       properties:
@@ -653,28 +680,26 @@ components:
       - created_by
       - created_at
       - updated_at
-    PortfolioCreateInput:
+    Pagination:
       type: object
       properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 120
-        description_md:
+        next_cursor:
           type:
           - string
           - 'null'
-          maxLength: 10000
-        color:
-          type: string
-          pattern: ^#[0-9a-fA-F]{6}$
-          example: '#8b8f98'
-        lead_user_id:
-          type:
-          - string
-          - 'null'
+          example: null
       required:
-      - name
+      - next_cursor
+    PortfolioProject:
+      type: object
+      properties:
+        portfolio_id:
+          type: string
+        project_id:
+          type: string
+      required:
+      - portfolio_id
+      - project_id
     ErrorEnvelope:
       type: object
       properties:
@@ -704,35 +729,7 @@ components:
           - message
       required:
       - error
-    PortfolioProjectAddInput:
-      type: object
-      properties:
-        project_id:
-          type: string
-          minLength: 1
-      required:
-      - project_id
-    PortfolioProject:
-      type: object
-      properties:
-        portfolio_id:
-          type: string
-        project_id:
-          type: string
-      required:
-      - portfolio_id
-      - project_id
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
-    PortfolioPatchInput:
+    PortfolioCreateInput:
       type: object
       properties:
         name:
@@ -747,10 +744,13 @@ components:
         color:
           type: string
           pattern: ^#[0-9a-fA-F]{6}$
+          example: '#8b8f98'
         lead_user_id:
           type:
           - string
           - 'null'
+      required:
+      - name
   securitySchemes:
     bearerAuth:
       type: http

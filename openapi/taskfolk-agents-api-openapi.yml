@@ -608,103 +608,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ErrorEnvelope:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
-      required:
-      - error
-    Agent:
-      type: object
-      properties:
-        agent_id:
-          type: string
-          example: 019e6f12-…
-          description: The agent's user id — the value to pass as agent_id elsewhere and the id used when assigning issues to the agent.
-        name:
-          type: string
-          example: Omar's Claude Code
-        kind:
-          type: string
-          example: claude
-          description: 'Provider: claude, openai, cursor, copilot, gemini, deepseek, kimi, perplexity, or custom.'
-        owner_user_id:
-          type: string
-          description: The human member who connected this agent.
-        running_sessions:
-          type: integer
-          example: 1
-        last_activity_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        cost_total:
-          type:
-          - number
-          - 'null'
-          description: Total agent-reported cost across the agent's sessions (USD). Agent-reported; Taskfolk never runs the model.
-        key_prefix:
-          type:
-          - string
-          - 'null'
-          description: The agent's API key prefix (masked).
-        key_revoked:
-          type: boolean
-          description: Whether the agent's API key is revoked.
-        field_policy:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-          description: FIELD-POLICY-01 allowlist of writable issue fields; null = all fields writable.
-        spend_cap_usd:
-          type:
-          - number
-          - 'null'
-          description: Per-agent soft spend cap (USD), or null when unset. Alert-only.
-      required:
-      - agent_id
-      - name
-      - kind
-      - owner_user_id
-      - running_sessions
-      - last_activity_at
-      - created_at
-      - cost_total
-      - key_prefix
-      - key_revoked
-      - field_policy
-      - spend_cap_usd
     AgentDetail:
       type: object
       properties:
@@ -800,6 +703,74 @@ components:
           example: null
       required:
       - next_cursor
+    Agent:
+      type: object
+      properties:
+        agent_id:
+          type: string
+          example: 019e6f12-…
+          description: The agent's user id — the value to pass as agent_id elsewhere and the id used when assigning issues to the agent.
+        name:
+          type: string
+          example: Omar's Claude Code
+        kind:
+          type: string
+          example: claude
+          description: 'Provider: claude, openai, cursor, copilot, gemini, deepseek, kimi, perplexity, or custom.'
+        owner_user_id:
+          type: string
+          description: The human member who connected this agent.
+        running_sessions:
+          type: integer
+          example: 1
+        last_activity_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        cost_total:
+          type:
+          - number
+          - 'null'
+          description: Total agent-reported cost across the agent's sessions (USD). Agent-reported; Taskfolk never runs the model.
+        key_prefix:
+          type:
+          - string
+          - 'null'
+          description: The agent's API key prefix (masked).
+        key_revoked:
+          type: boolean
+          description: Whether the agent's API key is revoked.
+        field_policy:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: FIELD-POLICY-01 allowlist of writable issue fields; null = all fields writable.
+        spend_cap_usd:
+          type:
+          - number
+          - 'null'
+          description: Per-agent soft spend cap (USD), or null when unset. Alert-only.
+      required:
+      - agent_id
+      - name
+      - kind
+      - owner_user_id
+      - running_sessions
+      - last_activity_at
+      - created_at
+      - cost_total
+      - key_prefix
+      - key_revoked
+      - field_policy
+      - spend_cap_usd
     AgentSession:
       type: object
       properties:
@@ -902,6 +873,35 @@ components:
       - started_at
       - last_activity_at
       - ended_at
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
   securitySchemes:
     bearerAuth:
       type: http

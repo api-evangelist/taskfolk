@@ -269,35 +269,30 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ErrorEnvelope:
+    Workspace:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
+        id:
+          type: string
+        slug:
+          type: string
+          example: taskfolk
+        name:
+          type: string
+          example: Taskfolk
+        default_locale:
+          type: string
+          example: en
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
       required:
-      - error
+      - id
+      - slug
+      - name
+      - default_locale
+      - created_at
     WorkspaceUsage:
       type: object
       properties:
@@ -383,16 +378,6 @@ components:
       - plan
       - storage
       - ai_credits
-    WorkspacePatchInput:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 100
-          example: Taskfolk
-      required:
-      - name
     Pagination:
       type: object
       properties:
@@ -403,30 +388,45 @@ components:
           example: null
       required:
       - next_cursor
-    Workspace:
+    WorkspacePatchInput:
       type: object
       properties:
-        id:
-          type: string
-        slug:
-          type: string
-          example: taskfolk
         name:
           type: string
+          minLength: 1
+          maxLength: 100
           example: Taskfolk
-        default_locale:
-          type: string
-          example: en
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
       required:
-      - id
-      - slug
       - name
-      - default_locale
-      - created_at
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
   securitySchemes:
     bearerAuth:
       type: http

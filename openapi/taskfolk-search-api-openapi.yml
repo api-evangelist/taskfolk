@@ -102,6 +102,26 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    SearchResult:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - issue
+          - doc
+        id:
+          type: string
+        title:
+          type: string
+        url:
+          type:
+          - string
+          - 'null'
+      required:
+      - type
+      - id
+      - title
     Pagination:
       type: object
       properties:
@@ -141,26 +161,6 @@ components:
           - message
       required:
       - error
-    SearchResult:
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-          - issue
-          - doc
-        id:
-          type: string
-        title:
-          type: string
-        url:
-          type:
-          - string
-          - 'null'
-      required:
-      - type
-      - id
-      - title
   securitySchemes:
     bearerAuth:
       type: http

@@ -454,42 +454,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    CommentCreateInput:
-      type: object
-      properties:
-        body_md:
-          type: string
-      required:
-      - body_md
-    ErrorEnvelope:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
-      required:
-      - error
     BulkCommentResult:
       anyOf:
       - type: object
@@ -541,6 +505,13 @@ components:
         - index
         - ok
         - error
+    CommentCreateInput:
+      type: object
+      properties:
+        body_md:
+          type: string
+      required:
+      - body_md
     Pagination:
       type: object
       properties:
@@ -551,6 +522,46 @@ components:
           example: null
       required:
       - next_cursor
+    BulkCommentsCreateInput:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommentCreateInput'
+          minItems: 1
+          maxItems: 50
+      required:
+      - items
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
     Comment:
       type: object
       properties:
@@ -580,17 +591,6 @@ components:
       - body_html
       - created_at
       - updated_at
-    BulkCommentsCreateInput:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/CommentCreateInput'
-          minItems: 1
-          maxItems: 50
-      required:
-      - items
   securitySchemes:
     bearerAuth:
       type: http

@@ -326,35 +326,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ErrorEnvelope:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
-      required:
-      - error
     StatusCreateInput:
       type: object
       properties:
@@ -386,6 +357,71 @@ components:
       - name
       - color
       - category
+    StatusPatchInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        name_ar:
+          type:
+          - string
+          - 'null'
+          maxLength: 80
+        color:
+          type: string
+          description: 'Hex color #RRGGBB.'
+        category:
+          type: string
+          enum:
+          - backlog
+          - todo
+          - in_progress
+          - in_review
+          - done
+          - failed
+          - cancelled
+          description: System category the column maps to (drives open/done semantics).
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
     ProjectStatus:
       type: object
       properties:
@@ -423,42 +459,6 @@ components:
       - color
       - category
       - rank
-    StatusPatchInput:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 80
-        name_ar:
-          type:
-          - string
-          - 'null'
-          maxLength: 80
-        color:
-          type: string
-          description: 'Hex color #RRGGBB.'
-        category:
-          type: string
-          enum:
-          - backlog
-          - todo
-          - in_progress
-          - in_review
-          - done
-          - failed
-          - cancelled
-          description: System category the column maps to (drives open/done semantics).
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
   securitySchemes:
     bearerAuth:
       type: http
