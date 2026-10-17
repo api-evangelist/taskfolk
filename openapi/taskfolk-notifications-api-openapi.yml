@@ -243,29 +243,6 @@ components:
           example: null
       required:
       - next_cursor
-    Notification:
-      type: object
-      properties:
-        id:
-          type: string
-        kind:
-          type: string
-          example: assigned
-        read_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - kind
-      - read_at
-      - created_at
     ErrorEnvelope:
       type: object
       properties:
@@ -295,6 +272,29 @@ components:
           - message
       required:
       - error
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+        kind:
+          type: string
+          example: assigned
+        read_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - kind
+      - read_at
+      - created_at
   securitySchemes:
     bearerAuth:
       type: http

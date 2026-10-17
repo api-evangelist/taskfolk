@@ -687,7 +687,7 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    FormCreateInput:
+    FormPatchInput:
       type: object
       properties:
         title:
@@ -695,8 +695,16 @@ components:
           minLength: 1
           maxLength: 200
         description:
-          type: string
+          type:
+          - string
+          - 'null'
           maxLength: 2000
+        status:
+          type: string
+          enum:
+          - draft
+          - published
+          - closed
         issue_type:
           type: string
           enum:
@@ -705,114 +713,76 @@ components:
           - bug
         priority:
           type: string
-        fields:
-          type: array
-          items:
-            type: object
-            properties:
-              kind:
-                type: string
-                enum:
-                - short_text
-                - long_text
-                - select
-                - multi_select
-                - number
-                - date
-                - email
-                - radio
-                - phone
-                - url
-                - rating
-                - section
-                - file
-                - checkbox
-              label:
-                type: string
-                minLength: 1
-                maxLength: 200
-              required:
-                type: boolean
-              options:
-                type: array
-                items:
-                  type: string
-                  maxLength: 200
-                maxItems: 50
-              placeholder:
-                type: string
-                maxLength: 200
-              help_text:
-                type: string
-                maxLength: 500
-              mapping:
-                type: string
-                enum:
-                - none
-                - title
-                - description
-                - priority
-              min_value:
-                type: number
-              max_value:
-                type: number
-              max_length:
-                type: integer
-                minimum: 1
-                maximum: 20000
-              default_value:
-                type: string
-                maxLength: 500
-            required:
-            - kind
-            - label
-          maxItems: 200
-      required:
-      - title
-    FormSummary:
-      type: object
-      properties:
-        id:
-          type: string
-        title:
-          type: string
-        description:
+        success_message:
           type:
           - string
           - 'null'
-        status:
+        accent_color:
+          type:
+          - string
+          - 'null'
+        header_text:
+          type:
+          - string
+          - 'null'
+        show_project_header:
+          type: boolean
+        close_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        response_limit:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 1000000
+        one_per_email:
+          type: boolean
+        confirmation_mode:
           type: string
           enum:
-          - draft
-          - published
-          - closed
-        public_enabled:
-          type: boolean
-        share_url:
+          - message
+          - redirect
+        redirect_url:
           type:
           - string
           - 'null'
-          description: Public /f/<token> URL; null unless public sharing is enabled.
-        submission_count:
-          type: integer
-        created_at:
+        default_assignee_id:
+          type:
+          - string
+          - 'null'
+        default_label_ids:
+          type: array
+          items:
+            type: string
+        default_sprint_id:
+          type:
+          - string
+          - 'null'
+        default_status_id:
+          type:
+          - string
+          - 'null'
+        access_mode:
           type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        updated_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - title
-      - description
-      - status
-      - public_enabled
-      - share_url
-      - submission_count
-      - created_at
-      - updated_at
+          enum:
+          - anyone
+          - members
+          - invited
+        allowed_emails:
+          type: array
+          items:
+            type: string
+          maxItems: 500
+        notify_submission:
+          type: boolean
+        confirmation_email:
+          type: boolean
+        public_enabled:
+          type: boolean
     Form:
       allOf:
       - $ref: '#/components/schemas/FormSummary'
@@ -919,17 +889,7 @@ components:
         - notify_submission
         - confirmation_email
         - fields
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
-    FormPatchInput:
+    FormCreateInput:
       type: object
       properties:
         title:
@@ -937,16 +897,8 @@ components:
           minLength: 1
           maxLength: 200
         description:
-          type:
-          - string
-          - 'null'
-          maxLength: 2000
-        status:
           type: string
-          enum:
-          - draft
-          - published
-          - closed
+          maxLength: 2000
         issue_type:
           type: string
           enum:
@@ -955,114 +907,99 @@ components:
           - bug
         priority:
           type: string
-        success_message:
-          type:
-          - string
-          - 'null'
-        accent_color:
-          type:
-          - string
-          - 'null'
-        header_text:
-          type:
-          - string
-          - 'null'
-        show_project_header:
-          type: boolean
-        close_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        response_limit:
-          type:
-          - integer
-          - 'null'
-          minimum: 1
-          maximum: 1000000
-        one_per_email:
-          type: boolean
-        confirmation_mode:
-          type: string
-          enum:
-          - message
-          - redirect
-        redirect_url:
-          type:
-          - string
-          - 'null'
-        default_assignee_id:
-          type:
-          - string
-          - 'null'
-        default_label_ids:
+        fields:
           type: array
           items:
-            type: string
-        default_sprint_id:
-          type:
-          - string
-          - 'null'
-        default_status_id:
-          type:
-          - string
-          - 'null'
-        access_mode:
-          type: string
-          enum:
-          - anyone
-          - members
-          - invited
-        allowed_emails:
-          type: array
-          items:
-            type: string
-          maxItems: 500
-        notify_submission:
-          type: boolean
-        confirmation_email:
-          type: boolean
-        public_enabled:
-          type: boolean
-    FormSubmission:
+            type: object
+            properties:
+              kind:
+                type: string
+                enum:
+                - short_text
+                - long_text
+                - select
+                - multi_select
+                - number
+                - date
+                - email
+                - radio
+                - phone
+                - url
+                - rating
+                - section
+                - file
+                - checkbox
+              label:
+                type: string
+                minLength: 1
+                maxLength: 200
+              required:
+                type: boolean
+              options:
+                type: array
+                items:
+                  type: string
+                  maxLength: 200
+                maxItems: 50
+              placeholder:
+                type: string
+                maxLength: 200
+              help_text:
+                type: string
+                maxLength: 500
+              mapping:
+                type: string
+                enum:
+                - none
+                - title
+                - description
+                - priority
+              min_value:
+                type: number
+              max_value:
+                type: number
+              max_length:
+                type: integer
+                minimum: 1
+                maximum: 20000
+              default_value:
+                type: string
+                maxLength: 500
+            required:
+            - kind
+            - label
+          maxItems: 200
+      required:
+      - title
+    ErrorEnvelope:
       type: object
       properties:
-        id:
-          type: string
-        answers:
+        error:
           type: object
-          additionalProperties: {}
-          description: field_id → submitted value, stored verbatim.
-        submitter_email:
-          type:
-          - string
-          - 'null'
-        source:
-          type: string
-          enum:
-          - public
-          - internal
-        created_issue_id:
-          type:
-          - string
-          - 'null'
-        created_issue_key:
-          type:
-          - string
-          - 'null'
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
       required:
-      - id
-      - answers
-      - submitter_email
-      - source
-      - created_issue_id
-      - created_issue_key
-      - created_at
+      - error
     FormField:
       type: object
       properties:
@@ -1146,35 +1083,98 @@ components:
       - max_length
       - default_value
       - created_at
-    ErrorEnvelope:
+    FormSummary:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type:
+          - string
+          - 'null'
+        status:
+          type: string
+          enum:
+          - draft
+          - published
+          - closed
+        public_enabled:
+          type: boolean
+        share_url:
+          type:
+          - string
+          - 'null'
+          description: Public /f/<token> URL; null unless public sharing is enabled.
+        submission_count:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
       required:
-      - error
+      - id
+      - title
+      - description
+      - status
+      - public_enabled
+      - share_url
+      - submission_count
+      - created_at
+      - updated_at
+    FormSubmission:
+      type: object
+      properties:
+        id:
+          type: string
+        answers:
+          type: object
+          additionalProperties: {}
+          description: field_id → submitted value, stored verbatim.
+        submitter_email:
+          type:
+          - string
+          - 'null'
+        source:
+          type: string
+          enum:
+          - public
+          - internal
+        created_issue_id:
+          type:
+          - string
+          - 'null'
+        created_issue_key:
+          type:
+          - string
+          - 'null'
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - answers
+      - submitter_email
+      - source
+      - created_issue_id
+      - created_issue_key
+      - created_at
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
   securitySchemes:
     bearerAuth:
       type: http

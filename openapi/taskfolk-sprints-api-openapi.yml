@@ -409,6 +409,35 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
     SprintCreateInput:
       type: object
       properties:
@@ -438,6 +467,35 @@ components:
           description: Date or ISO 8601.
       required:
       - name
+    SprintPatchInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+          example: Sprint 7
+        goal:
+          type:
+          - string
+          - 'null'
+          description: Sprint goal (markdown).
+        status:
+          type: string
+          enum:
+          - planned
+          - active
+          - completed
+        start_at:
+          type:
+          - string
+          - 'null'
+          description: Date or ISO 8601.
+        end_at:
+          type:
+          - string
+          - 'null'
+          description: Date or ISO 8601.
     Pagination:
       type: object
       properties:
@@ -489,64 +547,6 @@ components:
       - start_at
       - end_at
       - rank
-    SprintPatchInput:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 120
-          example: Sprint 7
-        goal:
-          type:
-          - string
-          - 'null'
-          description: Sprint goal (markdown).
-        status:
-          type: string
-          enum:
-          - planned
-          - active
-          - completed
-        start_at:
-          type:
-          - string
-          - 'null'
-          description: Date or ISO 8601.
-        end_at:
-          type:
-          - string
-          - 'null'
-          description: Date or ISO 8601.
-    ErrorEnvelope:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
-      required:
-      - error
   securitySchemes:
     bearerAuth:
       type: http

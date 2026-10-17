@@ -620,25 +620,6 @@ components:
           minLength: 1
       required:
       - project_id
-    PortfolioPatchInput:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 120
-        description_md:
-          type:
-          - string
-          - 'null'
-          maxLength: 10000
-        color:
-          type: string
-          pattern: ^#[0-9a-fA-F]{6}$
-        lead_user_id:
-          type:
-          - string
-          - 'null'
     Portfolio:
       type: object
       properties:
@@ -680,16 +661,6 @@ components:
       - created_by
       - created_at
       - updated_at
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
     PortfolioProject:
       type: object
       properties:
@@ -751,6 +722,35 @@ components:
           - 'null'
       required:
       - name
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    PortfolioPatchInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        description_md:
+          type:
+          - string
+          - 'null'
+          maxLength: 10000
+        color:
+          type: string
+          pattern: ^#[0-9a-fA-F]{6}$
+        lead_user_id:
+          type:
+          - string
+          - 'null'
   securitySchemes:
     bearerAuth:
       type: http

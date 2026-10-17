@@ -617,10 +617,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    CustomFieldValueInput:
-      type: object
-      properties:
-        value: {}
     CustomFieldDef:
       type: object
       properties:
@@ -668,28 +664,6 @@ components:
       - applies_to
       - required
       - rank
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
-    CustomFieldValue:
-      type: object
-      properties:
-        field_id:
-          type: string
-        name:
-          type: string
-        kind:
-          type: string
-        value: {}
-      required:
-      - field_id
     ErrorEnvelope:
       type: object
       properties:
@@ -719,6 +693,18 @@ components:
           - message
       required:
       - error
+    CustomFieldValue:
+      type: object
+      properties:
+        field_id:
+          type: string
+        name:
+          type: string
+        kind:
+          type: string
+        value: {}
+      required:
+      - field_id
     CustomFieldDefCreateInput:
       type: object
       properties:
@@ -756,6 +742,20 @@ components:
       required:
       - name
       - kind
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    CustomFieldValueInput:
+      type: object
+      properties:
+        value: {}
   securitySchemes:
     bearerAuth:
       type: http

@@ -362,6 +362,35 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
     Attachment:
       type: object
       properties:
@@ -399,16 +428,25 @@ components:
       - uploader_id
       - url
       - created_at
-    Pagination:
+    AttachmentCommitInput:
       type: object
       properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
+        r2_key:
+          type: string
+          description: The exact r2_key returned by the intent call.
+        file_name:
+          type: string
+        mime:
+          type: string
+        byte_size:
+          type: integer
+        comment_id:
+          type: string
       required:
-      - next_cursor
+      - r2_key
+      - file_name
+      - mime
+      - byte_size
     UploadIntent:
       type: object
       properties:
@@ -434,6 +472,16 @@ components:
       - relay_url
       - headers
       - expires_at
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
     AttachmentIntentInput:
       type: object
       properties:
@@ -446,54 +494,6 @@ components:
         comment_id:
           type: string
       required:
-      - file_name
-      - mime
-      - byte_size
-    ErrorEnvelope:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
-      required:
-      - error
-    AttachmentCommitInput:
-      type: object
-      properties:
-        r2_key:
-          type: string
-          description: The exact r2_key returned by the intent call.
-        file_name:
-          type: string
-        mime:
-          type: string
-        byte_size:
-          type: integer
-        comment_id:
-          type: string
-      required:
-      - r2_key
       - file_name
       - mime
       - byte_size

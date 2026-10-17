@@ -409,17 +409,19 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    MilestonePatchInput:
+    MilestoneCreateInput:
       type: object
       properties:
         name:
           type: string
           minLength: 1
           maxLength: 120
+          example: v2.0 Release
         description_md:
           type:
           - string
           - 'null'
+          description: Description (markdown).
         status:
           type: string
           enum:
@@ -430,10 +432,14 @@ components:
           type:
           - string
           - 'null'
+          description: Date (YYYY-MM-DD) or ISO 8601.
         due_at:
           type:
           - string
           - 'null'
+          description: Date (YYYY-MM-DD) or ISO 8601.
+      required:
+      - name
     Milestone:
       type: object
       properties:
@@ -475,47 +481,6 @@ components:
       - start_at
       - due_at
       - rank
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
-    MilestoneCreateInput:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 120
-          example: v2.0 Release
-        description_md:
-          type:
-          - string
-          - 'null'
-          description: Description (markdown).
-        status:
-          type: string
-          enum:
-          - planned
-          - active
-          - completed
-        start_at:
-          type:
-          - string
-          - 'null'
-          description: Date (YYYY-MM-DD) or ISO 8601.
-        due_at:
-          type:
-          - string
-          - 'null'
-          description: Date (YYYY-MM-DD) or ISO 8601.
-      required:
-      - name
     ErrorEnvelope:
       type: object
       properties:
@@ -545,6 +510,41 @@ components:
           - message
       required:
       - error
+    MilestonePatchInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        description_md:
+          type:
+          - string
+          - 'null'
+        status:
+          type: string
+          enum:
+          - planned
+          - active
+          - completed
+        start_at:
+          type:
+          - string
+          - 'null'
+        due_at:
+          type:
+          - string
+          - 'null'
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
   securitySchemes:
     bearerAuth:
       type: http

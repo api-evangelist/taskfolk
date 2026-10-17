@@ -63,31 +63,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Me:
-      type: object
-      properties:
-        keyId:
-          type: string
-        name:
-          type: string
-        workspaceSlug:
-          type: string
-        scopes:
-          type: array
-          items:
-            type: string
-        expiresAt:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - keyId
-      - name
-      - workspaceSlug
-      - scopes
-      - expiresAt
     ErrorEnvelope:
       type: object
       properties:
@@ -117,6 +92,31 @@ components:
           - message
       required:
       - error
+    Me:
+      type: object
+      properties:
+        keyId:
+          type: string
+        name:
+          type: string
+        workspaceSlug:
+          type: string
+        scopes:
+          type: array
+          items:
+            type: string
+        expiresAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - keyId
+      - name
+      - workspaceSlug
+      - scopes
+      - expiresAt
   securitySchemes:
     bearerAuth:
       type: http

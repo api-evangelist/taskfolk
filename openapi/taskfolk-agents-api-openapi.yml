@@ -608,6 +608,35 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
     AgentDetail:
       type: object
       properties:
@@ -693,16 +722,6 @@ components:
       - key_last_used_at
       - field_policy
       - spend_cap_usd
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
     Agent:
       type: object
       properties:
@@ -873,35 +892,16 @@ components:
       - started_at
       - last_activity_at
       - ended_at
-    ErrorEnvelope:
+    Pagination:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
       required:
-      - error
+      - next_cursor
   securitySchemes:
     bearerAuth:
       type: http

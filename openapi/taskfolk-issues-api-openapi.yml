@@ -1053,26 +1053,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Label:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-          example: frontend
-        color:
-          type: string
-          example: '#f5c518'
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - name
-      - color
-      - created_at
     CommitRef:
       type: object
       properties:
@@ -1107,9 +1087,111 @@ components:
       - url
       - author
       - committed_at
-    IssueLinkCreateInput:
+    ErrorEnvelope:
       type: object
       properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
+    IssueCreateInput:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - epic
+          - story
+          - task
+          - bug
+          - subtask
+        title:
+          type: string
+        description_md:
+          type: string
+        status:
+          type: string
+          enum:
+          - backlog
+          - todo
+          - in_progress
+          - in_review
+          - done
+          - failed
+          - cancelled
+        status_id:
+          type: string
+          description: Board status id (project_statuses); wins over status.
+        priority:
+          type: string
+          enum:
+          - lowest
+          - low
+          - medium
+          - high
+          - highest
+          - critical
+        assignee:
+          type: string
+          description: user_id or email
+          example: omar@haris.bz
+        labels:
+          type: array
+          items:
+            type: string
+          description: label ids or names
+        parent:
+          type: string
+          example: WEB-2
+        epic:
+          type: string
+          example: WEB-2
+        start_at:
+          type:
+          - string
+          - 'null'
+        due_at:
+          type:
+          - string
+          - 'null'
+        estimate_minutes:
+          type:
+          - integer
+          - 'null'
+        story_points:
+          type:
+          - integer
+          - 'null'
+      required:
+      - type
+      - title
+    IssueLink:
+      type: object
+      properties:
+        id:
+          type: string
         kind:
           type: string
           enum:
@@ -1121,15 +1203,24 @@ components:
           enum:
           - out
           - in
-          description: '"out" = anchor blocks/relates_to/duplicates target; "in" = target → anchor.'
+          description: '"out" = anchor → target, "in" = target → anchor.'
         target_key:
           type: string
-          description: Target issue KEY-NUM (e.g. WEB-12). Cross-project within the workspace is supported.
           example: WEB-12
+        target_title:
+          type: string
+        target_status:
+          type: string
+        target_project_slug:
+          type: string
       required:
+      - id
       - kind
       - direction
       - target_key
+      - target_title
+      - target_status
+      - target_project_slug
     Issue:
       type: object
       properties:
@@ -1305,21 +1396,9 @@ components:
       - archived_at
       - created_at
       - updated_at
-    Pagination:
+    IssueLinkCreateInput:
       type: object
       properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
-    IssueLink:
-      type: object
-      properties:
-        id:
-          type: string
         kind:
           type: string
           enum:
@@ -1331,50 +1410,69 @@ components:
           enum:
           - out
           - in
-          description: '"out" = anchor → target, "in" = target → anchor.'
+          description: '"out" = anchor blocks/relates_to/duplicates target; "in" = target → anchor.'
         target_key:
           type: string
+          description: Target issue KEY-NUM (e.g. WEB-12). Cross-project within the workspace is supported.
           example: WEB-12
-        target_title:
-          type: string
-        target_status:
-          type: string
-        target_project_slug:
-          type: string
       required:
-      - id
       - kind
       - direction
       - target_key
-      - target_title
-      - target_status
-      - target_project_slug
-    BulkIssuesCreateInput:
+    BulkIssueResult:
+      anyOf:
+      - type: object
+        properties:
+          index:
+            type: integer
+          ok:
+            type: boolean
+            enum:
+            - true
+          data:
+            $ref: '#/components/schemas/Issue'
+        required:
+        - index
+        - ok
+        - data
+      - type: object
+        properties:
+          index:
+            type: integer
+          ok:
+            type: boolean
+            enum:
+            - false
+          error:
+            type: object
+            properties:
+              code:
+                type: string
+                enum:
+                - unauthorized
+                - forbidden
+                - not_found
+                - validation
+                - rate_limited
+                - conflict
+                - idempotency_violation
+                - internal_error
+                example: validation
+              message:
+                type: string
+              details:
+                type: object
+                additionalProperties: {}
+            required:
+            - code
+            - message
+        required:
+        - index
+        - ok
+        - error
+    IssueTransitionInput:
       type: object
       properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/IssueCreateInput'
-          minItems: 1
-          maxItems: 50
-      required:
-      - items
-    IssueCreateInput:
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-          - epic
-          - story
-          - task
-          - bug
-          - subtask
-        title:
-          type: string
-        description_md:
-          type: string
         status:
           type: string
           enum:
@@ -1385,52 +1483,40 @@ components:
           - done
           - failed
           - cancelled
-        status_id:
+        rank:
           type: string
-          description: Board status id (project_statuses); wins over status.
-        priority:
-          type: string
-          enum:
-          - lowest
-          - low
-          - medium
-          - high
-          - highest
-          - critical
-        assignee:
-          type: string
-          description: user_id or email
-          example: omar@haris.bz
-        labels:
-          type: array
-          items:
-            type: string
-          description: label ids or names
-        parent:
-          type: string
-          example: WEB-2
-        epic:
-          type: string
-          example: WEB-2
-        start_at:
-          type:
-          - string
-          - 'null'
-        due_at:
-          type:
-          - string
-          - 'null'
-        estimate_minutes:
-          type:
-          - integer
-          - 'null'
-        story_points:
-          type:
-          - integer
-          - 'null'
       required:
-      - type
-      - title
+      - status
+    Label:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          example: frontend
+        color:
+          type: string
+          example: '#f5c518'
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - name
+      - color
+      - created_at
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
     IssuePatchInput:
       type: object
       properties:
@@ -1514,103 +1600,17 @@ components:
           type:
           - string
           - 'null'
-    ErrorEnvelope:
+    BulkIssuesCreateInput:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/IssueCreateInput'
+          minItems: 1
+          maxItems: 50
       required:
-      - error
-    IssueTransitionInput:
-      type: object
-      properties:
-        status:
-          type: string
-          enum:
-          - backlog
-          - todo
-          - in_progress
-          - in_review
-          - done
-          - failed
-          - cancelled
-        rank:
-          type: string
-      required:
-      - status
-    BulkIssueResult:
-      anyOf:
-      - type: object
-        properties:
-          index:
-            type: integer
-          ok:
-            type: boolean
-            enum:
-            - true
-          data:
-            $ref: '#/components/schemas/Issue'
-        required:
-        - index
-        - ok
-        - data
-      - type: object
-        properties:
-          index:
-            type: integer
-          ok:
-            type: boolean
-            enum:
-            - false
-          error:
-            type: object
-            properties:
-              code:
-                type: string
-                enum:
-                - unauthorized
-                - forbidden
-                - not_found
-                - validation
-                - rate_limited
-                - conflict
-                - idempotency_violation
-                - internal_error
-                example: validation
-              message:
-                type: string
-              details:
-                type: object
-                additionalProperties: {}
-            required:
-            - code
-            - message
-        required:
-        - index
-        - ok
-        - error
+      - items
   securitySchemes:
     bearerAuth:
       type: http

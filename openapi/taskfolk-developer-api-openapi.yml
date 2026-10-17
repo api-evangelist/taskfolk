@@ -1317,6 +1317,95 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    WebhookPatchInput:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+        event_types:
+          type: array
+          items:
+            type: string
+          minItems: 1
+        enabled:
+          type: boolean
+    CreatedOauthApp:
+      allOf:
+      - $ref: '#/components/schemas/OauthApp'
+      - type: object
+        properties:
+          client_secret:
+            type:
+            - string
+            - 'null'
+            example: utos_...
+            description: Returned exactly once on create. Null for public (PKCE) clients.
+        required:
+        - client_secret
+    ApiKeyPatchInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        rate_limit_per_minute:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 100000
+        expires_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+    ApiKeyCreateInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        scopes:
+          type: array
+          items:
+            type: string
+          minItems: 1
+        project_ids:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        expires_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+        rate_limit_per_minute:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 100000
+      required:
+      - name
+      - scopes
+    CreatedApiKey:
+      allOf:
+      - $ref: '#/components/schemas/ApiKey'
+      - type: object
+        properties:
+          plaintext:
+            type: string
+            example: tfk_live_abcd1234...
+            description: Returned exactly once on create. Store it securely.
+        required:
+        - plaintext
     ApiKey:
       type: object
       properties:
@@ -1414,6 +1503,35 @@ components:
       - p50_ms
       - p95_ms
       - p99_ms
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
     OauthAppCreateInput:
       type: object
       properties:
@@ -1446,47 +1564,6 @@ components:
       - name
       - redirect_uris
       - scopes
-    CreatedOauthApp:
-      allOf:
-      - $ref: '#/components/schemas/OauthApp'
-      - type: object
-        properties:
-          client_secret:
-            type:
-            - string
-            - 'null'
-            example: utos_...
-            description: Returned exactly once on create. Null for public (PKCE) clients.
-        required:
-        - client_secret
-    WebhookCreateInput:
-      type: object
-      properties:
-        url:
-          type: string
-          format: uri
-          example: https://example.com/taskfolk/webhook
-        event_types:
-          type: array
-          items:
-            type: string
-          minItems: 1
-          example:
-          - '*'
-      required:
-      - url
-      - event_types
-    CreatedWebhook:
-      allOf:
-      - $ref: '#/components/schemas/Webhook'
-      - type: object
-        properties:
-          secret:
-            type: string
-            example: utwhsec_...
-            description: Returned exactly once on create or rotation.
-        required:
-        - secret
     Webhook:
       type: object
       properties:
@@ -1537,6 +1614,41 @@ components:
       - last_delivery_status
       - created_by
       - created_at
+    WebhookDelivery:
+      type: object
+      properties:
+        delivery_id:
+          type: string
+        event_type:
+          type: string
+          example: webhook.test
+        attempt:
+          type: integer
+          example: 1
+        status:
+          type: integer
+          example: 200
+        latency_ms:
+          type: integer
+          example: 123
+        error:
+          type: string
+        final:
+          type: integer
+          example: 1
+        ts:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - delivery_id
+      - event_type
+      - attempt
+      - status
+      - latency_ms
+      - error
+      - final
+      - ts
     ApiKeyUsage:
       type: object
       properties:
@@ -1576,39 +1688,23 @@ components:
       - granularity
       - series
       - totals
-    ApiKeyCreateInput:
+    WebhookCreateInput:
       type: object
       properties:
-        name:
+        url:
           type: string
-          minLength: 1
-          maxLength: 80
-        scopes:
+          format: uri
+          example: https://example.com/taskfolk/webhook
+        event_types:
           type: array
           items:
             type: string
           minItems: 1
-        project_ids:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-        expires_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-        rate_limit_per_minute:
-          type:
-          - integer
-          - 'null'
-          minimum: 1
-          maximum: 100000
+          example:
+          - '*'
       required:
-      - name
-      - scopes
+      - url
+      - event_types
     Pagination:
       type: object
       properties:
@@ -1619,25 +1715,17 @@ components:
           example: null
       required:
       - next_cursor
-    ApiKeyPatchInput:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 80
-        rate_limit_per_minute:
-          type:
-          - integer
-          - 'null'
-          minimum: 1
-          maximum: 100000
-        expires_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
+    CreatedWebhook:
+      allOf:
+      - $ref: '#/components/schemas/Webhook'
+      - type: object
+        properties:
+          secret:
+            type: string
+            example: utwhsec_...
+            description: Returned exactly once on create or rotation.
+        required:
+        - secret
     OauthApp:
       type: object
       properties:
@@ -1675,94 +1763,6 @@ components:
       - scopes
       - is_public
       - created_at
-    WebhookDelivery:
-      type: object
-      properties:
-        delivery_id:
-          type: string
-        event_type:
-          type: string
-          example: webhook.test
-        attempt:
-          type: integer
-          example: 1
-        status:
-          type: integer
-          example: 200
-        latency_ms:
-          type: integer
-          example: 123
-        error:
-          type: string
-        final:
-          type: integer
-          example: 1
-        ts:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - delivery_id
-      - event_type
-      - attempt
-      - status
-      - latency_ms
-      - error
-      - final
-      - ts
-    CreatedApiKey:
-      allOf:
-      - $ref: '#/components/schemas/ApiKey'
-      - type: object
-        properties:
-          plaintext:
-            type: string
-            example: tfk_live_abcd1234...
-            description: Returned exactly once on create. Store it securely.
-        required:
-        - plaintext
-    WebhookPatchInput:
-      type: object
-      properties:
-        url:
-          type: string
-          format: uri
-        event_types:
-          type: array
-          items:
-            type: string
-          minItems: 1
-        enabled:
-          type: boolean
-    ErrorEnvelope:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
-      required:
-      - error
   securitySchemes:
     bearerAuth:
       type: http

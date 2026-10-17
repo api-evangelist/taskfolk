@@ -116,6 +116,31 @@ components:
           example: null
       required:
       - next_cursor
+    Activity:
+      type: object
+      properties:
+        id:
+          type: string
+        kind:
+          type: string
+          example: status_changed
+        actor_id:
+          type:
+          - string
+          - 'null'
+        payload:
+          type: object
+          additionalProperties: {}
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - kind
+      - actor_id
+      - payload
+      - created_at
     ErrorEnvelope:
       type: object
       properties:
@@ -145,31 +170,6 @@ components:
           - message
       required:
       - error
-    Activity:
-      type: object
-      properties:
-        id:
-          type: string
-        kind:
-          type: string
-          example: status_changed
-        actor_id:
-          type:
-          - string
-          - 'null'
-        payload:
-          type: object
-          additionalProperties: {}
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - kind
-      - actor_id
-      - payload
-      - created_at
   securitySchemes:
     bearerAuth:
       type: http

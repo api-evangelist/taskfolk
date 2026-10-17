@@ -269,30 +269,45 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Workspace:
+    WorkspacePatchInput:
       type: object
       properties:
-        id:
-          type: string
-        slug:
-          type: string
-          example: taskfolk
         name:
           type: string
+          minLength: 1
+          maxLength: 100
           example: Taskfolk
-        default_locale:
-          type: string
-          example: en
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
       required:
-      - id
-      - slug
       - name
-      - default_locale
-      - created_at
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+              - unauthorized
+              - forbidden
+              - not_found
+              - validation
+              - rate_limited
+              - conflict
+              - idempotency_violation
+              - internal_error
+              example: validation
+            message:
+              type: string
+              example: Label "foo" does not exist on this project.
+            details:
+              type: object
+              additionalProperties: {}
+          required:
+          - code
+          - message
+      required:
+      - error
     WorkspaceUsage:
       type: object
       properties:
@@ -388,45 +403,30 @@ components:
           example: null
       required:
       - next_cursor
-    WorkspacePatchInput:
+    Workspace:
       type: object
       properties:
+        id:
+          type: string
+        slug:
+          type: string
+          example: taskfolk
         name:
           type: string
-          minLength: 1
-          maxLength: 100
           example: Taskfolk
+        default_locale:
+          type: string
+          example: en
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
       required:
+      - id
+      - slug
       - name
-    ErrorEnvelope:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              enum:
-              - unauthorized
-              - forbidden
-              - not_found
-              - validation
-              - rate_limited
-              - conflict
-              - idempotency_violation
-              - internal_error
-              example: validation
-            message:
-              type: string
-              example: Label "foo" does not exist on this project.
-            details:
-              type: object
-              additionalProperties: {}
-          required:
-          - code
-          - message
-      required:
-      - error
+      - default_locale
+      - created_at
   securitySchemes:
     bearerAuth:
       type: http

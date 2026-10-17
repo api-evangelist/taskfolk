@@ -335,26 +335,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Label:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-          example: frontend
-        color:
-          type: string
-          example: '#f5c518'
-        created_at:
-          type: string
-          format: date-time
-          example: '2026-05-28T14:30:00Z'
-      required:
-      - id
-      - name
-      - color
-      - created_at
     LabelCreateInput:
       type: object
       properties:
@@ -365,23 +345,6 @@ components:
       required:
       - name
       - color
-    Pagination:
-      type: object
-      properties:
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          example: null
-      required:
-      - next_cursor
-    LabelPatchInput:
-      type: object
-      properties:
-        name:
-          type: string
-        color:
-          type: string
     ErrorEnvelope:
       type: object
       properties:
@@ -411,6 +374,43 @@ components:
           - message
       required:
       - error
+    LabelPatchInput:
+      type: object
+      properties:
+        name:
+          type: string
+        color:
+          type: string
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          example: null
+      required:
+      - next_cursor
+    Label:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          example: frontend
+        color:
+          type: string
+          example: '#f5c518'
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-05-28T14:30:00Z'
+      required:
+      - id
+      - name
+      - color
+      - created_at
   securitySchemes:
     bearerAuth:
       type: http
